@@ -413,7 +413,7 @@ Svaka stranica usluge:
 - [ ] **P0.DNS.12** SSL/TLS mod "Full (strict)", "Always Use HTTPS", minimalni TLS 1.2, TLS 1.3 uključen · Ko: Z · Gotovo kad: podešavanja su potvrđena screenshotom.
 
 #### P0.CNT: Prikupljanje sadržaja
-- [ ] **P0.CNT.01** Agent pripremi upitnik iz §8.2 kao `content/intake/project-questionnaire.md` · Ko: A · Gotovo kad: fajl postoji.
+- [x] **P0.CNT.01** Agent pripremi upitnik iz §8.2 kao `content/intake/project-questionnaire.md` · Ko: A · Gotovo kad: fajl postoji.
 - [ ] **P0.CNT.02** Uz Zijadovu dozvolu, agent pregleda lokalne foldere projekata (`~/Desktop/avicena_menagment_system`, `KpBau`, `rezervacija`, `aligner`, `limont reels`) i izvuče stack, funkcionalnosti i strukturu u `content/intake/<projekat>-notes.md`. **Samo čita, ništa ne mijenja, bez tajni.** · Ko: A · Gotovo kad: 5 fajlova s bilješkama.
 - [ ] **P0.CNT.03** Zijad popuni upitnik za **Avicenu** · Ko: Z · Zavisi: P0.CNT.01 · Gotovo kad: svih 11 odgovora.
 - [ ] **P0.CNT.04** Zijad popuni upitnik za **Karamujić Petrol** · Ko: Z · Gotovo kad: svih 11 odgovora.
