@@ -385,7 +385,7 @@ Svaka stranica usluge:
 
 #### P0.ACC: Nalozi i pristupi
 - [x] **P0.ACC.01** Napraviti privatni GitHub repo `lejliczijad-portfolio` i dati agentu pristup (gh CLI login) · Ko: Z · Gotovo kad: `gh repo view` radi iz terminala.
-- [ ] **P0.ACC.02** Napraviti Cloudflare nalog (ako ne postoji) i uključiti 2FA · Ko: Z · Gotovo kad: nalog postoji, 2FA je aktivan.
+- [x] **P0.ACC.02** Napraviti Cloudflare nalog (ako ne postoji) i uključiti 2FA · Ko: Z · Gotovo kad: nalog postoji, 2FA je aktivan.
 - [ ] **P0.ACC.03** Napraviti Cal.com nalog, povezati Google kalendar, podesiti radno vrijeme (CET) · Ko: Z · Gotovo kad: kalendar je povezan.
 - [ ] **P0.ACC.04** Napraviti Cal.com tip poziva "Intro call" (15 min, besplatno, 10 min buffer, min. 12 h unaprijed) · Ko: Z · Zavisi: P0.ACC.03 · Gotovo kad: javni link radi.
 - [ ] **P0.ACC.05** Napraviti Cal.com tip poziva "Project consultation" (45 min, pitanja: tip projekta, budžet, rok) · Ko: Z · Zavisi: P0.ACC.03 · Gotovo kad: javni link radi.
