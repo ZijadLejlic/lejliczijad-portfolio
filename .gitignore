@@ -1,0 +1,4 @@
+# Minimal ignore list; the full list lands in P1.ENV.06.
+node_modules/
+dist/
+.astro/

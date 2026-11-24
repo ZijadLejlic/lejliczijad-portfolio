@@ -745,7 +745,7 @@ Format: `ADR-NNN · Naslov · Status (Accepted/Superseded) · Datum · Kontekst 
 
 | ADR | Odluka | Status |
 |---|---|---|
-| ADR-001 | Astro (static) + `@astrojs/cloudflare`; verzije pinovane pri scaffoldu | Accepted |
+| ADR-001 | Astro (static) + `@astrojs/cloudflare`; verzije pinovane pri scaffoldu ([docs/adr/001-astro-static.md](docs/adr/001-astro-static.md): Astro 7.4.13, Node 26.13.1, pnpm 12.23.0, TypeScript 6.0.3) | Accepted |
 | ADR-002 | Cloudflare **Workers + Static Assets** umjesto klasičnog Pages projekta (Cloudflare ga preporučuje za nove projekte; zadržava "Pages" prednosti: CDN, preview, besplatno) | Accepted |
 | ADR-003 | Bez baze; MDX content collections; forme bez skladištenja (samo email) | Accepted |
 | ADR-004 | Svelte 5 za interaktivne islands, ostalo vanilla TS | Accepted |

@@ -442,7 +442,7 @@ Svaka stranica usluge:
 ### FAZA 1: Temelj i jezgro (→ lansiranje v1)
 
 #### P1.ENV: Projekt, alati, CI
-- [ ] **P1.ENV.01** Inicijalizovati Astro projekat (TypeScript strict, pnpm, Node LTS u `.nvmrc`, tačne verzije u `package.json`) · Ko: A · Gotovo kad: `pnpm dev` i `pnpm build` rade.
+- [x] **P1.ENV.01** Inicijalizovati Astro projekat (TypeScript strict, pnpm, Node LTS u `.nvmrc`, tačne verzije u `package.json`) · Ko: A · Gotovo kad: `pnpm dev` i `pnpm build` rade.
 - [ ] **P1.ENV.02** Struktura foldera prema [tech.md §3](tech.md#3-struktura-repozitorija) + path aliasi (`@/components` …) · Ko: A · Zavisi: P1.ENV.01 · Gotovo kad: aliasi rade u Astro, TS-u i Vitestu.
 - [ ] **P1.ENV.03** ESLint (flat config, astro, ts, svelte, jsx-a11y pravila) + Prettier (+ astro i svelte plugin) · Ko: A · Gotovo kad: `pnpm lint` prolazi, `pnpm format` radi.
 - [ ] **P1.ENV.04** Stylelint za CSS (order, no-hardcoded colors osim tokena) · Ko: A · Gotovo kad: `pnpm lint:css` prolazi.
