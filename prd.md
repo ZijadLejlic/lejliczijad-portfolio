@@ -388,7 +388,7 @@ Svaka stranica usluge:
 - [x] **P0.ACC.02** Napraviti Cloudflare nalog (ako ne postoji) i uključiti 2FA · Ko: Z · Gotovo kad: nalog postoji, 2FA je aktivan.
 - [x] **P0.ACC.03** Napraviti Cal.com nalog, povezati Google kalendar, podesiti radno vrijeme (CET) · Ko: Z · Gotovo kad: kalendar je povezan.
 - [x] **P0.ACC.04** Napraviti Cal.com tip poziva "Intro call" (15 min, besplatno, 10 min buffer, min. 12 h unaprijed) · Ko: Z · Zavisi: P0.ACC.03 · Gotovo kad: javni link radi.
-- [ ] **P0.ACC.05** Napraviti Cal.com tip poziva "Project consultation" (45 min, pitanja: tip projekta, budžet, rok) · Ko: Z · Zavisi: P0.ACC.03 · Gotovo kad: javni link radi.
+- [x] **P0.ACC.05** Napraviti Cal.com tip poziva "Project consultation" (45 min, pitanja: tip projekta, budžet, rok) · Ko: Z · Zavisi: P0.ACC.03 · Gotovo kad: javni link radi.
 - [ ] **P0.ACC.06** Napraviti Resend nalog · Ko: Z · Gotovo kad: nalog postoji.
 - [ ] **P0.ACC.07** Napraviti Umami Cloud nalog i website `lejliczijad.com`; dati agentu website ID · Ko: Z · Gotovo kad: ID je upisan u `.env.example` dokumentaciju (ID nije tajna).
 - [ ] **P0.ACC.08** Google Search Console: dodati Domain property `lejliczijad.com` (DNS verifikacija ide u P0.DNS) · Ko: Z · Gotovo kad: property čeka verifikaciju.
