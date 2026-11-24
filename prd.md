@@ -432,7 +432,7 @@ Svaka stranica usluge:
 - [ ] **P0.CNT.17** Podaci za Impressum (ime, adresa, telefon) · Ko: Z · Gotovo kad: podaci su poslani agentu (unose se u `src/data/legal.ts`).
 
 #### P0.SCAN: 3D sken glave (iPhone 17 Pro Max)
-- [ ] **P0.SCAN.01** Agent napiše uputstvo `docs/face-scan-guide.md` (aplikacija, svjetlo, poza, izvoz) · Ko: A · Gotovo kad: uputstvo postoji.
+- [x] **P0.SCAN.01** Agent napiše uputstvo `docs/face-scan-guide.md` (aplikacija, svjetlo, poza, izvoz) · Ko: A · Gotovo kad: uputstvo postoji.
 - [ ] **P0.SCAN.02** Snimiti sken po uputstvu. Preporuka: **Polycam ili Scaniverse, photo/photogrammetry mod; skenira druga osoba** koja te obiđe u 3 kruga (visina očiju, iznad, ispod), 80–150 fotografija. Neutralan izraz, otvorene oči, bez naočala, mat koža (bez sjaja), raspršeno svjetlo (oblačan dan ili prozor), mirno sjedenje, ramena u kadru · Ko: Z · Gotovo kad: postoji model bez rupa na licu.
 - [ ] **P0.SCAN.03** Izvesti `.glb` (s teksturom) i, ako postoji, `.ply` point cloud; plus 3 referentne fotografije (front, lijevi i desni profil) · Ko: Z · Gotovo kad: fajlovi su u `content/intake/scan/`.
 - [ ] **P0.SCAN.04** Agent provjeri kvalitet skena (rupe, šum, proporcije) i javi treba li ponoviti · Ko: A · Zavisi: P0.SCAN.03 · Gotovo kad: sken je odobren ili su poslane precizne upute za ponovno snimanje.
