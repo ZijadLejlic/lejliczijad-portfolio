@@ -422,7 +422,7 @@ Svaka stranica usluge:
 - [ ] **P0.CNT.07** Zijad popuni upitnik za **Rezervaciju** · Ko: Z · Gotovo kad: svih 11 odgovora.
 - [ ] **P0.CNT.08** Kratki podaci za APS Aluminium, Promax Home, Aligner i Limont reels (2–3 rečenice + linkovi) · Ko: Z · Gotovo kad: podaci su u `content/intake/short-projects.md`.
 - [ ] **P0.CNT.09** Screenshotovi za 5 glavnih projekata (desktop 1440 px + mobilni 390 px, ključni ekrani, **bez pravih ličnih podataka pacijenata ili kupaca**) · Ko: Z (A može snimiti javne sajtove) · Gotovo kad: slike su u `content/intake/assets/<projekat>/`.
-- [ ] **P0.CNT.10** Agent napiše email ili poruku za klijente s molbom za testimonijal (EN + BS verzija, sa 4 vodeća pitanja) · Ko: A · Gotovo kad: šablon je u `content/intake/testimonial-request.md`.
+- [x] **P0.CNT.10** Agent napiše email ili poruku za klijente s molbom za testimonijal (EN + BS verzija, sa 4 vodeća pitanja) · Ko: A · Gotovo kad: šablon je u `content/intake/testimonial-request.md`.
 - [ ] **P0.CNT.11** Zijad pošalje molbe za testimonijale i prikupi 4–10 odgovora (tekst + fotografija + dozvola) · Ko: Z · Zavisi: P0.CNT.10 · Gotovo kad: odgovori su u `content/intake/testimonials/`.
 - [ ] **P0.CNT.12** Zamoliti 1–2 klijenta za video testimonijal (30–60 s, uz uputstvo za snimanje telefonom) · Ko: Z · Gotovo kad: video fajlovi su primljeni.
 - [ ] **P0.CNT.13** Prikupiti logotipe klijenata (SVG ili PNG) + dozvolu · Ko: Z · Gotovo kad: logotipi su u `content/intake/logos/`.
@@ -861,3 +861,4 @@ Riješiti prije taska koji je naveden.
 | 2026-11-23 | Fizičko lice (freelancer): Impressum, Privacy i Terms | Zijadov status |
 | 2026-11-23 | GitHub privatni repo, PR za svaki task, CI obavezan | Kvalitet i kontrola |
 | 2026-11-23 | Samo EN; i18n struktura spremna za DE i BS | Fokus, kasnije širenje |
+| 2026-11-24 | Testimonijali na bosanskom: agent prevodi na engleski, klijent pismeno odobrava i original i prevod prije objave; za sajt se bira jedan doslovan odlomak ≤ 400 znakova | Sajt je samo EN, a testimonijali se objavljuju doslovno; Zijadov izbor (P0.CNT.10) |
