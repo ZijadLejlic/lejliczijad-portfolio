@@ -1,0 +1,38 @@
+{
+  "$comment": "Colors live only in src/styles/tokens.css (AGENTS.md §6.3); everything else must use var(--color-*). Property order follows recess (position → box → typography → visual).",
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-recess-order",
+    "stylelint-config-html/astro",
+    "stylelint-config-html/svelte"
+  ],
+  "ignoreFiles": ["dist/**", ".astro/**", "node_modules/**", "coverage/**", "docs/**"],
+  "rules": {
+    "value-keyword-case": ["lower", { "ignoreProperties": ["/^--font-/"] }],
+    "color-no-hex": true,
+    "color-named": "never",
+    "function-disallowed-list": [
+      ["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch", "color"],
+      {
+        "message": "Use a color token (var(--color-*)) from src/styles/tokens.css instead of a literal color."
+      }
+    ],
+    "selector-class-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+      {
+        "message": "Use kebab-case class names, BEM-lite allowed (block__el--mod)."
+      }
+    ],
+    "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global"] }]
+  },
+  "overrides": [
+    {
+      "files": ["src/styles/tokens.css"],
+      "rules": {
+        "color-no-hex": null,
+        "color-named": null,
+        "function-disallowed-list": null
+      }
+    }
+  ]
+}
