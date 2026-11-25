@@ -1,0 +1,504 @@
+/*
+ * P1.DS.01 mockups: shared tokens and base styles.
+ * Values follow tech.md §6 (starting tokens). This is a preview only, not src/styles.
+ */
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('fonts/JetBrainsMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+
+  --color-bg: #050507;
+  --color-surface-1: #0b0b0f;
+  --color-surface-2: #13131a;
+  --color-border: rgb(255 255 255 / 0.08);
+  --color-border-strong: rgb(255 255 255 / 0.16);
+  --color-text: #f4f4f6;
+  --color-text-muted: #a1a1aa;
+  --color-text-subtle: #7c7c86;
+  --color-accent: #4d7cff;
+  --color-accent-hover: #6b93ff;
+  --color-accent-pressed: #3a66e6;
+  --color-on-accent: #050507;
+  --color-success: #22c55e;
+  --color-focus: #4d7cff;
+
+  --font-display: 'Clash Display', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Satoshi', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --text-display: clamp(3rem, 1.2rem + 7.5vw, 10rem);
+  --text-h1: clamp(2.5rem, 1.4rem + 4.6vw, 6rem);
+  --text-lead: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --text-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --text-small: 0.875rem;
+  --text-mono: 0.75rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
+  --container: 1440px;
+  --header-h: 4.5rem;
+
+  --z-fx: -1;
+  --z-header: 50;
+  --z-menu: 60;
+  --z-toast: 90;
+  --z-skip: 100;
+
+  --dur-fast: 200ms;
+  --dur-base: 400ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: fixed;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  z-index: var(--z-skip);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* ---------- FX layer (mockup sketch, not production FX) ---------- */
+.fx-poster,
+.fx-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-fx);
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+}
+
+.fx-poster {
+  background:
+    radial-gradient(60% 45% at var(--poster-x, 70%) var(--poster-y, 50%), rgb(77 124 255 / 0.1), transparent 70%),
+    radial-gradient(40% 30% at var(--poster-x, 70%) var(--poster-y, 50%), rgb(255 255 255 / 0.05), transparent 70%),
+    var(--color-bg);
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: var(--z-header);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  max-inline-size: var(--container);
+  min-block-size: var(--header-h);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.wordmark {
+  flex: 0 0 auto;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-nav {
+  display: none;
+  margin-inline-start: auto;
+}
+
+.site-nav ul {
+  display: flex;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav a {
+  display: inline-block;
+  padding-block: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-small);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current='page'] {
+  color: var(--color-text);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-inline-start: auto;
+}
+
+.site-header .badge {
+  display: none;
+}
+
+.menu-button {
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text);
+  font: 500 var(--text-mono) / 1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-menu);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--header-h) var(--gutter) var(--space-7);
+  background: var(--color-bg);
+}
+
+.mobile-menu[hidden] {
+  display: none;
+}
+
+.mobile-menu ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mobile-menu li a {
+  display: block;
+  padding-block: var(--space-2);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.5rem + 3vw, 3rem);
+  font-weight: 500;
+  line-height: 1.1;
+  text-decoration: none;
+}
+
+.mobile-menu__close {
+  position: absolute;
+  inset-block-start: calc((var(--header-h) - 44px) / 2);
+  inset-inline-end: var(--gutter);
+}
+
+@media (min-width: 64em) {
+  .site-nav {
+    display: block;
+  }
+
+  .site-header__actions {
+    margin-inline-start: var(--space-6);
+  }
+
+  .menu-button {
+    display: none;
+  }
+}
+
+@media (min-width: 80em) {
+  .site-header .badge {
+    display: inline-flex;
+  }
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 48px;
+  padding-inline: var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.btn--sm {
+  min-block-size: 40px;
+  padding-inline: var(--space-4);
+  font-size: var(--text-small);
+}
+
+.btn--primary {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--color-accent-hover);
+}
+
+.btn--primary:active {
+  background: var(--color-accent-pressed);
+}
+
+.btn--secondary {
+  border-color: var(--color-border-strong);
+  background: rgb(5 5 7 / 0.6);
+  color: var(--color-text);
+}
+
+.btn--secondary:hover {
+  border-color: var(--color-text-muted);
+}
+
+.btn-meet {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: 500 var(--text-small) / 1 var(--font-body);
+  cursor: pointer;
+}
+
+.btn-meet__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.btn-meet:hover .btn-meet__icon {
+  border-color: var(--color-accent);
+}
+
+.btn-meet__icon svg {
+  inline-size: 14px;
+  block-size: 14px;
+  margin-inline-start: 2px;
+  fill: currentColor;
+}
+
+/* ---------- Badge ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font: 500 var(--text-mono) / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge__dot {
+  position: relative;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+}
+
+.badge__dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse 2s var(--ease-out) infinite;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+/* ---------- Shared hero bits ---------- */
+.eyebrow {
+  color: var(--color-text-muted);
+  font: 500 var(--text-mono) / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.draft-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border: 1px dashed var(--color-accent);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent-hover);
+  font: 500 0.6875rem / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Review toolbar: only for comparing mockups, never part of the design. */
+.review-bar {
+  position: fixed;
+  inset-block-end: var(--space-3);
+  inset-inline-end: var(--space-3);
+  z-index: var(--z-toast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-inline-size: calc(100% - 2 * var(--space-3));
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font: 500 0.6875rem / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.review-bar__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.review-bar a {
+  display: grid;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.review-bar a[aria-current='page'] {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .badge__dot::after {
+    display: none;
+  }
+}

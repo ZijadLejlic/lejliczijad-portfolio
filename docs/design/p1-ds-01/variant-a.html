@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Variant A · Split — P1.DS.01 hero mockup</title>
+    <!-- Fontshare is allowed for this preview only (P1.DS.03 self-hosts the fonts). -->
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600&f[]=satoshi@400,500,700&display=swap" />
+    <link rel="stylesheet" href="assets/base.css" />
+    <style>
+      /*
+       * Variant A: "Split". Text and head are two separate objects side by side.
+       * The head is the visual on the right; the vortex orbits it and fades out under the text.
+       */
+      .fx-poster {
+        --poster-x: 72%;
+        --poster-y: 48%;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-rows: auto auto;
+        gap: var(--space-5);
+        max-inline-size: var(--container);
+        min-block-size: 100svh;
+        margin-inline: auto;
+        padding: calc(var(--header-h) + var(--space-4)) var(--gutter) var(--space-8);
+      }
+
+      .hero__face {
+        block-size: clamp(16rem, 42svh, 26rem);
+      }
+
+      .hero__copy {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-5);
+        min-inline-size: 0;
+      }
+
+      .hero__title {
+        max-inline-size: 13ch;
+        font-family: var(--font-display);
+        font-size: var(--text-h1);
+        font-weight: 600;
+        line-height: 0.98;
+        letter-spacing: -0.025em;
+      }
+
+      .hero__title em {
+        color: var(--color-accent);
+        font-style: normal;
+      }
+
+      .hero__lead {
+        max-inline-size: 34ch;
+        color: var(--color-text-muted);
+        font-size: var(--text-lead);
+        line-height: 1.5;
+      }
+
+      .hero__meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-3) var(--space-6);
+        padding-block-start: var(--space-5);
+        border-block-start: 1px solid var(--color-border);
+        inline-size: 100%;
+        max-inline-size: 34rem;
+      }
+
+      @media (min-width: 64em) {
+        .hero {
+          grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+          grid-template-rows: 1fr;
+          align-items: center;
+          gap: var(--space-7);
+          padding-block-end: var(--space-7);
+        }
+
+        .hero__copy {
+          order: -1;
+        }
+
+        .hero__face {
+          block-size: min(78svh, 46vw);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="fx-poster" aria-hidden="true"></div>
+    <canvas class="fx-canvas" aria-hidden="true" hidden></canvas>
+
+    <header class="site-header">
+      <div class="site-header__inner" data-dim="0.2">
+        <a class="wordmark" href="#main">Zijad Lejlić</a>
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#blog">Blog</a></li>
+          </ul>
+        </nav>
+        <div class="site-header__actions">
+          <span class="badge"><span class="badge__dot" aria-hidden="true"></span>Available for new projects</span>
+          <a class="btn btn--primary btn--sm" href="#contact">Book a call</a>
+          <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-open>Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <button class="menu-button mobile-menu__close" type="button" data-menu-close>Close</button>
+      <nav aria-label="Mobile">
+        <ul>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#process">Process</a></li>
+          <li><a href="#blog">Blog</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn--primary" href="#contact">Book a call</a>
+    </div>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__face" data-face-anchor aria-hidden="true"></div>
+
+        <div class="hero__copy" data-dim="0.14">
+          <p class="eyebrow">Full-stack developer · CET <span class="draft-tag">Draft copy</span></p>
+          <h1 class="hero__title" id="hero-title">I build custom web apps <em>and websites.</em></h1>
+          <p class="hero__lead">
+            I plan, design, build and launch software around the way your business already works.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="#contact">Book a call</a>
+            <a class="btn btn--secondary" href="#work">View work</a>
+          </div>
+          <div class="hero__meta">
+            <button class="btn-meet" type="button">
+              <span class="btn-meet__icon" aria-hidden="true"><svg viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z" /></svg></span>
+              Meet me<span class="visually-hidden"> (intro video)</span>
+            </button>
+            <span class="badge"><span class="badge__dot" aria-hidden="true"></span>Available for new projects</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="review-bar" aria-label="Mockup variants">
+      <span class="review-bar__label">P1.DS.01 mockup · A Split</span>
+      <a href="variant-a.html" aria-current="page">A</a>
+      <a href="variant-b.html">B</a>
+      <a href="variant-c.html">C</a>
+    </nav>
+
+    <script src="assets/mockup.js"></script>
+    <script>
+      HeroSketch.initPage();
+      HeroSketch.start({
+        faceAnchor: '[data-face-anchor]',
+        faceScale: 1,
+        faceBrightness: 1,
+        vortex: { inner: 0.75, outer: 2.3, thickness: 0.05, tilt: 0.24, rotate: -10, speed: 0.55, scale: 1, brightness: 0.55, offsetY: 0.35 },
+      });
+    </script>
+  </body>
+</html>
