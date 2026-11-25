@@ -186,6 +186,8 @@ lejliczijad-portfolio/
 - `src/server/**` se nikad ne importuje iz klijentskog koda (ESLint `no-restricted-imports`). Izuzetak su `schemas/*`, koje su dijeljene.
 - `content/intake/**` nikad ne ulazi u `dist/` (provjera `scripts/checks/dist-leaks.ts`).
 - Jedna komponenta = jedan fajl. Ime komponente je PascalCase, sve ostalo kebab-case ili camelCase prema tipu fajla.
+- **Path alias:** jedan alias `@/*` → `./src/*`, definisan samo u `tsconfig.json` (`compilerOptions.paths`). Astro (i Vite ispod njega) ga čita odatle, pa se ne duplira u `astro.config.ts`. Primjeri: `@/components/ui/Button.astro`, `@/lib/seo/meta`, `@/server/http`, `@/fx`. Vitest ga dobija preko `getViteConfig()` iz `astro/config` (P1.ENV.08).
+- Prazni folderi iz ove strukture se drže kroz `.gitkeep` dok ne dobiju prve fajlove; tada se `.gitkeep` briše.
 
 ---
 
