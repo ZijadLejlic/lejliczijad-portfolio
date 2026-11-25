@@ -1,4 +1,62 @@
-# Minimal ignore list; the full list lands in P1.ENV.06.
+# --- Dependencies -------------------------------------------------------------
 node_modules/
+.pnpm-store/
+
+# --- Build output and generated types ----------------------------------------
 dist/
 .astro/
+.wrangler/
+.output/
+.cache/
+*.tsbuildinfo
+
+# --- Test and tooling output -------------------------------------------------
+# Visual baselines (*-snapshots/) are committed on purpose; only run output is ignored.
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.lighthouseci/
+.eslintcache
+.stylelintcache
+
+# --- Secrets and local env (never commit; see AGENTS.md §11) -----------------
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+*.pem
+*.key
+*.p12
+
+# --- Raw intake material (stays on Zijad's disk and cloud, see tech.md §3) ---
+# Raw scans, original photos and video are large and personal.
+content/intake/_raw/
+# Face scan exports (.glb 4-17 MB) and reference photos; the pipeline reads
+# from _raw/, so nothing here is needed in the repo.
+content/intake/scan/*
+!content/intake/scan/.gitkeep
+
+# --- Logs --------------------------------------------------------------------
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- OS ----------------------------------------------------------------------
+.DS_Store
+._*
+Thumbs.db
+desktop.ini
+
+# --- Editors and local agent settings ----------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+.claude/settings.local.json
