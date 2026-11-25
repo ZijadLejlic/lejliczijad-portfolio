@@ -127,7 +127,7 @@ lejliczijad-portfolio/
 │  └─ .well-known/security.txt
 ├─ src/
 │  ├─ assets/
-│  │  ├─ fonts/               # woff2, subset
+│  │  ├─ fonts/               # woff2 (Clash/Satoshi originalni, bez subseta; ADR-013)
 │  │  ├─ images/              # globalne slike
 │  │  └─ fx/ face.bin  vortex-poster.avif
 │  ├─ components/
@@ -301,7 +301,7 @@ export const site = {
 | `--text-mono` | JetBrains Mono 500 | `0.75rem`–`0.875rem` | 1.4 | 0.08em, uppercase |
 
 - Minimalna veličina tekstnog sadržaja je 16 px. Dužina linije 60–75 znakova (`max-width: 68ch` za prozu).
-- Fontovi su subsetovani na `latin` + `latin-ext` (č, ć, š, ž, đ). Preload: Clash Display 600 + Satoshi 400.
+- Clash Display i Satoshi se self-hostuju kao **originalni WOFF2 fajlovi, bez subsettinga** (ITF FFL v2.0 zabranjuje subsetting; [ADR-013](docs/adr/013-fonts-no-subset.md)). JetBrains Mono (OFL) se smije subsetovati na `latin` + `latin-ext`. Svi fontovi moraju imati č, ć, š, ž, đ. Preload: Clash Display 600 + Satoshi 400.
 - Fallback stack s `size-adjust`/`ascent-override` da CLS pri zamjeni fonta bude 0.
 
 ### 6.3 Prostor, oblici, slojevi
@@ -759,5 +759,6 @@ Format: `ADR-NNN · Naslov · Status (Accepted/Superseded) · Datum · Kontekst 
 | ADR-010 | Umami Cloud + CF Web Analytics; bez kolačića | Accepted |
 | ADR-011 | Lead magnet PDF u privatnom R2, download preko HMAC tokena | Accepted |
 | ADR-012 | US English za sav sadržaj sajta | Accepted |
+| ADR-013 | Clash Display i Satoshi se self-hostuju bez subsettinga (ITF FFL v2.0); JetBrains Mono (OFL) se smije subsetovati ([docs/adr/013-fonts-no-subset.md](docs/adr/013-fonts-no-subset.md)) | Accepted |
 
 Nove ADR-ove agent dodaje u `docs/adr/NNN-naslov.md`, a ovu tabelu ažurira u istom PR-u.

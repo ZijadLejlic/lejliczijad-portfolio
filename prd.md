@@ -464,7 +464,7 @@ Svaka stranica usluge:
 #### P1.DS: Dizajn sistem
 - [x] **P1.DS.01** Tri vizuelna mockupa hero sekcije (crna + električno plava #4D7CFF, Clash Display + Satoshi + JetBrains Mono) kao HTML preview; Zijad bira smjer · Ko: A+Z · Gotovo kad: Zijad je odobrio jedan smjer. · **Izabrano: C · Off-axis** (2026-11-25), mockupi u `docs/design/p1-ds-01/`.
 - [ ] **P1.DS.02** Color tokeni (`--color-*`) prema [tech.md §6](tech.md#6-dizajn-tokeni) + dokumentovan kontrast svakog para · Ko: A · Zavisi: P1.DS.01 · Gotovo kad: svi tekstualni parovi ≥ 4,5:1 (veliki tekst ≥ 3:1).
-- [ ] **P1.DS.03** Self-host fontova (WOFF2, subset latin + latin-ext zbog č/ć/š/ž/đ u imenima), `font-display: swap`, preload 2 fonta, fallback metrike (`size-adjust`) protiv CLS-a · Ko: A · Gotovo kad: CLS od fontova = 0; licence su dokumentovane u `docs/licenses.md`.
+- [ ] **P1.DS.03** Self-host fontova (WOFF2; Clash Display i Satoshi originalni, bez subsettinga prema ADR-013; JetBrains Mono subset latin + latin-ext; provjeriti č/ć/š/ž/đ), `font-display: swap`, preload 2 fonta, fallback metrike (`size-adjust`) protiv CLS-a · Ko: A · Gotovo kad: CLS od fontova = 0; licence su dokumentovane u `docs/licenses.md`.
 - [ ] **P1.DS.04** Fluidna tipografska skala (clamp) + tokeni za line-height i letter-spacing · Ko: A · Gotovo kad: naslovi skaliraju 320–2560 px bez prelamanja riječi.
 - [ ] **P1.DS.05** Spacing, radius, border, shadow, z-index tokeni · Ko: A · Gotovo kad: tokeni postoje; z-index skala je dokumentovana.
 - [ ] **P1.DS.06** Motion tokeni (trajanja, easing krivulje) + globalni `prefers-reduced-motion` reset · Ko: A · Gotovo kad: uz reduced motion nema animacija dužih od 0,01 s osim opacity fade.
@@ -863,3 +863,4 @@ Riješiti prije taska koji je naveden.
 | 2026-11-23 | Samo EN; i18n struktura spremna za DE i BS | Fokus, kasnije širenje |
 | 2026-11-24 | Testimonijali na bosanskom: agent prevodi na engleski, klijent pismeno odobrava i original i prevod prije objave; za sajt se bira jedan doslovan odlomak ≤ 400 znakova | Sajt je samo EN, a testimonijali se objavljuju doslovno; Zijadov izbor (P0.CNT.10) |
 | 2026-11-25 | Hero smjer **C · Off-axis**: predimenzionirana glava od tačaka odsječena desnim rubom, nagnut vortex disk, tekst usidren dolje lijevo na tankoj mreži od 4 kolone, mono labele u uglovima (uloga, lokalno vrijeme CET/CEST), H1 u Clash Display 500 | Zijadov izbor između 3 mockupa (P1.DS.01, `docs/design/p1-ds-01/`) |
+| 2026-11-25 | Clash Display i Satoshi se self-hostuju bez subsettinga (ADR-013) | ITF FFL v2.0 zabranjuje subsetting bez pismene dozvole; originalni fajlovi (~41 KB za 2 preloada) su ispod budžeta od 90 KB; Zijadov izbor (opcija A) |
