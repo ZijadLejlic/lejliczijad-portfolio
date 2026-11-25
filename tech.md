@@ -100,7 +100,8 @@ lejliczijad-portfolio/
 ├─ astro.config.ts
 ├─ wrangler.jsonc
 ├─ package.json  pnpm-lock.yaml  tsconfig.json  .nvmrc  .editorconfig
-├─ eslint.config.js  .prettierrc  .stylelintrc.json  commitlint.config.js
+├─ eslint.config.js  .prettierrc  .stylelintrc.json  commitlint.config.js  lint-staged.config.js
+├─ .husky/ pre-commit  commit-msg
 ├─ lighthouserc.json  playwright.config.ts  vitest.config.ts
 ├─ .github/
 │  ├─ workflows/ ci.yml  security.yml  deploy.yml  lighthouse.yml  zap.yml
