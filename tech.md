@@ -471,7 +471,9 @@ Ulaz: `name`, `email`, `consent`, `website`, `elapsedMs`, `turnstileToken`. Izla
 | `RL_DAILY` | KV | Worker | dnevni brojač |
 | `GUIDES` | R2 | Worker | privatni bucket |
 
-Lokalno: `.dev.vars` (gitignore) + `.dev.vars.example`. Turnstile test ključevi se koriste u devu i CI-u (Cloudflare objavljuje "always passes" i "always fails" test ključeve; vrijednosti provjeriti u dokumentaciji).
+Lokalno: `.env` (build, `PUBLIC_*`) i `.dev.vars` (Worker runtime), oba u gitignoreu; šabloni su `.env.example` i `.dev.vars.example`. Turnstile test ključevi (provjereno 2026-11-25 u [Cloudflare docs](https://developers.cloudflare.com/turnstile/troubleshooting/testing/)): sitekey `1x00000000000000000000AA` / secret `1x0000000000000000000000000000000AA` uvijek prolaze, `2x00000000000000000000AB` / `2x0000000000000000000000000000000AA` uvijek padaju.
+
+**Shema (P1.ENV.07):** `env.schema` u `astro.config.ts` (`astro:env`). `PUBLIC_SITE_URL` i `PUBLIC_DEPLOY_ENV` su obavezni; build pada s `EnvInvalidVariables` porukom ako fale ili nisu ispravni. Validacija se okida kad se `astro:env/client` prvi put importuje, zato ga `src/lib/deploy-env.ts` importuje i koristi u svakoj stranici. `PUBLIC_TURNSTILE_SITE_KEY` i `PUBLIC_UMAMI_WEBSITE_ID` su opcioni dok ih P1.CONT.04 i P1.ANL.02 ne učine obaveznim. Worker varijable (`TURNSTILE_SECRET`, `RESEND_API_KEY`, `LEAD_TOKEN_SECRET`, `IP_HASH_SALT`, `CONTACT_TO`, `MAIL_FROM`) imaju `access: 'secret'`, jer se samo taj nivo čita iz runtime env-a umjesto da se ugradi u bundle; validiraju se pri prvom pristupu, ne pri buildu.
 
 ---
 

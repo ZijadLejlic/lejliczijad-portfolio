@@ -1,5 +1,6 @@
 ---
 // Minimal placeholder page for the scaffold. Real Home content arrives in P1.HOME.*.
+import { ROBOTS_META } from '@/lib/deploy-env';
 ---
 
 <!doctype html>
@@ -7,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex,nofollow" />
+    <meta name="robots" content={ROBOTS_META} />
     <title>Zijad Lejlić</title>
   </head>
   <body>

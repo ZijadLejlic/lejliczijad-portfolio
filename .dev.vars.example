@@ -1,0 +1,22 @@
+# Worker runtime variables for local `wrangler dev` (tech.md §9.7). Copy to `.dev.vars`:
+#   cp .dev.vars.example .dev.vars
+# `.dev.vars` is gitignored. Production values are set by Zijad with `wrangler secret put <NAME>`;
+# never commit a real value and never paste one into this file.
+
+# Cloudflare's test secret that always passes siteverify (pairs with the test sitekey in .env).
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+
+# Resend API key with "sending access" only. Leave empty locally unless you test real sending.
+RESEND_API_KEY=
+
+# 32+ random bytes, base64 (44+ chars). Generate locally:
+#   openssl rand -base64 32
+LEAD_TOKEN_SECRET=
+
+# 32+ random chars for hashing IPs in logs. Generate locally:
+#   openssl rand -base64 32
+IP_HASH_SALT=
+
+# Plain Worker vars (not secret). In production they live in wrangler.jsonc `vars` (P1.ENV.13).
+CONTACT_TO=support@lejliczijad.com
+MAIL_FROM="Zijad Lejlić <support@lejliczijad.com>"
