@@ -443,13 +443,13 @@ Svaka stranica usluge:
 
 #### P1.ENV: Projekt, alati, CI
 - [x] **P1.ENV.01** Inicijalizovati Astro projekat (TypeScript strict, pnpm, Node LTS u `.nvmrc`, tačne verzije u `package.json`) · Ko: A · Gotovo kad: `pnpm dev` i `pnpm build` rade.
-- [~] **P1.ENV.02** Struktura foldera prema [tech.md §3](tech.md#3-struktura-repozitorija) + path aliasi (`@/components` …) (agent: claude-opus-5-5, 2026-11-25) · Ko: A · Zavisi: P1.ENV.01 · Gotovo kad: aliasi rade u Astro, TS-u i Vitestu. · **Bilješka (2026-11-25):** Astro i TS su provjereni ([PR #14](https://github.com/ZijadLejlic/lejliczijad-portfolio/pull/14)); provjera aliasa u Vitestu je prebačena u P1.ENV.08 (Zijadova odluka, opcija B). Task prelazi u `[x]` kad P1.ENV.08 prođe smoke test aliasa.
+- [x] **P1.ENV.02** Struktura foldera prema [tech.md §3](tech.md#3-struktura-repozitorija) + path aliasi (`@/components` …) · Ko: A · Zavisi: P1.ENV.01 · Gotovo kad: aliasi rade u Astro, TS-u i Vitestu. · **Bilješka (2026-11-25):** Astro i TS su provjereni ([PR #14](https://github.com/ZijadLejlic/lejliczijad-portfolio/pull/14)); provjera aliasa u Vitestu je prebačena u P1.ENV.08 (Zijadova odluka, opcija B). Smoke test aliasa u Vitestu prolazi u P1.ENV.08 (`tests/unit/setup.test.ts`, `tests/api/setup.test.ts`).
 - [x] **P1.ENV.03** ESLint (flat config, astro, ts, svelte, jsx-a11y pravila) + Prettier (+ astro i svelte plugin) · Ko: A · Gotovo kad: `pnpm lint` prolazi, `pnpm format` radi.
 - [x] **P1.ENV.04** Stylelint za CSS (order, no-hardcoded colors osim tokena) · Ko: A · Gotovo kad: `pnpm lint:css` prolazi.
 - [ ] **P1.ENV.05** Husky + lint-staged (lint i format na commitu) + commitlint (Conventional Commits) · Ko: A · Gotovo kad: neispravan commit je odbijen.
 - [x] **P1.ENV.06** `.editorconfig`, `.gitattributes`, `.gitignore` (uključujući `.env*`, `.dev.vars`, `content/intake/scan/*.glb` ako je prevelik) · Ko: A · Gotovo kad: fajlovi postoje.
 - [ ] **P1.ENV.07** Shema env varijabli (`astro:env` ili zod) + `.env.example` + `.dev.vars.example` · Ko: A · Gotovo kad: build pada s jasnom porukom ako fali obavezna varijabla.
-- [ ] **P1.ENV.08** Vitest setup (+ `@cloudflare/vitest-pool-workers` za API) · Ko: A · Gotovo kad: primjer testa prolazi u `pnpm test`; smoke test potvrđuje da `@/*` alias radi u Vitestu (preneseno iz P1.ENV.02).
+- [x] **P1.ENV.08** Vitest setup (+ `@cloudflare/vitest-pool-workers` za API) · Ko: A · Gotovo kad: primjer testa prolazi u `pnpm test`; smoke test potvrđuje da `@/*` alias radi u Vitestu (preneseno iz P1.ENV.02). · **Bilješka (2026-11-25):** paket je preimenovan u `@cloudflare/vitest-plugin` (stari je deprecated); projekti `unit` (Node) i `api` (workerd) u `vitest.config.ts`.
 - [ ] **P1.ENV.09** Playwright setup (chromium, webkit, firefox, Pixel 7, iPhone 15) + `?fx=off` mod za stabilne screenshotove · Ko: A · Gotovo kad: smoke test prolazi.
 - [ ] **P1.ENV.10** GitHub Actions `ci.yml`: install (cache) → lint → typecheck → unit → build → e2e · Ko: A · Zavisi: P1.ENV.03–09 · Gotovo kad: CI je zelen na PR-u.
 - [ ] **P1.ENV.11** GitHub Actions `security.yml`: `pnpm audit`, gitleaks, CodeQL · Ko: A · Gotovo kad: radi na PR-u i sedmično (cron).

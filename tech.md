@@ -82,7 +82,7 @@
 | Kod u blogu | Shiki (ugrađen u Astro) | Tema usklađena s tokenima |
 | Sitemap | `@astrojs/sitemap` | |
 | Video | `lite-youtube-embed` (ili vlastita komponenta, ≤ 2 KB) | `youtube-nocookie.com` |
-| Testovi | Vitest, `@cloudflare/vitest-pool-workers`, Playwright, `@axe-core/playwright`, Lighthouse CI, `html-validate`, `linkinator` | |
+| Testovi | Vitest, `@cloudflare/vitest-plugin` (novo ime za `@cloudflare/vitest-pool-workers`), Playwright, `@axe-core/playwright`, Lighthouse CI, `html-validate`, `linkinator` | |
 | Kvalitet | ESLint (flat), Prettier, Stylelint, TypeScript strict, Husky, lint-staged, commitlint | |
 | Sigurnost u CI-u | gitleaks, CodeQL, `pnpm audit`, OWASP ZAP (docker), nuclei | |
 | Face pipeline | Blender (headless, Python) + Node skripta | Lokalno, ne u CI-u |
@@ -186,7 +186,7 @@ lejliczijad-portfolio/
 - `src/server/**` se nikad ne importuje iz klijentskog koda (ESLint `no-restricted-imports`). Izuzetak su `schemas/*`, koje su dijeljene.
 - `content/intake/**` nikad ne ulazi u `dist/` (provjera `scripts/checks/dist-leaks.ts`).
 - Jedna komponenta = jedan fajl. Ime komponente je PascalCase, sve ostalo kebab-case ili camelCase prema tipu fajla.
-- **Path alias:** jedan alias `@/*` → `./src/*`, definisan samo u `tsconfig.json` (`compilerOptions.paths`). Astro (i Vite ispod njega) ga čita odatle, pa se ne duplira u `astro.config.ts`. Primjeri: `@/components/ui/Button.astro`, `@/lib/seo/meta`, `@/server/http`, `@/fx`. Vitest ga dobija preko `getViteConfig()` iz `astro/config` (P1.ENV.08).
+- **Path alias:** jedan alias `@/*` → `./src/*`, definisan samo u `tsconfig.json` (`compilerOptions.paths`). Astro (i Vite ispod njega) ga čita odatle, pa se ne duplira u `astro.config.ts`. Primjeri: `@/components/ui/Button.astro`, `@/lib/seo/meta`, `@/server/http`, `@/fx`. Vitest ga dobija preko `getViteConfig()` iz `astro/config` za projekat `unit`, a projekat `api` (workerd, bez Astro pluginova) preko Vite opcije `resolve.tsconfigPaths` (P1.ENV.08).
 - Prazni folderi iz ove strukture se drže kroz `.gitkeep` dok ne dobiju prve fajlove; tada se `.gitkeep` briše.
 
 ---
@@ -676,7 +676,7 @@ Privacy Policy mora navesti svaki red iz ove tabele. Dodavanje reda zahtijeva AD
 |---|---|---|---|
 | Statička analiza | `astro check`, `tsc`, ESLint, Stylelint | Tipovi, a11y lint, sigurnosna pravila | pre-commit + CI |
 | Unit | Vitest | `pricing`, sheme, `escapeHtml`, tokeni, SEO builderi, FX state machine, capabilities | CI |
-| API | `@cloudflare/vitest-pool-workers` | Svaki status kod iz §9.1, sretan put, Resend mock, rate limit | CI |
+| API | `@cloudflare/vitest-plugin` (Vitest projekat `api`, `tests/api/**`) | Svaki status kod iz §9.1, sretan put, Resend mock, rate limit | CI |
 | E2E | Playwright (chromium, webkit, firefox, Pixel 7, iPhone 15) | Navigacija, meni, filter, modal, forme, kalkulator, 404, redirecti | CI na preview okruženju |
 | Vizuelni | Playwright `toHaveScreenshot` sa `?fx=off`, `reducedMotion: 'reduce'` | Sve stranice × 360/768/1280/1920 | CI |
 | Overflow | Playwright skripta | `document.documentElement.scrollWidth <= innerWidth` + nijedan element s `getBoundingClientRect().right > innerWidth` (osim namjerno skrivenih), 11 širina | CI |

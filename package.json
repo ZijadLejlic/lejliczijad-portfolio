@@ -17,13 +17,19 @@
     "lint:fix": "eslint . --fix",
     "lint:css": "stylelint \"**/*.{css,astro,svelte}\" --allow-empty-input --cache --cache-location node_modules/.cache/stylelint/",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:api": "vitest run --project api",
+    "test:watch": "vitest",
+    "check": "pnpm lint && pnpm lint:css && pnpm typecheck && pnpm test:unit"
   },
   "dependencies": {
     "astro": "7.4.13"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
+    "@cloudflare/vitest-plugin": "1.8.1",
     "@eslint/js": "10.0.1",
     "astro-eslint-parser": "3.2.0",
     "eslint": "10.15.0",
@@ -44,6 +50,7 @@
     "svelte": "5.59.1",
     "svelte-eslint-parser": "1.12.0",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.74.0"
+    "typescript-eslint": "8.74.0",
+    "vitest": "5.1.0"
   }
 }
