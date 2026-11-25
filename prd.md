@@ -444,7 +444,7 @@ Svaka stranica usluge:
 #### P1.ENV: Projekt, alati, CI
 - [x] **P1.ENV.01** Inicijalizovati Astro projekat (TypeScript strict, pnpm, Node LTS u `.nvmrc`, tačne verzije u `package.json`) · Ko: A · Gotovo kad: `pnpm dev` i `pnpm build` rade.
 - [~] **P1.ENV.02** Struktura foldera prema [tech.md §3](tech.md#3-struktura-repozitorija) + path aliasi (`@/components` …) (agent: claude-opus-5-5, 2026-11-25) · Ko: A · Zavisi: P1.ENV.01 · Gotovo kad: aliasi rade u Astro, TS-u i Vitestu. · **Bilješka (2026-11-25):** Astro i TS su provjereni ([PR #14](https://github.com/ZijadLejlic/lejliczijad-portfolio/pull/14)); provjera aliasa u Vitestu je prebačena u P1.ENV.08 (Zijadova odluka, opcija B). Task prelazi u `[x]` kad P1.ENV.08 prođe smoke test aliasa.
-- [ ] **P1.ENV.03** ESLint (flat config, astro, ts, svelte, jsx-a11y pravila) + Prettier (+ astro i svelte plugin) · Ko: A · Gotovo kad: `pnpm lint` prolazi, `pnpm format` radi.
+- [x] **P1.ENV.03** ESLint (flat config, astro, ts, svelte, jsx-a11y pravila) + Prettier (+ astro i svelte plugin) · Ko: A · Gotovo kad: `pnpm lint` prolazi, `pnpm format` radi.
 - [x] **P1.ENV.04** Stylelint za CSS (order, no-hardcoded colors osim tokena) · Ko: A · Gotovo kad: `pnpm lint:css` prolazi.
 - [ ] **P1.ENV.05** Husky + lint-staged (lint i format na commitu) + commitlint (Conventional Commits) · Ko: A · Gotovo kad: neispravan commit je odbijen.
 - [x] **P1.ENV.06** `.editorconfig`, `.gitattributes`, `.gitignore` (uključujući `.env*`, `.dev.vars`, `content/intake/scan/*.glb` ako je prevelik) · Ko: A · Gotovo kad: fajlovi postoje.

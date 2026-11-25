@@ -1,0 +1,17 @@
+dist/
+.astro/
+node_modules/
+coverage/
+playwright-report/
+test-results/
+pnpm-lock.yaml
+
+# Raw intake material from Zijad is kept as delivered.
+content/intake/
+
+# Approved static design mockups, kept verbatim as a record (P1.DS.01).
+docs/design/
+
+# Planning docs (prd.md, tech.md, AGENTS.md, docs/*.md) are hand-formatted Bosnian prose with wide
+# tables; reflowing them would create noisy diffs in shared files. MDX site content is still formatted.
+*.md
