@@ -7,6 +7,9 @@ import { availabilityLabel, MAIL_FROM, site } from '@/data/site';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
+// Exact line match: values are compared as plain strings, never built into a RegExp.
+const lines = (path: string) => read(path).split(/\r?\n/);
+
 const httpsUrl = (value: string) => {
   const url = new URL(value);
   return url.protocol === 'https:' && !url.pathname.endsWith('/');
@@ -79,11 +82,11 @@ describe('config files stay in sync with site.ts', () => {
 
   it('.dev.vars.example', () => {
     const devVars = read('../../../.dev.vars.example');
-    expect(devVars).toMatch(new RegExp(`^CONTACT_TO=${site.email}$`, 'm'));
+    expect(lines('../../../.dev.vars.example')).toContain(`CONTACT_TO=${site.email}`);
     expect(devVars).toContain(`MAIL_FROM="${MAIL_FROM}"`);
   });
 
   it('.env.example', () => {
-    expect(read('../../../.env.example')).toMatch(new RegExp(`^PUBLIC_SITE_URL=${site.url}$`, 'm'));
+    expect(lines('../../../.env.example')).toContain(`PUBLIC_SITE_URL=${site.url}`);
   });
 });
