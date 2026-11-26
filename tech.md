@@ -356,6 +356,12 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 - `as="ul" | "ol"` automatski dodaje `role="list"` (Safari briše semantiku liste uz `list-style: none`; `reset.css` resetuje samo takve liste).
 - Djeca u flex i grid primitivima imaju `min-width: 0` (AGENTS.md §6.3). Primjeri i props su na `/_dev/ui`.
 
+**Button (P1.DS.10)**, `src/components/ui/Button.astro`: `variant: primary | secondary | ghost`, `size: sm | md | lg` (tokeni `--control-height-sm|md|lg` 40/48/56 px, koje koriste i inputi u P1.DS.21), `block`, `disabled`, `loading` + `loadingLabel`; sa `href` renderuje `<a>`, inače `<button type="button">`. Ikone idu u slotove `icon-start` / `icon-end` (uvijek `aria-hidden`). Link s `target="_blank"` automatski dobija `rel="noopener noreferrer"`.
+- Stilovi su globalni u `src/styles/button.css` (svako pravilo počinje sa `.button`, čuva test), a klase daje `buttonClasses()` iz `button.ts`, da ih Svelte forme (P1.CONT.03) mogu koristiti bez Astro komponente.
+- `disabled`: dugme dobija nativni `disabled`, a link gubi `href` i dobija `role="link"` + `aria-disabled`; oba izlaze iz tab redoslijeda i blijede na `--opacity-disabled`.
+- `loading`: `aria-disabled="true"` + `data-loading`, bez nativnog `disabled`, da fokus ostane na dugmetu dok forma šalje. Labela je nevidljiva (`opacity: 0`, ostaje u accessibility tree-ju i drži širinu), spinner je `aria-hidden`, a `loadingLabel` se čita iza labele. `button-guard.ts` jednim capture listenerom na `document` poništava klik na takvo dugme, uključujući Enter, Space i implicitni submit forme. JS koji kasnije mijenja stanje postavlja ista dva atributa.
+- Unutrašnji `.button__inner` nosi labelu i ikone; magnetni efekat (P1.FX.18) pomjera njega, nikad samo dugme.
+
 | Sloj | Token | Vrijednost | Ko ga koristi |
 |---|---|---|---|
 | FX canvas | `--z-fx` | −1 | `FxCanvas` i poster vortexa (iza sadržaja) |
