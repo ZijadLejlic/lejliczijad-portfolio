@@ -200,6 +200,7 @@ lejliczijad-portfolio/
 - Redirecti su u `public/_redirects` (npr. `www` rješava Cloudflare Redirect Rule, a ne Worker).
 - `PUBLIC_DEPLOY_ENV = production | preview | development`. Kad nije `production`: `<meta name="robots" content="noindex,nofollow">` na svim stranicama, `robots.txt` → `Disallow: /`, a analitika je isključena.
 - Build koraci (`pnpm build`): `content-guard` (samo prod) → `astro check` → `astro build` → generisanje OG slika (integracija) → PDF resume/guide → `dist-leaks` provjera.
+- **Content guard (P1.ENV.18):** `pnpm build:prod` = `scripts/checks/content-guard.ts` → `astro build`. Guard skenira `src/` i `public/` (tekstualni fajlovi; bez `src/pages/_dev/`) i ruši build (exit 1, lista `fajl:linija:kolona`) ako nađe `TODO(content)`, `lorem` (bilo koja veličina slova) ili `PLACEHOLDER` (samo velikim slovima, da HTML atribut `placeholder` i imena poput `facePlaceholder` prođu). Samostalno: `pnpm check:content`. `pnpm build` i CI (preview) ga ne pokreću, da content-pending taskovi mogu na preview; produkcijski deploy (P1.ENV.14) mora koristiti `build:prod`.
 
 ---
 

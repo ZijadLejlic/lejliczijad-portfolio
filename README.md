@@ -48,7 +48,9 @@ Nothing uses it yet; it is needed once the Worker and API land (P1.ENV.13, P1.CO
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` | Dev server on `localhost:4321` |
-| `pnpm build` | Production build into `dist/` |
+| `pnpm build` | Build into `dist/` (no content guard; used by CI and previews) |
+| `pnpm build:prod` | Content guard, then `astro build`; fails on `TODO(content)`, `lorem` or `PLACEHOLDER` in `src/` or `public/` |
+| `pnpm check:content` | Content guard on its own |
 | `pnpm preview` | Serves `dist/` locally (`astro preview`; becomes `wrangler dev` in P1.ENV.13) |
 | `pnpm check` | `lint` + `lint:css` + `typecheck` + `test:unit`; run before every PR |
 | `pnpm lint` / `pnpm lint:fix` | ESLint (0 warnings allowed) |
