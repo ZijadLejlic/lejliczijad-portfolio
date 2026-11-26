@@ -1,6 +1,6 @@
 # ADR-014 · Preload Clash Display 500 umjesto 600
 
-- **Status:** Accepted
+- **Status:** Superseded by [ADR-015](015-preload-clash-600.md) (2026-11-26)
 - **Datum:** 2026-11-26
 - **Task:** P1.DS.03
 - **Odobrio:** Zijad (chat, 2026-11-26)
