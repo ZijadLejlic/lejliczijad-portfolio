@@ -1,0 +1,19 @@
+---
+// Wrapper for long-form content: MDX case studies, posts, legal pages (P1.DS.09). The styles are
+// global (src/styles/prose.css) because slotted MDX is not reached by scoped component styles.
+import type { HTMLAttributes } from 'astro/types';
+
+import '@/styles/prose.css';
+
+type ProseTag = 'div' | 'article' | 'section';
+
+interface Props extends HTMLAttributes<'div'> {
+  as?: ProseTag;
+}
+
+const { as: Tag = 'div', class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={['prose', className]} {...rest}>
+  <slot />
+</Tag>

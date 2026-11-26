@@ -1,0 +1,71 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Running text outside Prose (P1.DS.09): intros (`lead`), body copy, captions and meta (`small`).
+// `measure` caps the line at a readable length (--measure-prose).
+import type { HTMLAttributes } from 'astro/types';
+
+import type { TextSize, TextTone } from './typography';
+
+type TextTag = 'p' | 'span' | 'div';
+
+interface Props extends HTMLAttributes<'p'> {
+  as?: TextTag;
+  size?: TextSize;
+  tone?: TextTone;
+  measure?: boolean;
+}
+
+const {
+  as: Tag = 'p',
+  size = 'body',
+  tone = 'default',
+  measure = false,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<Tag
+  class:list={['text', `text--${size}`, `text--${tone}`, { 'text--measure': measure }, className]}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .text {
+    text-wrap: pretty;
+  }
+
+  .text--lead {
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+  }
+
+  .text--body {
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+  }
+
+  .text--small {
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-small);
+  }
+
+  .text--default {
+    color: var(--color-text);
+  }
+
+  .text--muted {
+    color: var(--color-text-muted);
+  }
+
+  .text--subtle {
+    color: var(--color-text-subtle);
+  }
+
+  .text--measure {
+    max-width: var(--measure-prose);
+  }
+</style>

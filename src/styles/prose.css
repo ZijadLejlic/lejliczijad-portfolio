@@ -1,0 +1,166 @@
+/*
+ * Long-form content inside <Prose> (P1.DS.09): MDX case studies, posts and legal pages.
+ * Everything is scoped under .prose and uses tokens only. Spacing between blocks comes from the
+ * container (owl selector), so MDX authors never add margins. Headings are one step smaller than
+ * page headings: an article h2 at the full --text-h2 (64 px) would dwarf the text around it.
+ */
+
+.prose {
+  max-width: var(--measure-prose);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-text);
+}
+
+/* --- Rhythm -------------------------------------------------------------------------------- */
+
+.prose > * + * {
+  margin-block-start: var(--space-5);
+}
+
+.prose > :is(h2, h3, h4) {
+  margin-block-start: var(--space-8);
+}
+
+/* Nothing pushes the first block away from the top of the wrapper. */
+.prose > :first-child {
+  margin-block-start: 0;
+}
+
+/* A heading and the text it introduces belong together. */
+.prose > :is(h2, h3, h4) + * {
+  margin-block-start: var(--space-4);
+}
+
+/* --- Headings ------------------------------------------------------------------------------ */
+
+.prose h2 {
+  font-size: var(--text-h3);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
+}
+
+.prose h3 {
+  font-family: var(--font-body);
+  font-size: var(--text-lead);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-lead);
+  letter-spacing: var(--tracking-body);
+}
+
+.prose h4 {
+  font-weight: var(--weight-semibold);
+}
+
+/* Deep-linked headings stop below a sticky header instead of under it. */
+.prose :is(h2, h3, h4)[id] {
+  scroll-margin-block-start: var(--space-9);
+}
+
+/* --- Inline -------------------------------------------------------------------------------- */
+
+/* Code ligatures (=== drawn as one glyph) hide what to type; show the real characters. */
+.prose :is(code, pre) {
+  font-variant-ligatures: none;
+}
+
+.prose strong {
+  font-weight: var(--weight-semibold);
+}
+
+.prose a {
+  overflow-wrap: anywhere;
+}
+
+.prose :not(pre) > code {
+  /* In em, so inline code follows the size of the text around it (body, lead, small). */
+  padding: 0.1em 0.35em;
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  overflow-wrap: anywhere;
+  background-color: var(--color-surface-2);
+  border-radius: var(--radius-sm);
+}
+
+/* --- Lists --------------------------------------------------------------------------------- */
+
+/* reset.css only strips lists with role="list"; prose lists keep markers and need an indent. */
+.prose :is(ul, ol) {
+  padding-inline-start: var(--space-5);
+}
+
+.prose li + li {
+  margin-block-start: var(--space-2);
+}
+
+.prose li > :is(ul, ol) {
+  margin-block-start: var(--space-2);
+}
+
+.prose li::marker {
+  color: var(--color-text-muted);
+}
+
+/* --- Blocks -------------------------------------------------------------------------------- */
+
+.prose blockquote {
+  padding-inline-start: var(--space-5);
+  font-size: var(--text-lead);
+  line-height: var(--leading-lead);
+  color: var(--color-text);
+  border-inline-start: var(--border-width-strong) solid var(--color-accent);
+}
+
+.prose hr {
+  border: 0;
+  border-block-start: var(--border-width) solid var(--color-border-strong);
+}
+
+.prose > hr {
+  margin-block: var(--space-8);
+}
+
+/* Code blocks (Shiki themes them in P2.BLOG.02); they scroll inside, never widen the page. */
+.prose pre {
+  max-width: 100%;
+  padding: var(--space-4) var(--space-5);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  line-height: var(--leading-small);
+  background-color: var(--color-surface-1);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.prose figcaption {
+  margin-block-start: var(--space-3);
+  font-size: var(--text-small);
+  line-height: var(--leading-small);
+  color: var(--color-text-muted);
+}
+
+.prose :is(img, video) {
+  border-radius: var(--radius-md);
+}
+
+/* Wide tables scroll on their own instead of pushing the page sideways. */
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  font-size: var(--text-small);
+  line-height: var(--leading-small);
+  border-collapse: collapse;
+}
+
+.prose :is(th, td) {
+  padding: var(--space-2) var(--space-3);
+  vertical-align: top;
+  text-align: start;
+  border-block-end: var(--border-width) solid var(--color-border-strong);
+}
+
+.prose th {
+  font-weight: var(--weight-semibold);
+}
