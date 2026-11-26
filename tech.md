@@ -706,7 +706,7 @@ Privacy Policy mora navesti svaki red iz ove tabele. Dodavanje reda zahtijeva AD
 **Workflowi:**
 - `ci.yml` (PR + push): install (pnpm cache) → `lint` → `typecheck` → `test:unit` → `test:api` → `build` → upload preview → `test:e2e` + `test:visual` + `test:a11y` + `test:overflow` protiv preview URL-a.
 - `lighthouse.yml` (PR): LHCI protiv preview URL-a.
-- `security.yml` (PR + sedmično): gitleaks, `pnpm audit --audit-level=high`, CodeQL (JS/TS).
+- `security.yml` (PR + push na `main` + sedmično + ručno): gitleaks (CLI s provjerom SHA-256, cijela historija), `pnpm audit --audit-level=high`, CodeQL (JS/TS, `security-extended`). CodeQL se pokreće samo uz repo varijablu `CODEQL_ENABLED=true`, jer code scanning na privatnom repou traži GitHub Code Security (P1.ENV.11).
 - `zap.yml` (sedmično + ručno): ZAP baseline na produkciji, API scan na preview okruženju.
 - `deploy.yml` (push na `main`): build → `wrangler deploy` → smoke test (`/`, `/work`, `/api/health`) → IndexNow ping.
 - **Rollback:** `wrangler rollback` na prethodnu verziju (opisano u `docs/runbook.md`).

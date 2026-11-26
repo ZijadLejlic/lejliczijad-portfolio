@@ -452,7 +452,7 @@ Svaka stranica usluge:
 - [x] **P1.ENV.08** Vitest setup (+ `@cloudflare/vitest-pool-workers` za API) · Ko: A · Gotovo kad: primjer testa prolazi u `pnpm test`; smoke test potvrđuje da `@/*` alias radi u Vitestu (preneseno iz P1.ENV.02). · **Bilješka (2026-11-25):** paket je preimenovan u `@cloudflare/vitest-plugin` (stari je deprecated); projekti `unit` (Node) i `api` (workerd) u `vitest.config.ts`.
 - [x] **P1.ENV.09** Playwright setup (chromium, webkit, firefox, Pixel 7, iPhone 15) + `?fx=off` mod za stabilne screenshotove · Ko: A · Gotovo kad: smoke test prolazi.
 - [x] **P1.ENV.10** GitHub Actions `ci.yml`: install (cache) → lint → typecheck → unit → build → e2e · Ko: A · Zavisi: P1.ENV.03–09 · Gotovo kad: CI je zelen na PR-u.
-- [ ] **P1.ENV.11** GitHub Actions `security.yml`: `pnpm audit`, gitleaks, CodeQL · Ko: A · Gotovo kad: radi na PR-u i sedmično (cron).
+- [x] **P1.ENV.11** GitHub Actions `security.yml`: `pnpm audit`, gitleaks, CodeQL · Ko: A · Gotovo kad: radi na PR-u i sedmično (cron). · **Bilješka (2026-11-26):** `pnpm audit` i gitleaks rade na PR-u i sedmično; CodeQL job postoji, ali je isključen (`vars.CODEQL_ENABLED`), jer code scanning na privatnom repou ličnog naloga traži GitHub Code Security. Repo ostaje privatan (Zijadova odluka), pa je uključivanje CodeQL-a izdvojeno u P3.SEC.22.
 - [ ] **P1.ENV.12** Dependabot ili Renovate (sedmično, grupisano, bez auto-mergea majora) · Ko: A · Gotovo kad: konfiguracija je u repou.
 - [ ] **P1.ENV.13** Cloudflare Worker (static assets) projekat + `wrangler.jsonc` + adapter `@astrojs/cloudflare` · Ko: A+Z · Zavisi: P0.ACC.02 · Gotovo kad: `wrangler deploy --dry-run` prolazi.
 - [ ] **P1.ENV.14** Deploy workflow: preview za svaki PR (`*.workers.dev` + `X-Robots-Tag: noindex`), produkcija na `main` (API token sa minimalnim pravima, kao GitHub secret) · Ko: A+Z · Gotovo kad: PR dobija komentar s preview URL-om.
@@ -766,6 +766,7 @@ Svaka stranica usluge:
 - [ ] **P3.SEC.19** SSL Labs test (A+) · Ko: A
 - [ ] **P3.SEC.20** DMARC `p=quarantine` nakon 2 sedmice čistih izvještaja (pa `reject`) · Ko: Z (A vodi)
 - [ ] **P3.SEC.21** Retest svih nalaza nakon popravki + završni izvještaj · Ko: A
+- [ ] **P3.SEC.22** Uključiti CodeQL u `security.yml` (repo varijabla `CODEQL_ENABLED=true`) kad repo postane javan ili kad postoji GitHub Code Security licenca; do tada ostaje isključen (izdvojeno iz P1.ENV.11) · Ko: Z (A vodi) · Gotovo kad: CodeQL job radi na PR-u i sedmično, 0 High/Critical nalaza.
 
 #### P3.PERF: Performanse
 - [ ] **P3.PERF.01** Bundle analiza (svaka ruta) + uklanjanje nepotrebnog koda · Ko: A
