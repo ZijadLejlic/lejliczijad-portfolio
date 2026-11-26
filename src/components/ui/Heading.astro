@@ -1,0 +1,62 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Heading (P1.DS.09). `level` sets the document outline (one h1 per page, no skipped levels);
+// `size` only changes the look, so a section can have an h2 that reads like an h3.
+import type { HTMLAttributes } from 'astro/types';
+
+import { defaultHeadingSize, type HeadingLevel, type HeadingSize } from './typography';
+
+interface Props extends HTMLAttributes<'h2'> {
+  level: HeadingLevel;
+  size?: HeadingSize;
+}
+
+const { level, size = defaultHeadingSize(level), class: className, ...rest } = Astro.props;
+const Tag = `h${level}` as const;
+---
+
+<Tag class:list={['heading', `heading--${size}`, className]} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .heading {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    text-wrap: balance;
+  }
+
+  .heading--display {
+    font-size: var(--text-display);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .heading--h1 {
+    font-size: var(--text-h1);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-h1);
+    letter-spacing: var(--tracking-h1);
+  }
+
+  .heading--h2 {
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2);
+    letter-spacing: var(--tracking-h2);
+  }
+
+  .heading--h3 {
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-h3);
+  }
+
+  /* h4-h6 look: strong body text, as in base.css. */
+  .heading--body {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-body);
+  }
+</style>
