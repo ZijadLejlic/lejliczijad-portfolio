@@ -71,7 +71,7 @@
 | Islands | **Svelte 5** (`@astrojs/svelte`) | Samo za: filter, kalkulator, forme, modal i interaktivni Lab. Ostalo je Astro + vanilla TS |
 | Sadržaj | `@astrojs/mdx`, Content Layer (`src/content.config.ts`) s zod shemama | |
 | 3D/FX | **three.js** (moduli: WebGLRenderer, BufferGeometry, ShaderMaterial, `GPUComputationRenderer` iz `three/addons`, `MeshSurfaceSampler`) | Lijeno učitavanje |
-| GPU tier | `detect-gpu` | Lijeno |
+| GPU tier | `@pmndrs/detect-gpu` (novo ime paketa `detect-gpu`) | Lijeno; benchmark tabele se bundluju iz `node_modules`, ne s unpkg-a (P1.FX.01) |
 | Animacije | **GSAP** (core, ScrollTrigger, SplitText, Flip) | GSAP je od 2025. besplatan, uključujući sve pluginove; licencu provjeriti pri implementaciji |
 | Smooth scroll | **Lenis** | Samo desktop, bez reduced motion |
 | Validacija | **zod** | Dijeljene sheme klijent/server u `src/server/schemas` |
@@ -382,6 +382,17 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 | `static` | nema WebGL2/float tekstura, reduced motion, `saveData`, tier 0 | 0 | 0 | – | – |
 
 **Adaptacija:** FPS se mjeri kao EMA u prozoru od 2 s. Ako je < 50 (desktop) ili < 28 (mobilni), tier pada za jedan nivo. Vraćanje je dozvoljeno najviše jednom, i to nakon 10 s stabilnih > 58 FPS. Override za testiranje: `?fx=high|medium|low|static|off|debug`.
+
+**Implementacija (P1.FX.01):** `src/fx/core/capabilities.ts` (čista odluka, unit testovi u `tests/unit/fx/capabilities.test.ts`) + `src/fx/core/browser-env.ts` (sonde u browseru). Redoslijed odluke:
+1. `?fx=off|static` → `static` bez ijednog WebGL konteksta.
+2. Nema WebGL2, WebGL2 samo uz *major performance caveat* (softverski rendering) ili nema `EXT_color_buffer_float` ni `EXT_color_buffer_half_float` → `static`. Ovo pobjeđuje i forsirani `?fx=high|medium|low`.
+3. Forsirani `?fx=high|medium|low` → taj tier (preskače reduced motion, save-data i detect-gpu).
+4. Reduced motion, pa `navigator.connection.saveData` → `static`, bez sonde GPU-a.
+5. detect-gpu tier 0 (uključujući `BLOCKLISTED` i SwiftShader) → `static`; tier 3/2/1 → `high`/`medium`/`low`; nepoznat GPU (`FALLBACK`, `BENCHMARK_FETCH_FAILED`, greška pri učitavanju) → `medium`.
+6. Mobilni (detect-gpu `isMobile`, inače `(pointer: coarse)`) spušta za jedan nivo, ali ne ispod `low` (tier 3 telefon = `medium`).
+7. `deviceMemory ≤ 4` → najviše `low`; `hardwareConcurrency ≤ 2` → najviše `low`, `≤ 4` → najviše `medium`. Nepoznata vrijednost (Safari, Firefox) ne ograničava.
+
+`?fx=debug` zadržava automatski tier i samo postavlja `debug: true`. Rezultat sadrži i `floatRenderTarget: 'float' | 'half'`, koji simulacija (P1.FX.08) koristi za tip render targeta. Sonda pravi jedan privremeni WebGL2 kontekst i oslobađa ga (`WEBGL_lose_context`) prije nego renderer napravi svoj.
 
 ### 7.3 Vortex simulacija
 - `GPUComputationRenderer`: dvije teksture (pozicija `RGBA32F`, brzina `RGBA32F`), ping-pong.
