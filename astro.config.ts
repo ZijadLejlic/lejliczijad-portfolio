@@ -1,11 +1,15 @@
 import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { parseEnv } from 'node:util';
 
 import cloudflare from '@astrojs/cloudflare';
 import mdx from '@astrojs/mdx';
 import { defineConfig, envField } from 'astro/config';
+import type { AstroIntegration } from 'astro';
 
 import { contentReferences } from './scripts/checks/content-references.ts';
 import { site } from './src/data/site.ts';
+import { DEV_PAGES, shouldServeDevPages } from './src/lib/dev-pages.ts';
 
 // Commit shown by /api/health (tech.md §9.6). CI provides GITHUB_SHA; locally ask git.
 function appVersion(): string {
@@ -18,6 +22,26 @@ function appVersion(): string {
   }
 }
 
+// Deploy env for config-time decisions. CI sets it in the environment; locally it lives in .env,
+// which Astro only loads for `astro:env`, not into process.env while this file runs.
+function deployEnv(): string | undefined {
+  const fromProcess = process.env.PUBLIC_DEPLOY_ENV;
+  if (fromProcess) return fromProcess;
+  if (!existsSync('.env')) return undefined;
+  return parseEnv(readFileSync('.env', 'utf8')).PUBLIC_DEPLOY_ENV;
+}
+
+// Routes for dev-only pages (/_dev/ui). Never part of a production build (src/lib/dev-pages.ts).
+const devPages: AstroIntegration = {
+  name: 'lejliczijad:dev-pages',
+  hooks: {
+    'astro:config:setup': ({ command, injectRoute }) => {
+      if (!shouldServeDevPages(command, deployEnv())) return;
+      for (const page of DEV_PAGES) injectRoute({ ...page, prerender: true });
+    },
+  },
+};
+
 // Rendering baseline from tech.md §4. Worker settings live in wrangler.jsonc (P1.ENV.13).
 export default defineConfig({
   site: site.url,
@@ -25,7 +49,7 @@ export default defineConfig({
   output: 'static',
   // MDX for content collections (tech.md §2, §5): case studies, posts, services, lab.
   // contentReferences() fails the build on a reference to a missing entry (P1.CNT.05).
-  integrations: [mdx(), contentReferences()],
+  integrations: [mdx(), contentReferences(), devPages],
   adapter: cloudflare({
     // Images are optimized once at build with Sharp (tech.md §2: astro:assets, AVIF + WebP);
     // the Worker never transforms images, so no Cloudflare Images binding is needed.

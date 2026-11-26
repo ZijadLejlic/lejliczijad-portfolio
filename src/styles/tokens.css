@@ -115,6 +115,13 @@
   --container-max: 90rem;
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
 
+  /* Smallest column width of an auto-filling <Grid> (P1.DS.08). Grid caps it at 100%, so a
+     column never overflows a narrow screen: sm fits logos and chips, md service cards, lg project
+     cards. */
+  --grid-min-sm: 14rem;
+  --grid-min-md: 18rem;
+  --grid-min-lg: 24rem;
+
   /* --- Shape ------------------------------------------------------------------------------ */
 
   /* Corners: 6 / 12 / 20 px; pill for badges and tags. */

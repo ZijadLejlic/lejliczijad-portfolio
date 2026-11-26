@@ -1,0 +1,50 @@
+/*
+ * Gap steps shared by the layout primitives Stack, Cluster and Grid (P1.DS.08). A primitive
+ * renders `data-layout-gap="N"` and reads --layout-gap, so the step stays a class of values from
+ * the spacing scale (no inline style, which the CSP blocks). Every primitive always renders the
+ * attribute, so a nested primitive never inherits its parent's gap.
+ */
+
+[data-layout-gap='1'] {
+  --layout-gap: var(--space-1);
+}
+
+[data-layout-gap='2'] {
+  --layout-gap: var(--space-2);
+}
+
+[data-layout-gap='3'] {
+  --layout-gap: var(--space-3);
+}
+
+[data-layout-gap='4'] {
+  --layout-gap: var(--space-4);
+}
+
+[data-layout-gap='5'] {
+  --layout-gap: var(--space-5);
+}
+
+[data-layout-gap='6'] {
+  --layout-gap: var(--space-6);
+}
+
+[data-layout-gap='7'] {
+  --layout-gap: var(--space-7);
+}
+
+[data-layout-gap='8'] {
+  --layout-gap: var(--space-8);
+}
+
+[data-layout-gap='9'] {
+  --layout-gap: var(--space-9);
+}
+
+[data-layout-gap='10'] {
+  --layout-gap: var(--space-10);
+}
+
+[data-layout-gap='11'] {
+  --layout-gap: var(--space-11);
+}
