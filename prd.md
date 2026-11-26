@@ -544,7 +544,7 @@ Svaka stranica usluge:
 #### P1.CNT: Content model (MDX)
 - [ ] **P1.CNT.01** Zod shema `projects` prema [tech.md §5](tech.md#5-content-model) · Ko: A · Gotovo kad: neispravan frontmatter ruši build s jasnom porukom.
 - [ ] **P1.CNT.02** Zod sheme `testimonials`, `clients`, `services`, `faq`, `posts`, `lab` · Ko: A · Gotovo kad: sve kolekcije su tipizirane.
-- [ ] **P1.CNT.03** `src/data/site.ts` (ime, URL, email, social, dostupnost, vremenska zona, Cal.com linkovi) · Ko: A · Gotovo kad: nijedan od tih podataka nije hardkodiran van ovog fajla.
+- [~] **P1.CNT.03** (agent: claude, 2026-11-26) `src/data/site.ts` (ime, URL, email, social, dostupnost, vremenska zona, Cal.com linkovi) · Ko: A · Gotovo kad: nijedan od tih podataka nije hardkodiran van ovog fajla.
 - [ ] **P1.CNT.04** MDX komponente za case study (`Summary`, `Feature`, `ArchitectureDiagram`, `Gallery`, `Metric`, `Quote`, `BeforeAfter`, `VideoWalkthrough`) · Ko: A · Gotovo kad: primjer MDX-a koristi sve komponente.
 
 #### P1.HOME: Home stranica
