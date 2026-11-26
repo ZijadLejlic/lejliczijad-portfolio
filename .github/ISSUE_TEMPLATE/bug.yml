@@ -1,0 +1,91 @@
+# Bug report issue form (P1.ENV.16). Security issues do not go here: see config.yml.
+name: Bug report
+description: Something on the site or in the tooling does not work as expected.
+title: '[Bug] '
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Do not report security vulnerabilities here**; email support@lejliczijad.com instead.
+        Never paste secrets, tokens, `.env` contents or personal data of real users.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: One or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to /work
+        2. Click "Web apps"
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: URL or route
+      placeholder: https://lejliczijad.com/work?type=app
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - production
+        - preview
+        - local (pnpm dev / pnpm preview)
+        - CI
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device, OS and browser
+      placeholder: iPhone 17 Pro Max, iOS 26, Safari
+  - type: input
+    id: viewport
+    attributes:
+      label: Viewport width (px)
+      placeholder: '375'
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - FX (vortex, face, cursor, transitions)
+        - UI / layout / responsive
+        - Content
+        - Forms / API / email
+        - SEO
+        - Accessibility
+        - Performance
+        - CI / tooling
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: modes
+    attributes:
+      label: Does it also happen with...
+      description: Tick the ones you checked and that still show the bug.
+      options:
+        - label: '`?fx=off`'
+        - label: '`prefers-reduced-motion: reduce`'
+        - label: JavaScript disabled
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output, screenshots or video
+      description: Paste console errors as text. Blur any personal data in screenshots.
+      render: text

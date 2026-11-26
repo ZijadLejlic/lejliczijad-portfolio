@@ -1,0 +1,69 @@
+# Task issue form (P1.ENV.16). prd.md §10 stays the source of truth for planned tasks; use this for
+# work that is not in prd.md yet, or to track a prd.md task that needs discussion.
+name: Task
+description: A unit of work that becomes one branch and one PR.
+title: '[<TASK-ID>] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One task = one branch = one PR (AGENTS.md §0.2). New tasks are added to prd.md §10 only after Zijad approves them.
+  - type: input
+    id: task-id
+    attributes:
+      label: Task ID
+      description: From prd.md, or "new" if it is not there yet.
+      placeholder: P1.FX.08
+    validations:
+      required: true
+  - type: dropdown
+    id: lane
+    attributes:
+      label: Lane (AGENTS.md §14.1)
+      options:
+        - FX
+        - UI/DS
+        - Pages
+        - Content
+        - API/Sec
+        - SEO
+        - Platform/QA
+    validations:
+      required: true
+  - type: dropdown
+    id: owner
+    attributes:
+      label: Who
+      options:
+        - A (agent)
+        - Z (Zijad)
+        - A+Z (agent prepares, Zijad approves or does the manual step)
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: What and why
+    validations:
+      required: true
+  - type: textarea
+    id: done-when
+    attributes:
+      label: Done when
+      description: Acceptance criteria. The task is not done until all of them hold.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: input
+    id: depends-on
+    attributes:
+      label: Depends on
+      description: Task IDs that must be [x] first.
+      placeholder: P1.FX.07, P1.LAY.07
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes, references, open questions
+      description: Links to tech.md sections, ADRs, designs.
