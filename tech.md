@@ -293,14 +293,16 @@ export const site = {
 ### 6.2 Tipografija
 | Token | Font | Veličina (clamp) | Line-height | Tracking |
 |---|---|---|---|---|
-| `--text-display` | Clash Display 600 | `clamp(3rem, 1.2rem + 7.5vw, 10rem)` | 0.92 | -0.03em |
+| `--text-display` | Clash Display 600 | `clamp(2.5rem, 0.6rem + 8.4vw, 10rem)` (P1.DS.04; bilo `clamp(3rem, 1.2rem + 7.5vw, 10rem)`, duge riječi nisu stajale na 320 px) | 0.92 | -0.03em |
 | `--text-h1` | Clash Display 600 | `clamp(2.5rem, 1.4rem + 4.6vw, 6rem)` | 0.98 | -0.025em |
 | `--text-h2` | Clash Display 500 | `clamp(2rem, 1.3rem + 2.8vw, 4rem)` | 1.05 | -0.02em |
 | `--text-h3` | Clash Display 500 | `clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem)` | 1.15 | -0.01em |
 | `--text-lead` | Satoshi 400 | `clamp(1.125rem, 1rem + 0.5vw, 1.5rem)` | 1.5 | 0 |
 | `--text-body` | Satoshi 400 | `clamp(1rem, 0.96rem + 0.2vw, 1.125rem)` | 1.65 | 0 |
 | `--text-small` | Satoshi 500 | `0.875rem` | 1.5 | 0 |
-| `--text-mono` | JetBrains Mono 500 | `0.75rem`–`0.875rem` | 1.4 | 0.08em, uppercase |
+| `--text-mono` | JetBrains Mono 500 | `clamp(0.75rem, 0.71rem + 0.2vw, 0.875rem)` | 1.4 | 0.08em, uppercase |
+
+Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabele), `--weight-regular|medium|semibold`, `--measure-prose: 68ch`. Vrijednosti po širini i provjera najduže riječi su u [docs/design/typography.md](docs/design/typography.md).
 
 - Minimalna veličina tekstnog sadržaja je 16 px. Dužina linije 60–75 znakova (`max-width: 68ch` za prozu).
 - Clash Display i Satoshi se self-hostuju kao **originalni WOFF2 fajlovi, bez subsettinga** (ITF FFL v2.0 zabranjuje subsetting; [ADR-013](docs/adr/013-fonts-no-subset.md)). JetBrains Mono (OFL) se smije subsetovati na `latin` + `latin-ext`. Svi fontovi moraju imati č, ć, š, ž, đ. Preload: **Clash Display 600** (font svih H1, uključujući hero H1, LCP) + Satoshi 400 ([ADR-015](docs/adr/015-preload-clash-600.md), zamjenjuje ADR-014), kroz `src/components/layout/FontPreload.astro`.
