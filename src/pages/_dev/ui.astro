@@ -1,12 +1,16 @@
 ---
-// Component gallery (P1.DS.08, completed by P1.DS.26). Served at /_dev/ui by `astro dev` and in
+// Component gallery (P1.DS.08–09, completed by P1.DS.26). Served at /_dev/ui by `astro dev` and in
 // preview builds only; the route is injected in astro.config.ts and never exists in production
 // (src/lib/dev-pages.ts). Global styles are imported here until BaseLayout exists (P1.LAY.01).
 import Cluster from '@/components/ui/Cluster.astro';
 import Container from '@/components/ui/Container.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
 import Grid from '@/components/ui/Grid.astro';
+import Heading from '@/components/ui/Heading.astro';
+import Prose from '@/components/ui/Prose.astro';
 import Section from '@/components/ui/Section.astro';
 import Stack from '@/components/ui/Stack.astro';
+import Text from '@/components/ui/Text.astro';
 import FontPreload from '@/components/layout/FontPreload.astro';
 import '@/styles/tokens.css';
 import '@/styles/fonts.css';
@@ -20,7 +24,7 @@ interface PropRow {
   fallback: string;
 }
 
-interface Primitive {
+interface GalleryEntry {
   id: string;
   name: string;
   purpose: string;
@@ -29,7 +33,7 @@ interface Primitive {
 
 const GAP_VALUES = '1–11 (--space-N)';
 
-const PRIMITIVES: Primitive[] = [
+const COMPONENTS: GalleryEntry[] = [
   {
     id: 'container',
     name: 'Container',
@@ -88,6 +92,45 @@ const PRIMITIVES: Primitive[] = [
       { name: 'align', values: 'center, start, end, baseline, stretch', fallback: 'center' },
     ],
   },
+  {
+    id: 'heading',
+    name: 'Heading',
+    purpose:
+      'level sets the outline (one h1 per page, no skipped levels); size only changes the look.',
+    props: [
+      { name: 'level', values: '1–6 (required)', fallback: '–' },
+      { name: 'size', values: 'display, h1, h2, h3, body', fallback: 'matches level (4–6 → body)' },
+    ],
+  },
+  {
+    id: 'eyebrow',
+    name: 'Eyebrow',
+    purpose:
+      'Mono label above a heading or in a corner. Write it in sentence case; CSS uppercases it.',
+    props: [
+      { name: 'as', values: 'p, span, div', fallback: 'p' },
+      { name: 'tone', values: 'muted, accent', fallback: 'muted' },
+    ],
+  },
+  {
+    id: 'text',
+    name: 'Text',
+    purpose:
+      'Running text outside Prose. tone="subtle" never goes on surface-2 or above the FX canvas.',
+    props: [
+      { name: 'as', values: 'p, span, div', fallback: 'p' },
+      { name: 'size', values: 'lead, body, small', fallback: 'body' },
+      { name: 'tone', values: 'default, muted, subtle', fallback: 'default' },
+      { name: 'measure', values: 'true, false (cap at 68ch)', fallback: 'false' },
+    ],
+  },
+  {
+    id: 'prose',
+    name: 'Prose',
+    purpose:
+      'Wrapper for MDX and long-form text: block rhythm, lists, quotes, code and tables, capped at 68ch.',
+    props: [{ name: 'as', values: 'div, article, section', fallback: 'div' }],
+  },
 ];
 
 const CARDS = ['One', 'Two', 'Three', 'Four', 'Five'];
@@ -107,15 +150,17 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
     <main>
       <Section spacing="compact" aria-labelledby="ui-title">
         <Stack gap={4}>
-          <p class="eyebrow">/_dev/ui · not in production</p>
-          <h1 id="ui-title">UI components</h1>
-          <p class="lead">
+          <Eyebrow>/_dev/ui · not in production</Eyebrow>
+          <Heading level={1} id="ui-title">
+            UI components
+          </Heading>
+          <Text size="lead" tone="muted" measure>
             Every design-system component with its props. Shrink the window to check that nothing
             overflows.
-          </p>
+          </Text>
           <nav aria-label="Components">
             <Cluster as="ul" gap={4}>
-              {PRIMITIVES.map((primitive) => (
+              {COMPONENTS.map((primitive) => (
                 <li>
                   <a href={`#${primitive.id}`}>{primitive.name}</a>
                 </li>
@@ -125,12 +170,16 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
         </Stack>
       </Section>
 
-      {PRIMITIVES.map((primitive) => (
+      {COMPONENTS.map((primitive) => (
         <Section id={primitive.id} spacing="compact" aria-labelledby={`${primitive.id}-title`}>
           <Stack gap={6}>
             <Stack gap={3}>
-              <h2 id={`${primitive.id}-title`}>{primitive.name}</h2>
-              <p class="purpose">{primitive.purpose}</p>
+              <Heading level={2} id={`${primitive.id}-title`}>
+                {primitive.name}
+              </Heading>
+              <Text tone="muted" measure>
+                {primitive.purpose}
+              </Text>
             </Stack>
 
             <div class="props">
@@ -186,7 +235,7 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                 <Stack gap={5}>
                   {(['sm', 'md', 'lg'] as const).map((min) => (
                     <Stack gap={2}>
-                      <p class="label">min="{min}"</p>
+                      <Eyebrow>min="{min}"</Eyebrow>
                       <Grid as="ul" min={min} gap={4}>
                         {CARDS.map((card) => (
                           <li class="box">{card}</li>
@@ -201,7 +250,7 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                 <Grid min="sm" gap={5}>
                   {([2, 5, 7] as const).map((gap) => (
                     <Stack gap={2}>
-                      <p class="label">gap={gap}</p>
+                      <Eyebrow>gap={gap}</Eyebrow>
                       <Stack gap={gap}>
                         <p class="box">First</p>
                         <p class="box">Second</p>
@@ -210,7 +259,7 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                     </Stack>
                   ))}
                   <Stack gap={2}>
-                    <p class="label">align="start"</p>
+                    <Eyebrow>align="start"</Eyebrow>
                     <Stack gap={3} align="start">
                       <p class="box">Short</p>
                       <p class="box">A longer item</p>
@@ -223,7 +272,7 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                 <Stack gap={5}>
                   {(['start', 'center', 'between'] as const).map((justify) => (
                     <Stack gap={2}>
-                      <p class="label">justify="{justify}"</p>
+                      <Eyebrow>justify="{justify}"</Eyebrow>
                       <Cluster as="ul" justify={justify} gap={2}>
                         {CHIPS.map((chip) => (
                           <li class="chip">{chip}</li>
@@ -232,6 +281,112 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                     </Stack>
                   ))}
                 </Stack>
+              )}
+
+              {primitive.id === 'heading' && (
+                <Stack gap={5}>
+                  <Heading level={3} size="display">
+                    Display
+                  </Heading>
+                  <Heading level={3} size="h1">
+                    Heading h1 size
+                  </Heading>
+                  <Heading level={3} size="h2">
+                    Heading h2 size
+                  </Heading>
+                  <Heading level={3}>Heading h3 size</Heading>
+                  <Heading level={4}>Heading level 4 (body size)</Heading>
+                  <Text size="small" tone="muted">
+                    All demo headings are level 3–4, so this page keeps a single h1.
+                  </Text>
+                </Stack>
+              )}
+
+              {primitive.id === 'eyebrow' && (
+                <Stack gap={4}>
+                  <Eyebrow>Selected work</Eyebrow>
+                  <Eyebrow tone="accent">Available for new projects</Eyebrow>
+                  <Cluster gap={2}>
+                    <Eyebrow as="span">Full-stack developer</Eyebrow>
+                    <Eyebrow as="span">·</Eyebrow>
+                    <Eyebrow as="span">CET 14:05</Eyebrow>
+                  </Cluster>
+                </Stack>
+              )}
+
+              {primitive.id === 'text' && (
+                <Stack gap={5}>
+                  {(['lead', 'body', 'small'] as const).map((size) => (
+                    <Stack gap={2}>
+                      <Eyebrow>size="{size}"</Eyebrow>
+                      <Text size={size} measure>
+                        I build web apps and websites for small and mid-sized businesses, from the
+                        first call to launch and support.
+                      </Text>
+                    </Stack>
+                  ))}
+                  <Stack gap={2}>
+                    <Eyebrow>tone</Eyebrow>
+                    <Text>Default text color.</Text>
+                    <Text tone="muted">Muted text color.</Text>
+                    <Text tone="subtle">Subtle text color (page background only).</Text>
+                  </Stack>
+                </Stack>
+              )}
+
+              {primitive.id === 'prose' && (
+                <Prose>
+                  <h2 id="prose-sample">The challenge</h2>
+                  <p>
+                    Staff tracked appointments in a shared spreadsheet. Two people could book the
+                    same slot, and nobody knew until the patient arrived. This sample shows{' '}
+                    <strong>strong text</strong>, <a href="#prose">a link</a> and{' '}
+                    <code>inline code</code>.
+                  </p>
+                  <h3>What changed</h3>
+                  <ul>
+                    <li>One calendar for every doctor and room</li>
+                    <li>
+                      Reminders by email
+                      <ul>
+                        <li>A nested list item</li>
+                      </ul>
+                    </li>
+                    <li>
+                      A very long item with a URL
+                      https://example.com/a/very/long/path/that/should/wrap
+                    </li>
+                  </ul>
+                  <ol>
+                    <li>Discovery call</li>
+                    <li>Proposal and estimate</li>
+                    <li>Weekly demos</li>
+                  </ol>
+                  <blockquote>
+                    <p>A sample quote, to show the blockquote style.</p>
+                  </blockquote>
+                  <pre><code>{`const slots = await getFreeSlots({ doctorId, day });\nif (slots.length === 0) notifyWaitlist(doctorId);`}</code></pre>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col">Role</th>
+                        <th scope="col">Uses it for</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Reception</td>
+                        <td>Booking and check-in</td>
+                      </tr>
+                      <tr>
+                        <td>Doctor</td>
+                        <td>Daily schedule</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <hr />
+                  <p>Text after a divider.</p>
+                </Prose>
               )}
             </div>
           </Stack>
@@ -242,29 +397,7 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
 </html>
 
 <style>
-  /* Demo-only styling. Real Eyebrow, Text and Tag components arrive in P1.DS.09 and P1.DS.12. */
-  .eyebrow,
-  .label {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono);
-    line-height: var(--leading-mono);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-  }
-
-  .lead {
-    max-width: var(--measure-prose);
-    font-size: var(--text-lead);
-    line-height: var(--leading-lead);
-    color: var(--color-text-muted);
-  }
-
-  .purpose {
-    max-width: var(--measure-prose);
-    color: var(--color-text-muted);
-  }
-
+  /* Demo-only styling for the gallery itself. */
   .props {
     max-width: 100%;
     overflow-x: auto;
