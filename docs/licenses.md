@@ -46,3 +46,11 @@ Fallback lica u `src/styles/fonts.css` su `@font-face` deklaracije nad lokalnim 
 
 **Rezultat** (Chromium, 48 px, 4 uzorka): razlika u širini fallback ↔ web font je od −4,3 % do +2,8 %. Broj redova u bloku širine 600 px je isti za sve fontove i uzorke. CLS na `/` je 0.
 Lokalni fontovi postoje na macOS-u i Windowsu; na Androidu i Linuxu fallback ide na generički `sans-serif`/`monospace` bez korekcije.
+
+## Ikone
+
+| Gdje | Ikona | Izvor | Licenca | Izmijenjena? |
+|---|---|---|---|---|
+| `src/components/ui/Link.astro` (inline SVG, oznaka spoljnog linka, P1.DS.11) | Lucide `arrow-up-right` | [lucide.dev](https://lucide.dev/icons/arrow-up-right), dvije putanje (`M7 7h10v10`, `M7 17 17 7`) | ISC (Lucide; dio ikona izveden iz Feathera, MIT) | Ne (samo `class`, `aria-hidden`, `focusable`) |
+
+Provjereno: **2026-11-26**. ISC i MIT dozvoljavaju upotrebu i izmjenu uz očuvanje napomene o licenci; napomena je u komentaru komponente. Cijeli set ikona (P1.DS.13) će dobiti zajednički zapis ovdje.

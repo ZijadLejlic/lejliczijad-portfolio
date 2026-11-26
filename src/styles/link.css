@@ -1,0 +1,95 @@
+/*
+ * Link (P1.DS.11). Global, not scoped, so Svelte islands can reuse the classes
+ * (src/components/ui/link.ts). Every rule starts with `.link`.
+ *
+ * The underline is two background lines on the label instead of text-decoration, so it can draw
+ * in from the left and still follow a label that wraps (box-decoration-break: clone):
+ * - layer 1: the hover line, full color, grows from 0 to 100% width;
+ * - layer 2: the resting line. `inline` keeps it visible at half strength, so a link in running
+ *   text never relies on color alone (WCAG 1.4.1); `quiet` has none.
+ * Only background-size and color change (paint, no layout). With reduced motion the duration
+ * tokens drop to 0.01 ms, so the line just appears.
+ */
+
+.link {
+  --link-line: var(--border-width);
+
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.link__label {
+  padding-block-end: 0.08em;
+  background-image:
+    linear-gradient(currentcolor, currentcolor), linear-gradient(var(--link-rest), var(--link-rest));
+  background-repeat: no-repeat;
+  background-position:
+    0 100%,
+    0 100%;
+  background-size:
+    0% var(--link-line),
+    100% var(--link-line);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-size var(--dur-base) var(--ease-out);
+  box-decoration-break: clone;
+}
+
+.link:is(:hover, :focus-visible) .link__label {
+  background-size:
+    100% var(--link-line),
+    100% var(--link-line);
+}
+
+/* --- Variants ------------------------------------------------------------------------------ */
+
+.link--inline {
+  --link-rest: color-mix(in srgb, currentcolor 50%, transparent);
+
+  color: var(--color-accent);
+}
+
+.link--inline:hover {
+  color: var(--color-accent-hover);
+}
+
+.link--quiet {
+  --link-rest: transparent;
+
+  color: inherit;
+}
+
+/* base.css colors every a:hover with the accent; a quiet link keeps its color. */
+.link--quiet:hover {
+  color: inherit;
+}
+
+/* --- Parts --------------------------------------------------------------------------------- */
+
+/* Same size as a lowercase letter and sitting on the x-height, so it reads as part of the text. */
+.link__icon {
+  display: inline-block;
+  inline-size: 0.8em;
+  block-size: 0.8em;
+  margin-inline-start: 0.15em;
+  vertical-align: -0.05em;
+}
+
+.link__hint {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* Forced colors and print drop background images, so the underline goes back to text-decoration. */
+@media (forced-colors: active), print {
+  .link__label {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+}
