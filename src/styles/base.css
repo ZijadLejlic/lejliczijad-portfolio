@@ -1,0 +1,103 @@
+/*
+ * Base element styles (P1.DS.07): page colors and type, headings, links, selection, the focus
+ * ring and scrollbars. Everything comes from tokens.css. Components style themselves on top.
+ */
+
+html {
+  color-scheme: dark;
+
+  /* Scrollbars: standard property only, where supported; it inherits, so inner scroll areas
+     match. The thumb uses text-subtle (4.93:1 on bg) to stay findable; the width is left to
+     the platform so it is easy to grab. */
+  scrollbar-color: var(--color-text-subtle) var(--color-bg);
+  background-color: var(--color-bg);
+}
+
+body {
+  min-height: 100svh;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+}
+
+/* --- Headings ------------------------------------------------------------------------------ */
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-h1);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-h1);
+  letter-spacing: var(--tracking-h1);
+}
+
+h2 {
+  font-size: var(--text-h2);
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-h2);
+}
+
+h3 {
+  font-size: var(--text-h3);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
+}
+
+/* h4-h6 are rare (deep case-study sections); they read as strong body text. */
+h4,
+h5,
+h6 {
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-body);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* --- Links --------------------------------------------------------------------------------- */
+
+a {
+  color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* --- Selection ----------------------------------------------------------------------------- */
+
+/* Dark text on the accent, the same AA pair as the primary button (5.47:1). */
+::selection {
+  color: var(--color-on-accent);
+  background-color: var(--color-accent);
+}
+
+/* --- Focus --------------------------------------------------------------------------------- */
+
+/* One visible ring for every interactive element, keyboard focus only (WCAG 2.4.7 / 2.4.11).
+   The offset keeps it on the page background, where the accent has 5.47:1. */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Elements focused only by script (e.g. the h1 after a page swap, P1.LAY.09) get no ring. */
+[tabindex='-1']:focus:not(:focus-visible) {
+  outline: none;
+}

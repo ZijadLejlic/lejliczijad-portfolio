@@ -1,0 +1,91 @@
+/*
+ * Modern CSS reset (P1.DS.07). Removes browser defaults that fight the design system and adds
+ * the safety rules from AGENTS.md §6.3 (nothing wider than the viewport, long words wrap).
+ * Look and feel live in base.css; this file only neutralises.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Stop iOS/Android from inflating text in landscape; user zoom still works. */
+  text-size-adjust: 100%;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+dl,
+dd,
+ul,
+ol {
+  margin: 0;
+}
+
+/* Lists that are styled as lists (prose) get their markers back in prose.css (P1.DS.09). */
+ul[role='list'],
+ol[role='list'] {
+  padding: 0;
+  list-style: none;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Long words and URLs wrap instead of pushing the page wider than the viewport. */
+p,
+li,
+dd,
+blockquote,
+figcaption,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* The `hidden` attribute always wins, even over component display rules. */
+[hidden] {
+  display: none !important;
+}
