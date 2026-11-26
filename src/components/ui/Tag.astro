@@ -1,0 +1,50 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Tag / chip (P1.DS.12): a short, non-interactive label for a stack item or topic ("Astro",
+// "Web app"). Several tags go in a <Cluster as="ul"> with as="li". Clickable filters are buttons
+// with aria-pressed (P1.WORK.02), not tags.
+import type { HTMLAttributes } from 'astro/types';
+
+import type { TagTone } from './badge';
+
+type TagElement = 'span' | 'li';
+
+interface Props extends HTMLAttributes<'span'> {
+  as?: TagElement;
+  tone?: TagTone;
+}
+
+const { as: Element = 'span', tone = 'default', class: className, ...rest } = Astro.props;
+---
+
+<Element class:list={['tag', `tag--${tone}`, className]} {...rest}>
+  <slot />
+</Element>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    max-inline-size: 100%;
+    padding-block: var(--space-1);
+    padding-inline: var(--space-3);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-small);
+    overflow-wrap: anywhere;
+    border: var(--border-width) solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+  }
+
+  /* Muted text: 7.95:1 on bg, still AA on surface-2 and above the dimmed canvas. */
+  .tag--default {
+    color: var(--color-text-muted);
+  }
+
+  /* Accent text 5.47:1 on bg; the border is decorative, the text carries the label. */
+  .tag--accent {
+    color: var(--color-accent);
+    border-color: currentcolor;
+  }
+</style>

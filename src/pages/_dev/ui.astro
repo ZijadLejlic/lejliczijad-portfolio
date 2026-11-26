@@ -1,16 +1,20 @@
 ---
-// Component gallery (P1.DS.08–10, completed by P1.DS.26). Served at /_dev/ui by `astro dev` and in
+// Component gallery (P1.DS.08–12, completed by P1.DS.26). Served at /_dev/ui by `astro dev` and in
 // preview builds only; the route is injected in astro.config.ts and never exists in production
 // (src/lib/dev-pages.ts). Global styles are imported here until BaseLayout exists (P1.LAY.01).
+import AvailabilityBadge from '@/components/ui/AvailabilityBadge.astro';
+import Badge from '@/components/ui/Badge.astro';
 import Button from '@/components/ui/Button.astro';
 import Cluster from '@/components/ui/Cluster.astro';
 import Container from '@/components/ui/Container.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import Grid from '@/components/ui/Grid.astro';
 import Heading from '@/components/ui/Heading.astro';
+import Link from '@/components/ui/Link.astro';
 import Prose from '@/components/ui/Prose.astro';
 import Section from '@/components/ui/Section.astro';
 import Stack from '@/components/ui/Stack.astro';
+import Tag from '@/components/ui/Tag.astro';
 import Text from '@/components/ui/Text.astro';
 import FontPreload from '@/components/layout/FontPreload.astro';
 import '@/styles/tokens.css';
@@ -146,6 +150,63 @@ const COMPONENTS: GalleryEntry[] = [
       { name: 'disabled', values: 'true, false', fallback: 'false' },
       { name: 'loading', values: 'true, false', fallback: 'false' },
       { name: 'loadingLabel', values: 'text spoken while loading', fallback: 'Loading' },
+    ],
+  },
+  {
+    id: 'link',
+    name: 'Link',
+    purpose:
+      'Text link with an underline that draws in on hover and focus. Another host than site.url is detected as external: arrow icon, rel="noopener noreferrer", new tab with a spoken hint, open cursor. Unsafe schemes (javascript:, data:) fail the build.',
+    props: [
+      { name: 'href', values: 'URL (required)', fallback: '–' },
+      {
+        name: 'variant',
+        values: 'inline (accent, resting underline), quiet (inherits color)',
+        fallback: 'inline',
+      },
+      {
+        name: 'external',
+        values: 'true, false (overrides detection)',
+        fallback: 'detected from href',
+      },
+      { name: 'newTab', values: 'true, false', fallback: 'true for external' },
+      {
+        name: 'newTabLabel',
+        values: 'text spoken for a new tab',
+        fallback: '(opens in a new tab)',
+      },
+    ],
+  },
+  {
+    id: 'tag',
+    name: 'Tag',
+    purpose:
+      'Non-interactive label for a stack item or topic. Several tags go in <Cluster as="ul"> with as="li". Filters are buttons, not tags.',
+    props: [
+      { name: 'as', values: 'span, li', fallback: 'span' },
+      { name: 'tone', values: 'default, accent', fallback: 'default' },
+    ],
+  },
+  {
+    id: 'badge',
+    name: 'Badge',
+    purpose:
+      'Status pill. The text carries the meaning; the dot repeats it in color and is aria-hidden. The pulse stops under reduced motion.',
+    props: [
+      { name: 'as', values: 'span, p, div', fallback: 'span' },
+      { name: 'tone', values: 'neutral, accent, success (dot color)', fallback: 'neutral' },
+      { name: 'dot', values: 'true, false', fallback: 'true' },
+      { name: 'pulse', values: 'true, false', fallback: 'false' },
+    ],
+  },
+  {
+    id: 'availability-badge',
+    name: 'AvailabilityBadge',
+    purpose:
+      'Badge that reads site.availability (src/data/site.ts) and builds its text with availabilityLabel(). Pages pass no props.',
+    props: [
+      { name: 'as', values: 'span, p, div', fallback: 'span' },
+      { name: 'availability', values: 'previews and tests only', fallback: 'site.availability' },
     ],
   },
 ];
@@ -351,6 +412,57 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                 </Stack>
               )}
 
+              {primitive.id === 'link' && (
+                <Stack gap={6}>
+                  <Stack gap={2}>
+                    <Eyebrow>variant="inline" · in running text</Eyebrow>
+                    <Text measure>
+                      Read the <Link href="#link">internal case study</Link>, check the code on{' '}
+                      <Link href="https://github.com/ZijadLejlic">GitHub</Link>, or write to{' '}
+                      <Link href="mailto:support@lejliczijad.com">support@lejliczijad.com</Link>.
+                    </Text>
+                    <Text measure>
+                      <Link href="https://developer.mozilla.org/en-US/docs/Web/CSS/box-decoration-break">
+                        MDN on box-decoration-break and how it clones decorations across lines
+                      </Link>{' '}
+                      is a long external label: it wraps and keeps its underline on every line
+                    </Text>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>variant="quiet" · nav and footer</Eyebrow>
+                    <Cluster gap={5} as="ul">
+                      <li>
+                        <Link href="#link" variant="quiet">
+                          Work
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="#link" variant="quiet">
+                          About
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="https://github.com/ZijadLejlic" variant="quiet">
+                          GitHub
+                        </Link>
+                      </li>
+                    </Cluster>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>External, same tab · absolute URL on this site</Eyebrow>
+                    <Text>
+                      <Link href="https://example.com" newTab={false}>
+                        Same-tab external
+                      </Link>{' '}
+                      ·{' '}
+                      <Link href="https://lejliczijad.com/work">
+                        lejliczijad.com/work (internal)
+                      </Link>
+                    </Text>
+                  </Stack>
+                </Stack>
+              )}
+
               {primitive.id === 'button' && (
                 <Stack gap={6}>
                   {(['primary', 'secondary', 'ghost'] as const).map((variant) => (
@@ -424,6 +536,60 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                     <Button variant="secondary">
                       A deliberately long button label that has to wrap on a narrow phone screen
                     </Button>
+                  </Stack>
+                </Stack>
+              )}
+
+              {primitive.id === 'tag' && (
+                <Stack gap={4}>
+                  <Stack gap={2}>
+                    <Eyebrow>Stack list · tone="default"</Eyebrow>
+                    <Cluster as="ul" gap={2} aria-label="Stack">
+                      {CHIPS.map((chip) => (
+                        <Tag as="li">{chip}</Tag>
+                      ))}
+                    </Cluster>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>tone="accent" · long label</Eyebrow>
+                    <Cluster gap={2}>
+                      <Tag tone="accent">Full case study</Tag>
+                      <Tag>A deliberately long tag label that has to wrap on a narrow phone</Tag>
+                    </Cluster>
+                  </Stack>
+                </Stack>
+              )}
+
+              {primitive.id === 'badge' && (
+                <Stack gap={2}>
+                  <Eyebrow>tone · dot · pulse</Eyebrow>
+                  <Cluster gap={3}>
+                    <Badge>Neutral</Badge>
+                    <Badge tone="accent">Accent</Badge>
+                    <Badge tone="success">Success</Badge>
+                    <Badge tone="success" pulse>
+                      Success, pulsing
+                    </Badge>
+                    <Badge dot={false}>No dot</Badge>
+                  </Cluster>
+                </Stack>
+              )}
+
+              {primitive.id === 'availability-badge' && (
+                <Stack gap={4}>
+                  <Stack gap={2}>
+                    <Eyebrow>From site.ts (what pages render)</Eyebrow>
+                    <div>
+                      <AvailabilityBadge />
+                    </div>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>Every status (preview values, not real availability)</Eyebrow>
+                    <Cluster gap={3}>
+                      <AvailabilityBadge availability={{ status: 'available', from: '2027-01' }} />
+                      <AvailabilityBadge availability={{ status: 'limited' }} />
+                      <AvailabilityBadge availability={{ status: 'booked', from: '2027-03' }} />
+                    </Cluster>
                   </Stack>
                 </Stack>
               )}

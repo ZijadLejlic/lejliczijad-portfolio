@@ -1,0 +1,115 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Badge (P1.DS.12): a status pill with an optional colored dot ("Available for new projects",
+// "Live"). The text is the message; the dot only repeats it in color and is hidden from
+// assistive tech. The pulse stops under reduced motion.
+import type { HTMLAttributes } from 'astro/types';
+
+import type { BadgeTone } from './badge';
+
+type BadgeElement = 'span' | 'p' | 'div';
+
+interface Props extends HTMLAttributes<'span'> {
+  as?: BadgeElement;
+  tone?: BadgeTone;
+  /** Show the status dot. */
+  dot?: boolean;
+  /** Pulse the dot (open availability only; never more than one pulsing badge in view). */
+  pulse?: boolean;
+}
+
+const {
+  as: Element = 'span',
+  tone = 'neutral',
+  dot = true,
+  pulse = false,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<Element class:list={['badge', `badge--${tone}`, className]} {...rest}>
+  {dot && <span class:list={['badge__dot', { 'badge__dot--pulse': pulse }]} aria-hidden="true" />}
+  <span class="badge__label">
+    <slot />
+  </span>
+</Element>
+
+<style>
+  .badge {
+    --badge-dot-size: var(--space-2);
+
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+    max-inline-size: 100%;
+    padding-block: var(--space-1);
+    padding-inline: var(--space-3);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-small);
+    color: var(--color-text);
+    background-color: var(--color-surface-1);
+    border: var(--border-width) solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+  }
+
+  .badge__label {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* The dot is a graphic object (WCAG 1.4.11): every tone is >= 3:1 on bg and surfaces
+     (docs/design/contrast.md). */
+  .badge--neutral {
+    --badge-dot-color: var(--color-text-muted);
+  }
+
+  .badge--accent {
+    --badge-dot-color: var(--color-accent);
+  }
+
+  .badge--success {
+    --badge-dot-color: var(--color-success);
+  }
+
+  .badge__dot {
+    position: relative;
+    flex: none;
+    inline-size: var(--badge-dot-size);
+    block-size: var(--badge-dot-size);
+    background-color: var(--badge-dot-color);
+    border-radius: var(--radius-pill);
+  }
+
+  /* A ring that grows and fades out of the dot. Transform and opacity only (AGENTS.md §6.3);
+     invisible at rest, so stopping the animation leaves a plain dot. */
+  .badge__dot--pulse::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background-color: var(--badge-dot-color);
+    border-radius: inherit;
+    opacity: 0;
+    animation: badge-pulse var(--dur-pulse) var(--ease-out) infinite;
+  }
+
+  @keyframes badge-pulse {
+    from {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+
+    to {
+      opacity: 0;
+      transform: scale(2.5);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .badge__dot--pulse::after {
+      animation: none;
+    }
+  }
+</style>
