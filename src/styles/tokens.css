@@ -1,7 +1,7 @@
 /*
  * Design tokens (tech.md §6). The only file where literal colors are allowed (.stylelintrc.json).
  * Contrast of every text pair is documented in docs/design/contrast.md and enforced by
- * tests/unit/styles/contrast.test.ts, so a change here that breaks AA fails `pnpm check`.
+ * tests/unit/styles/tokens-contrast.test.ts, so a change here that breaks AA fails `pnpm check`.
  */
 
 :root {
