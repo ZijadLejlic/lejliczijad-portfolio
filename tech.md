@@ -189,6 +189,7 @@ lejliczijad-portfolio/
 - Jedna komponenta = jedan fajl. Ime komponente je PascalCase, sve ostalo kebab-case ili camelCase prema tipu fajla.
 - **Path alias:** jedan alias `@/*` → `./src/*`, definisan samo u `tsconfig.json` (`compilerOptions.paths`). Astro (i Vite ispod njega) ga čita odatle, pa se ne duplira u `astro.config.ts`. Primjeri: `@/components/ui/Button.astro`, `@/lib/seo/meta`, `@/server/http`, `@/fx`. Vitest ga dobija preko `getViteConfig()` iz `astro/config` za projekat `unit`, a projekat `api` (workerd, bez Astro pluginova) preko Vite opcije `resolve.tsconfigPaths` (P1.ENV.08).
 - Prazni folderi iz ove strukture se drže kroz `.gitkeep` dok ne dobiju prve fajlove; tada se `.gitkeep` briše.
+- **Dev stranice (`/_dev/*`):** Astro ne rutira fajlove koji počinju s `_`, pa `src/pages/_dev/ui.astro` sam po sebi nije stranica. Integracija u `astro.config.ts` ga ubacuje (`injectRoute`) samo za `astro dev` i za build s `PUBLIC_DEPLOY_ENV` = `development` ili `preview` (`src/lib/dev-pages.ts`; nepoznata ili prazna vrijednost se tretira kao produkcija). Produkcijski build ga zato uopšte nema u `dist/`, a PR preview ga prikazuje (P1.DS.08, P1.DS.26).
 
 ---
 
@@ -324,6 +325,11 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 - Razmaci i forme: `--space-1` … `--space-11` (rem); `--section-padding-block`; `--container-max: 90rem` (= 1440 px pri 16 px, ali raste s korisnikovom veličinom fonta); `--gutter`; `--radius-sm|md|lg|pill`; `--border-width` 1 px i `--border-width-strong` 2 px; `--focus-ring-width` i `--focus-ring-offset` (2 px + 2 px).
 - Sjene: `--shadow-1` (dropdown, kartica u hoveru) i `--shadow-2` (meni, modal, toast). Na skoro crnoj pozadini elevaciju nose prvenstveno `surface-1/2`, a sjena samo odvaja plutajuće slojeve od canvasa.
 - Slojevi: `--z-*`. Sirovi broj za `z-index` se ne koristi. Redoslijed čuva test `tests/unit/styles/scales.test.ts`.
+
+**Layout primitivi (P1.DS.08)**, `src/components/ui/`: `Container` (`width: default | prose`), `Section` (`spacing: default | compact | none`, Container unutra osim uz `contained={false}`), `Grid` (auto-fill kolone, `min: sm | md | lg` = tokeni `--grid-min-sm|md|lg` 14/18/24 rem, uvijek ograničeno na 100 %), `Stack` (vertikalno) i `Cluster` (red koji se prelama). Svi imaju `as` (dozvoljeni tagovi u `layout.ts`) i prosljeđuju ostale atribute.
+- Razmak je korak skale (`gap={1…11}` → `--space-N`). Komponenta renderuje `data-layout-gap`, a `src/styles/layout.css` ga mapira na `--layout-gap`. Inline `style` se ne koristi jer ga CSP blokira (§13.3); atribut se uvijek renderuje, pa ugniježđeni primitiv ne nasljeđuje roditeljev razmak.
+- `as="ul" | "ol"` automatski dodaje `role="list"` (Safari briše semantiku liste uz `list-style: none`; `reset.css` resetuje samo takve liste).
+- Djeca u flex i grid primitivima imaju `min-width: 0` (AGENTS.md §6.3). Primjeri i props su na `/_dev/ui`.
 
 | Sloj | Token | Vrijednost | Ko ga koristi |
 |---|---|---|---|
