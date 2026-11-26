@@ -1,6 +1,10 @@
 ---
-// Minimal placeholder page for the scaffold. Real Home content arrives in P1.HOME.*.
+// Minimal placeholder page for the scaffold. Real Home content arrives in P1.HOME.*, and the
+// global styles move into BaseLayout in P1.LAY.01.
+import FontPreload from '@/components/layout/FontPreload.astro';
 import { ROBOTS_META } from '@/lib/deploy-env';
+import '@/styles/tokens.css';
+import '@/styles/fonts.css';
 ---
 
 <!doctype html>
@@ -10,6 +14,7 @@ import { ROBOTS_META } from '@/lib/deploy-env';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content={ROBOTS_META} />
     <title>Zijad Lejlić</title>
+    <FontPreload />
   </head>
   <body>
     <main>
@@ -18,3 +23,17 @@ import { ROBOTS_META } from '@/lib/deploy-env';
     </main>
   </body>
 </html>
+
+<style>
+  /* Temporary until base styles land (P1.DS.07): shows the self-hosted fonts on the page. */
+  body {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+</style>

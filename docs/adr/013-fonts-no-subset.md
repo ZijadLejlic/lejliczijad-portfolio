@@ -28,7 +28,7 @@ Veličina originalnih WOFF2 fajlova koje servira Fontshare API (izmjereno 2026-1
 - Clash Display i Satoshi se self-hostuju **kao originalni, nepromijenjeni WOFF2 fajlovi** preuzeti s Fontsharea. Bez subsettinga, bez konverzije formata, bez promjene imena ili metapodataka.
 - JetBrains Mono (OFL) se smije subsetovati na `latin` + `latin-ext`.
 - Fallback metrike (`size-adjust`, `ascent-override` …) idu u `@font-face` deklaraciju **fallback** fonta, ne u font fajl, pa nisu izmjena fonta.
-- Ostalo iz tech.md §6.2 ostaje: `font-display: swap`, preload Clash Display 600 + Satoshi 400.
+- Ostalo iz tech.md §6.2 ostaje: `font-display: swap`, preload Clash Display 600 + Satoshi 400. (Preload je privremeno bio Clash Display 500 prema [ADR-014](014-preload-clash-500.md); [ADR-015](015-preload-clash-600.md) ga vraća na Clash Display 600.)
 
 ## Posljedice
 - Budžet fontova ostaje ispunjen bez subsettinga (~41 KB od 90 KB).
@@ -36,3 +36,8 @@ Veličina originalnih WOFF2 fajlova koje servira Fontshare API (izmjereno 2026-1
 - Repo je privatan, pa čuvanje fajlova u `src/assets/fonts/` nije "javno dostupan repozitorij". Ako repo ikad postane javan, font fajlovi se moraju izbaciti iz repoa i historije ili se mora tražiti dozvola ITF-a.
 - Servirani fajlovi na lejliczijad.com su dozvoljena web upotreba, ne redistribucija.
 - Ako se kasnije želi subset (npr. zbog novih jezika), potrebna je pismena dozvola ITF-a i novi ADR.
+
+## Rezultat provjere u P1.DS.03 (2026-11-26)
+1. **Fajlovi iz ZIP-a i s API-ja nisu isti.** Primjer: Clash Display 600 je 16.576 B u ZIP-u (`ClashDisplay_Complete/Fonts/WEB/fonts/`), a 15.284 B na `cdn.fontshare.com`. Self-hostuju se fajlovi iz zvaničnog ZIP-a ("Official Version" po FFL-u); veličine i hashevi su u [docs/licenses.md](../licenses.md). Preload (Clash 600 + Satoshi 400, ADR-015) je ~44 KB.
+2. Svi fajlovi imaju č, ć, š, ž, đ i velika slova.
+3. CLS od fontova na `/` je 0 (Chromium). Fallback metrike i metoda su u docs/licenses.md.

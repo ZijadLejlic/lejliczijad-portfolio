@@ -1,0 +1,15 @@
+---
+// Preloads the two fonts the first screen needs (tech.md §6.2, ADR-015): Clash Display 600 for
+// every h1, including the hero H1 (LCP), and Satoshi 400 for body text. `?url` resolves to the
+// same hashed asset that the @font-face rules in src/styles/fonts.css point at, so the browser
+// reuses the preload. Everything else (Clash 500, Satoshi 500, JetBrains Mono) loads on demand
+// with font-display: swap.
+import clashDisplaySemibold from '@/assets/fonts/ClashDisplay-Semibold.woff2?url';
+import satoshiRegular from '@/assets/fonts/Satoshi-Regular.woff2?url';
+
+const PRELOADED_FONTS = [clashDisplaySemibold, satoshiRegular];
+---
+
+{PRELOADED_FONTS.map((href) => (
+  <link rel="preload" href={href} as="font" type="font/woff2" crossorigin="anonymous" />
+))}

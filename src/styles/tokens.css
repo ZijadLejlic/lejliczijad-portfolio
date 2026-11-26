@@ -41,4 +41,12 @@
 
   /* Focus ring: 2px + 2px offset, so it sits on the page background (5.47:1 on bg). */
   --color-focus: #4d7cff;
+
+  /* --- Font families (P1.DS.03) ----------------------------------------------------------- */
+
+  /* Each web font is followed by its metric-matched fallback (src/styles/fonts.css), so the
+     swap does not shift layout. */
+  --font-display: 'Clash Display', 'Clash Display Fallback', sans-serif;
+  --font-body: Satoshi, 'Satoshi Fallback', sans-serif;
+  --font-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
 }
