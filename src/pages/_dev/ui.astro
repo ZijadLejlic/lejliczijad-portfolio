@@ -1,0 +1,332 @@
+---
+// Component gallery (P1.DS.08, completed by P1.DS.26). Served at /_dev/ui by `astro dev` and in
+// preview builds only; the route is injected in astro.config.ts and never exists in production
+// (src/lib/dev-pages.ts). Global styles are imported here until BaseLayout exists (P1.LAY.01).
+import Cluster from '@/components/ui/Cluster.astro';
+import Container from '@/components/ui/Container.astro';
+import Grid from '@/components/ui/Grid.astro';
+import Section from '@/components/ui/Section.astro';
+import Stack from '@/components/ui/Stack.astro';
+import FontPreload from '@/components/layout/FontPreload.astro';
+import '@/styles/tokens.css';
+import '@/styles/fonts.css';
+import '@/styles/reset.css';
+import '@/styles/base.css';
+import '@/styles/motion.css';
+
+interface PropRow {
+  name: string;
+  values: string;
+  fallback: string;
+}
+
+interface Primitive {
+  id: string;
+  name: string;
+  purpose: string;
+  props: PropRow[];
+}
+
+const GAP_VALUES = '1–11 (--space-N)';
+
+const PRIMITIVES: Primitive[] = [
+  {
+    id: 'container',
+    name: 'Container',
+    purpose:
+      'Centers content, caps it at --container-max (1440 px at the default font size) and adds the fluid gutter.',
+    props: [
+      {
+        name: 'as',
+        values: 'div, section, article, aside, header, footer, main, nav, ul, ol',
+        fallback: 'div',
+      },
+      { name: 'width', values: 'default, prose', fallback: 'default' },
+    ],
+  },
+  {
+    id: 'section',
+    name: 'Section',
+    purpose:
+      'Vertical page rhythm (--section-padding-block) with a Container inside. Name it with aria-labelledby.',
+    props: [
+      { name: 'as', values: 'section, div, article, aside, footer', fallback: 'section' },
+      { name: 'spacing', values: 'default, compact, none', fallback: 'default' },
+      { name: 'contained', values: 'true, false', fallback: 'true' },
+      { name: 'width', values: 'default, prose', fallback: 'default' },
+    ],
+  },
+  {
+    id: 'grid',
+    name: 'Grid',
+    purpose:
+      'As many equal columns as fit, each at least min wide. Below that width it falls back to one full-width column.',
+    props: [
+      { name: 'as', values: 'div, ul, ol, …', fallback: 'div' },
+      { name: 'min', values: 'sm (14rem), md (18rem), lg (24rem)', fallback: 'md' },
+      { name: 'gap', values: GAP_VALUES, fallback: '5' },
+    ],
+  },
+  {
+    id: 'stack',
+    name: 'Stack',
+    purpose: 'Vertical flow with one gap between children, so children never carry margins.',
+    props: [
+      { name: 'as', values: 'div, ul, ol, …', fallback: 'div' },
+      { name: 'gap', values: GAP_VALUES, fallback: '5' },
+      { name: 'align', values: 'stretch, start, center, end', fallback: 'stretch' },
+    ],
+  },
+  {
+    id: 'cluster',
+    name: 'Cluster',
+    purpose: 'Inline group that wraps onto new lines: tags, buttons, meta rows.',
+    props: [
+      { name: 'as', values: 'div, ul, ol, …', fallback: 'div' },
+      { name: 'gap', values: GAP_VALUES, fallback: '3' },
+      { name: 'justify', values: 'start, center, end, between', fallback: 'start' },
+      { name: 'align', values: 'center, start, end, baseline, stretch', fallback: 'center' },
+    ],
+  },
+];
+
+const CARDS = ['One', 'Two', 'Three', 'Four', 'Five'];
+const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte', 'PostgreSQL'];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>UI components — dev</title>
+    <FontPreload />
+  </head>
+  <body>
+    <main>
+      <Section spacing="compact" aria-labelledby="ui-title">
+        <Stack gap={4}>
+          <p class="eyebrow">/_dev/ui · not in production</p>
+          <h1 id="ui-title">UI components</h1>
+          <p class="lead">
+            Every design-system component with its props. Shrink the window to check that nothing
+            overflows.
+          </p>
+          <nav aria-label="Components">
+            <Cluster as="ul" gap={4}>
+              {PRIMITIVES.map((primitive) => (
+                <li>
+                  <a href={`#${primitive.id}`}>{primitive.name}</a>
+                </li>
+              ))}
+            </Cluster>
+          </nav>
+        </Stack>
+      </Section>
+
+      {PRIMITIVES.map((primitive) => (
+        <Section id={primitive.id} spacing="compact" aria-labelledby={`${primitive.id}-title`}>
+          <Stack gap={6}>
+            <Stack gap={3}>
+              <h2 id={`${primitive.id}-title`}>{primitive.name}</h2>
+              <p class="purpose">{primitive.purpose}</p>
+            </Stack>
+
+            <div class="props">
+              <table>
+                <caption class="visually-hidden">{primitive.name} props</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Prop</th>
+                    <th scope="col">Values</th>
+                    <th scope="col">Default</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {primitive.props.map((row) => (
+                    <tr>
+                      <th scope="row">
+                        <code>{row.name}</code>
+                      </th>
+                      <td>{row.values}</td>
+                      <td>
+                        <code>{row.fallback}</code>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="demo" data-demo={primitive.id}>
+              {primitive.id === 'container' && (
+                <Stack gap={4}>
+                  <Container class="outline">
+                    <p class="box">Container (default)</p>
+                  </Container>
+                  <Container width="prose" class="outline">
+                    <p class="box">Container width="prose"</p>
+                  </Container>
+                </Stack>
+              )}
+
+              {primitive.id === 'section' && (
+                <Stack gap={4}>
+                  <Section as="div" spacing="compact" class="outline">
+                    <p class="box">Section spacing="compact"</p>
+                  </Section>
+                  <Section as="div" spacing="none" contained={false} class="outline">
+                    <p class="box">Section spacing="none" contained=false</p>
+                  </Section>
+                </Stack>
+              )}
+
+              {primitive.id === 'grid' && (
+                <Stack gap={5}>
+                  {(['sm', 'md', 'lg'] as const).map((min) => (
+                    <Stack gap={2}>
+                      <p class="label">min="{min}"</p>
+                      <Grid as="ul" min={min} gap={4}>
+                        {CARDS.map((card) => (
+                          <li class="box">{card}</li>
+                        ))}
+                      </Grid>
+                    </Stack>
+                  ))}
+                </Stack>
+              )}
+
+              {primitive.id === 'stack' && (
+                <Grid min="sm" gap={5}>
+                  {([2, 5, 7] as const).map((gap) => (
+                    <Stack gap={2}>
+                      <p class="label">gap={gap}</p>
+                      <Stack gap={gap}>
+                        <p class="box">First</p>
+                        <p class="box">Second</p>
+                        <p class="box">Third</p>
+                      </Stack>
+                    </Stack>
+                  ))}
+                  <Stack gap={2}>
+                    <p class="label">align="start"</p>
+                    <Stack gap={3} align="start">
+                      <p class="box">Short</p>
+                      <p class="box">A longer item</p>
+                    </Stack>
+                  </Stack>
+                </Grid>
+              )}
+
+              {primitive.id === 'cluster' && (
+                <Stack gap={5}>
+                  {(['start', 'center', 'between'] as const).map((justify) => (
+                    <Stack gap={2}>
+                      <p class="label">justify="{justify}"</p>
+                      <Cluster as="ul" justify={justify} gap={2}>
+                        {CHIPS.map((chip) => (
+                          <li class="chip">{chip}</li>
+                        ))}
+                      </Cluster>
+                    </Stack>
+                  ))}
+                </Stack>
+              )}
+            </div>
+          </Stack>
+        </Section>
+      ))}
+    </main>
+  </body>
+</html>
+
+<style>
+  /* Demo-only styling. Real Eyebrow, Text and Tag components arrive in P1.DS.09 and P1.DS.12. */
+  .eyebrow,
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    line-height: var(--leading-mono);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+  }
+
+  .lead {
+    max-width: var(--measure-prose);
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    color: var(--color-text-muted);
+  }
+
+  .purpose {
+    max-width: var(--measure-prose);
+    color: var(--color-text-muted);
+  }
+
+  .props {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+    vertical-align: top;
+    text-align: start;
+    border-block-end: var(--border-width) solid var(--color-border-strong);
+  }
+
+  thead th {
+    font-weight: var(--weight-medium);
+    color: var(--color-text-muted);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.95em;
+  }
+
+  .demo {
+    padding: var(--space-5);
+    border: var(--border-width) dashed var(--color-border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .box {
+    padding: var(--space-4);
+    font-size: var(--text-small);
+    background-color: var(--color-surface-2);
+    border-radius: var(--radius-sm);
+  }
+
+  .chip {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-small);
+    background-color: var(--color-surface-2);
+    border-radius: var(--radius-pill);
+  }
+
+  /* :global because Container and Section render their own root element. */
+  .demo :global(.outline) {
+    outline: var(--border-width) solid var(--color-accent);
+    outline-offset: calc(-1 * var(--border-width));
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+</style>
