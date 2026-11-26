@@ -2,6 +2,8 @@
 // Component gallery (P1.DS.08–10, completed by P1.DS.26). Served at /_dev/ui by `astro dev` and in
 // preview builds only; the route is injected in astro.config.ts and never exists in production
 // (src/lib/dev-pages.ts). Global styles are imported here until BaseLayout exists (P1.LAY.01).
+import AvailabilityBadge from '@/components/ui/AvailabilityBadge.astro';
+import Badge from '@/components/ui/Badge.astro';
 import Button from '@/components/ui/Button.astro';
 import Cluster from '@/components/ui/Cluster.astro';
 import Container from '@/components/ui/Container.astro';
@@ -11,6 +13,7 @@ import Heading from '@/components/ui/Heading.astro';
 import Prose from '@/components/ui/Prose.astro';
 import Section from '@/components/ui/Section.astro';
 import Stack from '@/components/ui/Stack.astro';
+import Tag from '@/components/ui/Tag.astro';
 import Text from '@/components/ui/Text.astro';
 import FontPreload from '@/components/layout/FontPreload.astro';
 import '@/styles/tokens.css';
@@ -146,6 +149,38 @@ const COMPONENTS: GalleryEntry[] = [
       { name: 'disabled', values: 'true, false', fallback: 'false' },
       { name: 'loading', values: 'true, false', fallback: 'false' },
       { name: 'loadingLabel', values: 'text spoken while loading', fallback: 'Loading' },
+    ],
+  },
+  {
+    id: 'tag',
+    name: 'Tag',
+    purpose:
+      'Non-interactive label for a stack item or topic. Several tags go in <Cluster as="ul"> with as="li". Filters are buttons, not tags.',
+    props: [
+      { name: 'as', values: 'span, li', fallback: 'span' },
+      { name: 'tone', values: 'default, accent', fallback: 'default' },
+    ],
+  },
+  {
+    id: 'badge',
+    name: 'Badge',
+    purpose:
+      'Status pill. The text carries the meaning; the dot repeats it in color and is aria-hidden. The pulse stops under reduced motion.',
+    props: [
+      { name: 'as', values: 'span, p, div', fallback: 'span' },
+      { name: 'tone', values: 'neutral, accent, success (dot color)', fallback: 'neutral' },
+      { name: 'dot', values: 'true, false', fallback: 'true' },
+      { name: 'pulse', values: 'true, false', fallback: 'false' },
+    ],
+  },
+  {
+    id: 'availability-badge',
+    name: 'AvailabilityBadge',
+    purpose:
+      'Badge that reads site.availability (src/data/site.ts) and builds its text with availabilityLabel(). Pages pass no props.',
+    props: [
+      { name: 'as', values: 'span, p, div', fallback: 'span' },
+      { name: 'availability', values: 'previews and tests only', fallback: 'site.availability' },
     ],
   },
 ];
@@ -424,6 +459,60 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                     <Button variant="secondary">
                       A deliberately long button label that has to wrap on a narrow phone screen
                     </Button>
+                  </Stack>
+                </Stack>
+              )}
+
+              {primitive.id === 'tag' && (
+                <Stack gap={4}>
+                  <Stack gap={2}>
+                    <Eyebrow>Stack list · tone="default"</Eyebrow>
+                    <Cluster as="ul" gap={2} aria-label="Stack">
+                      {CHIPS.map((chip) => (
+                        <Tag as="li">{chip}</Tag>
+                      ))}
+                    </Cluster>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>tone="accent" · long label</Eyebrow>
+                    <Cluster gap={2}>
+                      <Tag tone="accent">Full case study</Tag>
+                      <Tag>A deliberately long tag label that has to wrap on a narrow phone</Tag>
+                    </Cluster>
+                  </Stack>
+                </Stack>
+              )}
+
+              {primitive.id === 'badge' && (
+                <Stack gap={2}>
+                  <Eyebrow>tone · dot · pulse</Eyebrow>
+                  <Cluster gap={3}>
+                    <Badge>Neutral</Badge>
+                    <Badge tone="accent">Accent</Badge>
+                    <Badge tone="success">Success</Badge>
+                    <Badge tone="success" pulse>
+                      Success, pulsing
+                    </Badge>
+                    <Badge dot={false}>No dot</Badge>
+                  </Cluster>
+                </Stack>
+              )}
+
+              {primitive.id === 'availability-badge' && (
+                <Stack gap={4}>
+                  <Stack gap={2}>
+                    <Eyebrow>From site.ts (what pages render)</Eyebrow>
+                    <div>
+                      <AvailabilityBadge />
+                    </div>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>Every status (preview values, not real availability)</Eyebrow>
+                    <Cluster gap={3}>
+                      <AvailabilityBadge availability={{ status: 'available', from: '2027-01' }} />
+                      <AvailabilityBadge availability={{ status: 'limited' }} />
+                      <AvailabilityBadge availability={{ status: 'booked', from: '2027-03' }} />
+                    </Cluster>
                   </Stack>
                 </Stack>
               )}
