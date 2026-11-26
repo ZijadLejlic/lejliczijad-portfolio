@@ -510,7 +510,7 @@ Svaka stranica usluge:
 - [ ] **P1.FX.02** `FxCanvas.astro`: fixed canvas iza sadržaja, `aria-hidden`, `pointer-events: none`, persist kroz navigaciju · Ko: A · Zavisi: P1.LAY.07 · Gotovo kad: canvas je ispod sadržaja i ne hvata klikove.
 - [ ] **P1.FX.03** Statični fallback: AVIF poster vortexa + CSS gradijent (za `static`, bez JS-a i dok se WebGL ne učita) · Ko: A · Gotovo kad: nema praznog ekrana ni CLS-a pri zamjeni postera canvasom.
 - [ ] **P1.FX.04** Lijeno učitavanje FX bundlea (dynamic import nakon `load` + `requestIdleCallback`) · Ko: A · Gotovo kad: three.js nije u početnom JS bundleu (provjera bundle analizom).
-- [ ] **P1.FX.05** `Renderer` singleton (three.js WebGLRenderer, DPR limit po tieru, resize observer, `webglcontextlost` i `restored` handleri) · Ko: A · Gotovo kad: simulirani gubitak konteksta se oporavi bez greške.
+- [~] **P1.FX.05** `Renderer` singleton (three.js WebGLRenderer, DPR limit po tieru, resize observer, `webglcontextlost` i `restored` handleri) · Ko: A · Gotovo kad: simulirani gubitak konteksta se oporavi bez greške. (agent: claude, 2026-11-26)
 - [ ] **P1.FX.06** Render petlja (jedan rAF, delta time clamp, pauza na `visibilitychange`, pauza kad je canvas van ekrana) · Ko: A · Gotovo kad: 0 % GPU-a dok je tab skriven.
 - [ ] **P1.FX.07** Adaptivni kvalitet: mjerenje FPS-a (prozor od 2 s); ispod praga se spušta tier, oporavak tek nakon 10 s stabilnosti · Ko: A · Gotovo kad: uz CPU throttle 6× kvalitet automatski padne.
 - [ ] **P1.FX.08** GPGPU simulacija vortexa (FBO ping-pong pozicija i brzina, curl noise, broj čestica po tieru) · Ko: A · Gotovo kad: ≥ 55 FPS na high tieru; vizuelno odgovara Dust Vortex referenci.
