@@ -48,7 +48,7 @@ export const site: Site = {
   email: 'support@lejliczijad.com',
   jobTitle: 'Full-Stack Developer',
   timezone: 'Europe/Sarajevo',
-  // TODO(content): Zijad confirms the availability status and start month (prd.md §6.7).
+  // Confirmed by Zijad on 2026-11-26: available now, no start month.
   availability: { status: 'available' },
   // Event types from P0.ACC.04 and P0.ACC.05.
   cal: {
