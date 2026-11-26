@@ -1,0 +1,5 @@
+# Only the bug and task forms; no blank issues, so every issue has the fields we need.
+# Security reports go by email (see the note at the top of bug.yml), never into a public issue.
+# No contact_links entry for that: GitHub only accepts http(s) URLs there, and the site's
+# security.txt (P1.SEO.08) is not live yet. Add a link once it is.
+blank_issues_enabled: false

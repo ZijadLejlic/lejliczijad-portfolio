@@ -457,7 +457,7 @@ Svaka stranica usluge:
 - [ ] **P1.ENV.13** Cloudflare Worker (static assets) projekat + `wrangler.jsonc` + adapter `@astrojs/cloudflare` · Ko: A+Z · Zavisi: P0.ACC.02 · Gotovo kad: `wrangler deploy --dry-run` prolazi.
 - [ ] **P1.ENV.14** Deploy workflow: preview za svaki PR (`*.workers.dev` + `X-Robots-Tag: noindex`), produkcija na `main` (API token sa minimalnim pravima, kao GitHub secret) · Ko: A+Z · Gotovo kad: PR dobija komentar s preview URL-om.
 - [ ] **P1.ENV.15** Branch protection na `main` (obavezan PR, CI zelen, bez force pusha) · Ko: Z (A daje upute) · Gotovo kad: direktan push na `main` je odbijen.
-- [ ] **P1.ENV.16** PR šablon + issue šabloni (bug, task) + `CODEOWNERS` · Ko: A · Gotovo kad: novi PR automatski dobija šablon.
+- [x] **P1.ENV.16** PR šablon + issue šabloni (bug, task) + `CODEOWNERS` · Ko: A · Gotovo kad: novi PR automatski dobija šablon. · **Bilješka (2026-11-26):** `.github/PULL_REQUEST_TEMPLATE.md` (prati AGENTS.md §5.3 + DoD), issue forme `bug.yml` i `task.yml` (prazni issuei isključeni), `CODEOWNERS` (`@ZijadLejlic` za sve). GitHub čita šablone sa `main`, pa se "novi PR dobija šablon" provjerava na prvom PR-u nakon mergea.
 - [ ] **P1.ENV.17** `README.md` (pokretanje, komande, deploy, linkovi na prd, tech i AGENTS) · Ko: A · Gotovo kad: novi developer pokreće projekat u ≤ 5 min.
 - [ ] **P1.ENV.18** Content guard: build u produkciji pada ako u sadržaju postoji `TODO(content)`, `lorem` ili `PLACEHOLDER` · Ko: A · Gotovo kad: test s placeholderom ruši `build:prod`.
 
