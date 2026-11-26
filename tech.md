@@ -71,7 +71,7 @@
 | Islands | **Svelte 5** (`@astrojs/svelte`) | Samo za: filter, kalkulator, forme, modal i interaktivni Lab. Ostalo je Astro + vanilla TS |
 | Sadržaj | `@astrojs/mdx`, Content Layer (`src/content.config.ts`) s zod shemama | |
 | 3D/FX | **three.js** (moduli: WebGLRenderer, BufferGeometry, ShaderMaterial, `GPUComputationRenderer` iz `three/addons`, `MeshSurfaceSampler`) | Lijeno učitavanje |
-| GPU tier | `detect-gpu` | Lijeno |
+| GPU tier | `@pmndrs/detect-gpu` (novo ime paketa `detect-gpu`) | Lijeno; benchmark tabele se bundluju iz `node_modules`, ne s unpkg-a (P1.FX.01) |
 | Animacije | **GSAP** (core, ScrollTrigger, SplitText, Flip) | GSAP je od 2025. besplatan, uključujući sve pluginove; licencu provjeriti pri implementaciji |
 | Smooth scroll | **Lenis** | Samo desktop, bez reduced motion |
 | Validacija | **zod** | Dijeljene sheme klijent/server u `src/server/schemas` |
@@ -120,7 +120,7 @@ lejliczijad-portfolio/
 │  ├─ face/ prepare.py  sample.ts
 │  ├─ og/ generate.ts
 │  ├─ pdf/ resume.ts  guide.ts
-│  └─ checks/ content-guard.ts  headings.ts  dist-leaks.ts  overflow-report.ts
+│  └─ checks/ content-guard.ts  content-references.ts  headings.ts  dist-leaks.ts  overflow-report.ts
 ├─ public/
 │  ├─ _headers                # security i cache headeri
 │  ├─ favicon.svg  favicon-32.png  apple-touch-icon.png  icon-192.png  icon-512.png
@@ -240,7 +240,7 @@ lejliczijad-portfolio/
 }
 ```
 
-**Implementacija (P1.CNT.01):** shema je u `src/content/schemas/projects.ts` kao fabrika `projectSchema({ image, clientRef, testimonialRef })`, da je unit testovi (`tests/unit/content/projects-schema.test.ts`) mogu provjeriti bez Astro content layera; `src/content.config.ts` joj daje `image()` i `reference()`. Loader je `glob('*/index.mdx')` (zato `@astrojs/mdx`), a `projectIdFromEntry()` ruši build ako se `slug` i ime foldera razlikuju. Objekti su `z.strictObject` (zod 4 ekvivalent `.strict()`); nepoznato polje daje poruku s imenom polja. Dodatna pravila uz tabelu: kebab-case `slug`; `liveUrl` samo `https://`; `hoverVideo` je putanja iz `public/` (`/….mp4|webm`); `youtubeId` 11 znakova i obavezan za `type: video`; `services`, `stack` i `seo.keywords` neprazni i bez duplikata; `year` ≥ 2000 i ne poslije godine `publishedAt`; `updatedAt` ne prije `publishedAt`. `draft` se filtrira pri čitanju kolekcije (P1.WORK.01), ne u shemi. Reference na `clients` i `testimonials` rade tek kad P1.CNT.02 definiše te kolekcije.
+**Implementacija (P1.CNT.01):** shema je u `src/content/schemas/projects.ts` kao fabrika `projectSchema({ image, clientRef, testimonialRef })`, da je unit testovi (`tests/unit/content/projects-schema.test.ts`) mogu provjeriti bez Astro content layera; `src/content.config.ts` joj daje `image()` i `reference()`. Loader je `glob('*/index.mdx')` (zato `@astrojs/mdx`), a `projectIdFromEntry()` ruši build ako se `slug` i ime foldera razlikuju. Objekti su `z.strictObject` (zod 4 ekvivalent `.strict()`); nepoznato polje daje poruku s imenom polja. Dodatna pravila uz tabelu: kebab-case `slug`; `liveUrl` samo `https://`; `hoverVideo` je putanja iz `public/` (`/….mp4|webm`); `youtubeId` 11 znakova i obavezan za `type: video`; `services`, `stack` i `seo.keywords` neprazni i bez duplikata; `year` ≥ 2000 i ne poslije godine `publishedAt`; `updatedAt` ne prije `publishedAt`. `draft` se filtrira pri čitanju kolekcije (P1.WORK.01), ne u shemi. Reference na `clients` i `testimonials` rade od P1.CNT.02.
 
 ### 5.2 Ostale kolekcije
 - **testimonials:** `{ id, quote (≤ 400), author, role, company, photo?: image, linkedin?: url, projectRef?, videoYoutubeId?, rating?: 1..5, source: 'direct'|'clutch'|'google', date, consent: true }`. Build pada ako je `consent !== true`.
@@ -248,7 +248,15 @@ lejliczijad-portfolio/
 - **services:** `{ slug, title, h1, summary, deliverables[], audience[], process[], tech[], fromPrice?: number, relatedProjects: reference('projects')[], faq: {q,a}[], seo }`
 - **posts:** `{ title, slug, description, publishedAt, updatedAt?, tags[], cover, coverAlt, draft, seo, relatedProjects? }`
 - **faq:** `{ group, items: {q, a, id}[] }`
-- **lab:** `{ slug, title, description, tech[], component: string, cover, publishedAt }`
+- **lab:** `{ slug, title, description, tech[], component: string, cover, coverAlt, publishedAt }`
+
+**Implementacija (P1.CNT.02):** svaka shema je fabrika u `src/content/schemas/<kolekcija>.ts` (kao `projects`), a zajednički dijelovi (`strictObject`, `uniqueList`, `seoSchema`, datumi, `idFromEntry`) su u `shared.ts`; testovi su u `tests/unit/content/`. Loaderi: `testimonials`, `clients` i `faq` su `*.json`, `services` i `lab` su `*.mdx`, `posts` je `*/index.mdx`. ID unosa je ime fajla (ili foldera), a `id`/`slug` u sadržaju mora biti isti, inače build pada s oba imena; `faq` nema svoje ID polje (ime fajla je ID grupe, `group` je naslov). Dodatna pravila uz listu:
+- `testimonials` i `clients`: `consent` mora biti doslovno `true`; `linkedin` je `https://…linkedin.com/in/…`; `rating` cijeli broj 1–5; `url` samo `https://`.
+- `services`: `slug` je jedan od 6 slugova usluga; `process` su koraci `{ title, description }`; `faq` ima 4–6 pitanja i `relatedProjects` 2–3 različita projekta (prd.md §7.4); `fromPrice` je cijeli broj eura > 0; `seo` ima ista ograničenja kao `projects`.
+- `posts`: slug bez datuma (`YYYY-MM`, prd.md §5; sama godina je dozvoljena); `description` ≤ 160 (kartica), meta je `seo.description`; tagovi kebab-case bez duplikata; `updatedAt` ne prije `publishedAt`.
+- `faq`: `items[].id` je kebab-case anchor, jedinstven u grupi.
+- `lab`: `component` je PascalCase ime Svelte komponente; `coverAlt` je dodan jer svaka slika mora imati `alt` (AGENTS.md §6.2).
+- **Nevažeće reference (P1.CNT.05):** Astro (7.4.13) referencu na nepostojeći unos (npr. `relatedProjects: [ghost]`) samo loguje kao `[ERROR] [content] Invalid content reference: …` i ne nudi opciju da to bude greška. Zato integracija `contentReferences()` (`scripts/checks/content-references.ts`, uključena u `astro.config.ts`) tokom sinhronizacije sadržaja bilježi te poruke sa dijeljenog loggera i u `astro:build:start` ruši build (`pnpm build`, `build:prod`, CI) sa spiskom svih nevažećih referenci, prije renderovanja stranica. `astro dev` i `astro sync` samo loguju, da nedovršen unos ne ruši dev server. Test `tests/unit/content-references.test.ts` radi pravi `astro build` nad `tests/fixtures/content-references/`, pa nadogradnja Astra koja promijeni oblik poruke ruši `pnpm check`.
 
 ### 5.3 `src/data/site.ts`
 ```ts
@@ -389,6 +397,17 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 | `static` | nema WebGL2/float tekstura, reduced motion, `saveData`, tier 0 | 0 | 0 | – | – |
 
 **Adaptacija:** FPS se mjeri kao EMA u prozoru od 2 s. Ako je < 50 (desktop) ili < 28 (mobilni), tier pada za jedan nivo. Vraćanje je dozvoljeno najviše jednom, i to nakon 10 s stabilnih > 58 FPS. Override za testiranje: `?fx=high|medium|low|static|off|debug`.
+
+**Implementacija (P1.FX.01):** `src/fx/core/capabilities.ts` (čista odluka, unit testovi u `tests/unit/fx/capabilities.test.ts`) + `src/fx/core/browser-env.ts` (sonde u browseru). Redoslijed odluke:
+1. `?fx=off|static` → `static` bez ijednog WebGL konteksta.
+2. Nema WebGL2, WebGL2 samo uz *major performance caveat* (softverski rendering) ili nema `EXT_color_buffer_float` ni `EXT_color_buffer_half_float` → `static`. Ovo pobjeđuje i forsirani `?fx=high|medium|low`.
+3. Forsirani `?fx=high|medium|low` → taj tier (preskače reduced motion, save-data i detect-gpu).
+4. Reduced motion, pa `navigator.connection.saveData` → `static`, bez sonde GPU-a.
+5. detect-gpu tier 0 (uključujući `BLOCKLISTED` i SwiftShader) → `static`; tier 3/2/1 → `high`/`medium`/`low`; nepoznat GPU (`FALLBACK`, `BENCHMARK_FETCH_FAILED`, greška pri učitavanju) → `medium`.
+6. Mobilni (detect-gpu `isMobile`, inače `(pointer: coarse)`) spušta za jedan nivo, ali ne ispod `low` (tier 3 telefon = `medium`).
+7. `deviceMemory ≤ 4` → najviše `low`; `hardwareConcurrency ≤ 2` → najviše `low`, `≤ 4` → najviše `medium`. Nepoznata vrijednost (Safari, Firefox) ne ograničava.
+
+`?fx=debug` zadržava automatski tier i samo postavlja `debug: true`. Rezultat sadrži i `floatRenderTarget: 'float' | 'half'`, koji simulacija (P1.FX.08) koristi za tip render targeta. Sonda pravi jedan privremeni WebGL2 kontekst i oslobađa ga (`WEBGL_lose_context`) prije nego renderer napravi svoj.
 
 ### 7.3 Vortex simulacija
 - `GPUComputationRenderer`: dvije teksture (pozicija `RGBA32F`, brzina `RGBA32F`), ping-pong.

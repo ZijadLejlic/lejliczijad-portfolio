@@ -7,6 +7,7 @@ import mdx from '@astrojs/mdx';
 import { defineConfig, envField } from 'astro/config';
 import type { AstroIntegration } from 'astro';
 
+import { contentReferences } from './scripts/checks/content-references.ts';
 import { site } from './src/data/site.ts';
 import { DEV_PAGES, shouldServeDevPages } from './src/lib/dev-pages.ts';
 
@@ -47,7 +48,8 @@ export default defineConfig({
   trailingSlash: 'never',
   output: 'static',
   // MDX for content collections (tech.md §2, §5): case studies, posts, services, lab.
-  integrations: [mdx(), devPages],
+  // contentReferences() fails the build on a reference to a missing entry (P1.CNT.05).
+  integrations: [mdx(), contentReferences(), devPages],
   adapter: cloudflare({
     // Images are optimized once at build with Sharp (tech.md §2: astro:assets, AVIF + WebP);
     // the Worker never transforms images, so no Cloudflare Images binding is needed.
