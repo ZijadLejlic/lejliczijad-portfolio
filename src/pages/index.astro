@@ -1,10 +1,12 @@
 ---
 // Minimal placeholder page for the scaffold. Real Home content arrives in P1.HOME.*, and the
-// global styles move into BaseLayout in P1.LAY.01.
+// global style imports move into BaseLayout in P1.LAY.01 (order matters: tokens first).
 import FontPreload from '@/components/layout/FontPreload.astro';
 import { ROBOTS_META } from '@/lib/deploy-env';
 import '@/styles/tokens.css';
 import '@/styles/fonts.css';
+import '@/styles/reset.css';
+import '@/styles/base.css';
 import '@/styles/motion.css';
 ---
 
@@ -24,17 +26,3 @@ import '@/styles/motion.css';
     </main>
   </body>
 </html>
-
-<style>
-  /* Temporary until base styles land (P1.DS.07): shows the self-hosted fonts on the page. */
-  body {
-    font-family: var(--font-body);
-    color: var(--color-text);
-    background: var(--color-bg);
-  }
-
-  h1 {
-    font-family: var(--font-display);
-    font-weight: 500;
-  }
-</style>
