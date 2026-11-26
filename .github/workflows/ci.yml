@@ -1,9 +1,9 @@
 # CI for every PR and every push to main (tech.md §17, P1.ENV.10).
 #
 # Two jobs: `checks` (lint → typecheck → unit → api → build) and `e2e` (Playwright), which only runs
-# once checks pass. Until the PR preview deploy exists (P1.ENV.14), e2e runs against a local
-# `astro preview` of the same build that the Playwright webServer starts; after that, CI sets
-# PLAYWRIGHT_BASE_URL to the preview URL and the local server is skipped.
+# once checks pass. e2e runs against a local `astro preview` of the same build that the Playwright
+# webServer starts. PR previews are deployed by deploy.yml (P1.ENV.14); pointing e2e at them with
+# PLAYWRIGHT_BASE_URL is a separate step, since forks and Dependabot PRs have no preview.
 #
 # Third-party actions are pinned to a full commit SHA (tag in the comment), so a moved or
 # compromised tag cannot change what runs here. Dependabot (P1.ENV.12) bumps them.

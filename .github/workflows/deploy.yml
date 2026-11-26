@@ -1,0 +1,249 @@
+# Deploys to Cloudflare Workers (tech.md §17, P1.ENV.14, ADR-016).
+#
+# - `preview`: every PR from this repo gets a Workers Preview named `pr-<number>` (`wrangler
+#   preview`), with its own vars and bindings from the `previews` block in wrangler.jsonc. Its
+#   workers.dev URL sends `X-Robots-Tag: noindex` (Cloudflare adds it; the job checks), and the build
+#   uses PUBLIC_DEPLOY_ENV=preview, so pages also carry `noindex,nofollow` and no analytics. The URL
+#   is posted as one PR comment that is edited on every push.
+# - `preview-cleanup`: deletes the Preview when the PR is closed or merged.
+# - `production`: every push to main runs `build:prod` (content guard, P1.ENV.18) and
+#   `wrangler deploy`, then smoke-tests `/` and `/api/health`. While any `TODO(content)` is left,
+#   `build:prod` fails and nothing is deployed, on purpose.
+#
+# Secrets (Zijad sets them; agents never see the values): CLOUDFLARE_API_TOKEN (Account → Workers
+# Scripts: Edit and Account Settings: Read, one account only) and CLOUDFLARE_ACCOUNT_ID. PRs from
+# forks and from Dependabot get no repository secrets, so they skip the preview instead of failing.
+#
+# Actions are pinned to a full commit SHA (tag in the comment), like ci.yml.
+
+name: Deploy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  # astro:env requires these at build time (tech.md §9.7). Not secrets.
+  PUBLIC_SITE_URL: https://lejliczijad.com
+  WORKER_NAME: lejliczijad
+
+jobs:
+  preview:
+    name: Preview (Workers Preview)
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    # One preview upload per PR at a time; a newer push replaces the one in progress.
+    concurrency:
+      group: deploy-preview-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    env:
+      PUBLIC_DEPLOY_ENV: preview
+      PREVIEW_NAME: pr-${{ github.event.pull_request.number }}
+      # GITHUB_SHA on a PR is GitHub's temporary merge commit; show the branch head instead.
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Check Cloudflare secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must be set as repository secrets (README, Deploy)."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Plain `build`, not `build:prod`: content-pending work must still be reviewable on a preview.
+      - name: Build
+        run: pnpm build
+
+      # Wrangler reads dist/server/wrangler.json through .wrangler/deploy/config.json. The --json
+      # shape is still beta, so the URL is taken from the output text: the stable Preview URL
+      # (pr-<n>-lejliczijad.…workers.dev), not the per-deployment one. The output holds no secrets.
+      - name: Upload Preview
+        id: preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          status=0
+          output="$(pnpm exec wrangler preview --name "$PREVIEW_NAME" \
+            --message "PR #${{ github.event.pull_request.number }} @ ${HEAD_SHA::7}" --json)" || status=$?
+          echo "::group::wrangler preview output"
+          printf '%s\n' "$output"
+          echo "::endgroup::"
+          if [ "$status" -ne 0 ]; then
+            echo "::error::wrangler preview failed (exit $status)."
+            exit "$status"
+          fi
+          url="$(printf '%s\n' "$output" \
+            | grep -Eo "https://${PREVIEW_NAME}-${WORKER_NAME}\.[a-z0-9-]+\.workers\.dev" | head -n1)" || true
+          if [ -z "$url" ]; then
+            echo "::error::Could not read the Preview URL from wrangler output."
+            printf '%s\n' "$output"
+            exit 1
+          fi
+          echo "url=${url%/}" >> "$GITHUB_OUTPUT"
+
+      # The Worker must answer and the static pages must not be indexable.
+      - name: Smoke test Preview
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        run: |
+          set -o pipefail
+          for attempt in 1 2 3 4 5; do
+            if curl --fail --silent --show-error "$PREVIEW_URL/api/health" -o health.json; then break; fi
+            [ "$attempt" = 5 ] && exit 1
+            sleep 5
+          done
+          jq -e '.ok == true' health.json
+          headers="$(curl --fail --silent --show-error --head "$PREVIEW_URL/")"
+          printf '%s\n' "$headers" | grep -iq '^x-robots-tag:.*noindex' \
+            || { echo "::error::Preview / is missing X-Robots-Tag: noindex"; printf '%s\n' "$headers"; exit 1; }
+          curl --fail --silent --show-error "$PREVIEW_URL/" | grep -q 'name="robots" content="noindex,nofollow"' \
+            || { echo "::error::Preview / is missing the noindex robots meta"; exit 1; }
+
+      - name: Comment Preview URL on the PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          body="$(printf '%s\n' \
+            '### Preview' \
+            '' \
+            "${PREVIEW_URL}" \
+            '' \
+            "Commit \`${HEAD_SHA::7}\` · Workers Preview \`${PREVIEW_NAME}\` · \`noindex\` · deleted when this PR closes.")"
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$body" --edit-last --create-if-none
+
+  preview-cleanup:
+    name: Delete Preview
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: deploy-preview-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # A PR whose preview never uploaded has nothing to delete; that is not a failure.
+      - name: Delete Preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PREVIEW_NAME: pr-${{ github.event.pull_request.number }}
+        run: |
+          pnpm exec wrangler preview delete --worker-name "$WORKER_NAME" --name "$PREVIEW_NAME" --skip-confirmation \
+            || echo "::warning::Preview $PREVIEW_NAME was not deleted (it may not exist)."
+
+  production:
+    name: Production (wrangler deploy)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: production
+    # Deploys run in merge order and are never cancelled halfway.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    env:
+      PUBLIC_DEPLOY_ENV: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Content guard first: no TODO(content), lorem or PLACEHOLDER reaches production (P1.ENV.18).
+      - name: Build (production)
+        run: pnpm build:prod
+
+      - name: Deploy
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -o pipefail
+          pnpm exec wrangler deploy --message "main @ ${GITHUB_SHA::7}" | tee deploy.log
+          url="$(grep -Eo "https://${WORKER_NAME}\.[a-z0-9-]+\.workers\.dev" deploy.log | head -n1)"
+          echo "url=${url}" >> "$GITHUB_OUTPUT"
+
+      # Until the custom domain exists (P1.LAUNCH.01) the workers.dev URL is production.
+      - name: Smoke test production
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          if [ -z "$BASE_URL" ]; then
+            echo "::error::Could not read the production URL from wrangler deploy output."
+            exit 1
+          fi
+          for attempt in 1 2 3 4 5; do
+            if curl --fail --silent --show-error "$BASE_URL/api/health" -o health.json; then break; fi
+            [ "$attempt" = 5 ] && exit 1
+            sleep 5
+          done
+          jq -e --arg sha "$GITHUB_SHA" '.ok == true and .version == $sha' health.json
+          curl --fail --silent --show-error --output /dev/null "$BASE_URL/"

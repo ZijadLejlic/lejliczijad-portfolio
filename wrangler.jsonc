@@ -25,6 +25,15 @@
     "CONTACT_TO": "support@lejliczijad.com",
     "MAIL_FROM": "Zijad Lejlić <support@lejliczijad.com>",
   },
+  // PR Previews (`wrangler preview`, P1.ENV.14, ADR-016) do not inherit production settings, so
+  // vars and every later binding must be repeated here. Bind preview-only resources (a separate KV
+  // namespace, rate limit namespace_id, R2 bucket) so a PR can never touch production data.
+  "previews": {
+    "vars": {
+      "CONTACT_TO": "support@lejliczijad.com",
+      "MAIL_FROM": "Zijad Lejlić <support@lejliczijad.com>",
+    },
+  },
   // Workers Logs with 100 % sampling; only /api/* runs in the Worker (tech.md §19).
   "observability": {
     "enabled": true,

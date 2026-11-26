@@ -729,7 +729,7 @@ Privacy Policy mora navesti svaki red iz ove tabele. Dodavanje reda zahtijeva AD
 | Okruženje | URL | Trigger | Indeksiranje | Analitika |
 |---|---|---|---|---|
 | development | `localhost:4321` | `pnpm dev` | – | ne |
-| preview | Workers preview URL po verziji | svaki PR (`wrangler versions upload`) | `noindex` | ne |
+| preview | `https://pr-<broj>-lejliczijad.<subdomain>.workers.dev` | svaki PR (`wrangler preview`, Workers Previews, [ADR-016](docs/adr/016-workers-previews.md)) | `noindex` (header + meta) | ne |
 | production | `https://lejliczijad.com` | merge na `main` (`wrangler deploy`) | da | da |
 
 **Workflowi:**
@@ -737,9 +737,10 @@ Privacy Policy mora navesti svaki red iz ove tabele. Dodavanje reda zahtijeva AD
 - `lighthouse.yml` (PR): LHCI protiv preview URL-a.
 - `security.yml` (PR + push na `main` + sedmično + ručno): gitleaks (CLI s provjerom SHA-256, cijela historija), `pnpm audit --audit-level=high`, CodeQL (JS/TS, `security-extended`). CodeQL se pokreće samo uz repo varijablu `CODEQL_ENABLED=true`, jer code scanning na privatnom repou traži GitHub Code Security (P1.ENV.11).
 - `zap.yml` (sedmično + ručno): ZAP baseline na produkciji, API scan na preview okruženju.
-- `deploy.yml` (push na `main`): build → `wrangler deploy` → smoke test (`/`, `/work`, `/api/health`) → IndexNow ping.
+- `deploy.yml` (P1.ENV.14): na PR `build` → `wrangler preview --name pr-<broj>` → provjera `/api/health`, `X-Robots-Tag: noindex` i robots meta → jedan PR komentar s URL-om (ažurira se na svaki push); na zatvaranje PR-a `wrangler preview delete`. Na push u `main`: `build:prod` (content guard) → `wrangler deploy` → smoke test (`/`, `/api/health` s tačnim SHA-om). Dok postoji `TODO(content)`, produkcijski job namjerno pada i ništa se ne deploya (Zijadova odluka). `/work` se dodaje u smoke test kad stranica postoji, a IndexNow ping u P2.BLOG.09. PR-ovi iz forkova i Dependabot PR-ovi preskaču preview (nemaju secrete).
+- **Previews i bindingi:** Previews ne nasljeđuju produkcijska podešavanja. Blok `previews` u `wrangler.jsonc` ponavlja vars, a svaki budući binding (KV, rate limit, R2) dobija **odvojen** preview resurs, da PR nikad ne dira produkcijske podatke (ADR-016).
 - **Rollback:** `wrangler rollback` na prethodnu verziju (opisano u `docs/runbook.md`).
-- **Tajne u GitHubu:** `CLOUDFLARE_API_TOKEN` (samo Workers Scripts:Edit + Account Read za jedan nalog), `CLOUDFLARE_ACCOUNT_ID`.
+- **Tajne u GitHubu:** `CLOUDFLARE_API_TOKEN` (Account → Workers Scripts: Edit + Account → Account Settings: Read, samo za jedan nalog; postavlja Zijad, upute u README), `CLOUDFLARE_ACCOUNT_ID`.
 
 ---
 
@@ -796,5 +797,6 @@ Format: `ADR-NNN · Naslov · Status (Accepted/Superseded) · Datum · Kontekst 
 | ADR-013 | Clash Display i Satoshi se self-hostuju bez subsettinga (ITF FFL v2.0); JetBrains Mono (OFL) se smije subsetovati ([docs/adr/013-fonts-no-subset.md](docs/adr/013-fonts-no-subset.md)) | Accepted |
 | ADR-014 | Preload Clash Display 500 (font hero H1) + Satoshi 400 umjesto Clash 600 ([docs/adr/014-preload-clash-500.md](docs/adr/014-preload-clash-500.md)) | Superseded (ADR-015) |
 | ADR-015 | Hero H1 i svi H1 u Clash Display 600; preload Clash Display 600 + Satoshi 400 ([docs/adr/015-preload-clash-600.md](docs/adr/015-preload-clash-600.md)) | Accepted |
+| ADR-016 | PR preview preko Workers Previews (`wrangler preview`, `pr-<broj>`) umjesto `wrangler versions upload`; preview ima odvojene vars i bindinge ([docs/adr/016-workers-previews.md](docs/adr/016-workers-previews.md)) | Accepted |
 
 Nove ADR-ove agent dodaje u `docs/adr/NNN-naslov.md`, a ovu tabelu ažurira u istom PR-u.

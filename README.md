@@ -115,26 +115,47 @@ GitHub Actions on every PR and push to `main`:
 
 ## Deploy
 
-The Worker `lejliczijad` is configured in [`wrangler.jsonc`](wrangler.jsonc) (P1.ENV.13); the deploy
-workflow is not set up yet (P1.ENV.14). `astro build` writes the deployable config to
-`dist/server/wrangler.json`, and wrangler finds it on its own, so after a build:
-
-```bash
-pnpm exec wrangler deploy --dry-run
-```
-
-checks the bundle and bindings without touching Cloudflare. A real deploy needs Zijad's Cloudflare
-login and goes through CI only. Pages in `dist/client` are served as static assets; the Worker runs
-only for `/api/*` (`GET /api/health` returns `{ ok, version }`).
-
-The target, from [tech.md §17](tech.md#17-cicd-i-okruženja):
+[`deploy.yml`](.github/workflows/deploy.yml) deploys the Worker `lejliczijad`
+([`wrangler.jsonc`](wrangler.jsonc)) to Cloudflare (tech.md §17,
+[ADR-016](docs/adr/016-workers-previews.md)):
 
 | Environment | URL | Trigger |
 | --- | --- | --- |
 | development | `localhost:4321` | `pnpm dev` |
-| preview | Workers preview URL per PR, `noindex` | every PR (`wrangler versions upload`) |
-| production | `https://lejliczijad.com` | merge to `main` (`wrangler deploy`) |
+| preview | `https://pr-<number>-lejliczijad.<subdomain>.workers.dev`, `noindex` | every PR (`wrangler preview`), deleted when the PR closes |
+| production | workers.dev until P1.LAUNCH.01, then `https://lejliczijad.com` | push to `main` (`build:prod` → `wrangler deploy`) |
 
-The deploy workflow comes in P1.ENV.14. Production secrets are
-set by Zijad with `wrangler secret put`; they are never committed or shared with agents. Rollback
-will be documented in `docs/runbook.md` (P3.DOC.03).
+- Each PR gets one bot comment with its preview URL, updated on every push. The job checks
+  `/api/health`, `X-Robots-Tag: noindex` and the robots meta before commenting.
+- Previews do not inherit production settings: repeat vars under `previews` in `wrangler.jsonc`, and
+  give every new binding (KV, rate limit, R2) a separate preview resource.
+- Production uses `build:prod`, so while any `TODO(content)` is left the job fails and nothing is
+  deployed. That is intended.
+- PRs from forks and from Dependabot skip the preview (no access to repository secrets).
+
+Locally, after a build, `pnpm exec wrangler deploy --dry-run` checks the bundle and bindings without
+touching Cloudflare. Real deploys go through CI only.
+
+### One-time setup (Zijad)
+
+1. Cloudflare dashboard → My Profile → API Tokens → Create Token → Custom token:
+   - Permissions: **Account → Workers Scripts → Edit** and **Account → Account Settings → Read**
+   - Account Resources: **Include → your account only**; no zone permissions; optionally a TTL
+2. Add both values as repository secrets (the token is pasted only into the prompt):
+
+```bash
+gh secret set CLOUDFLARE_API_TOKEN
+```
+
+```bash
+gh secret set CLOUDFLARE_ACCOUNT_ID
+```
+
+The account ID is on the Workers & Pages overview page.
+
+Cloudflare only turns on workers.dev and Preview URLs after the Worker's first `wrangler deploy`.
+That bootstrap was done once by hand on 2026-11-26 with a `noindex` build
+(`PUBLIC_DEPLOY_ENV=preview`), so `https://lejliczijad.lejliczijad-79f.workers.dev` shows that build
+until the first successful production deploy from CI. Production Worker secrets are set by Zijad
+with `wrangler secret put` (preview ones with `wrangler preview secret put`); they are never
+committed or shared with agents. Rollback will be documented in `docs/runbook.md` (P3.DOC.03).
