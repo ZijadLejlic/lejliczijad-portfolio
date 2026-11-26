@@ -1,0 +1,86 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Inline group that wraps onto new lines (P1.DS.08): tags, buttons, links, meta rows. The same
+// gap applies between items and between wrapped lines.
+import type { HTMLAttributes } from 'astro/types';
+
+import '@/styles/layout.css';
+
+import { listRole, type BlockTag, type SpaceStep } from './layout';
+
+type ClusterJustify = 'start' | 'center' | 'end' | 'between';
+type ClusterAlign = 'center' | 'start' | 'end' | 'baseline' | 'stretch';
+
+interface Props extends HTMLAttributes<'div'> {
+  as?: BlockTag;
+  gap?: SpaceStep;
+  justify?: ClusterJustify;
+  align?: ClusterAlign;
+}
+
+const {
+  as: Tag = 'div',
+  gap = 3,
+  justify = 'start',
+  align = 'center',
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<Tag
+  class:list={['cluster', `cluster--justify-${justify}`, `cluster--align-${align}`, className]}
+  data-layout-gap={gap}
+  role={listRole(Tag)}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--layout-gap);
+  }
+
+  .cluster > :global(*) {
+    min-width: 0;
+  }
+
+  .cluster--justify-start {
+    justify-content: flex-start;
+  }
+
+  .cluster--justify-center {
+    justify-content: center;
+  }
+
+  .cluster--justify-end {
+    justify-content: flex-end;
+  }
+
+  .cluster--justify-between {
+    justify-content: space-between;
+  }
+
+  .cluster--align-center {
+    align-items: center;
+  }
+
+  .cluster--align-start {
+    align-items: flex-start;
+  }
+
+  .cluster--align-end {
+    align-items: flex-end;
+  }
+
+  .cluster--align-baseline {
+    align-items: baseline;
+  }
+
+  .cluster--align-stretch {
+    align-items: stretch;
+  }
+</style>

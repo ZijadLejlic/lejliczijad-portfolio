@@ -1,0 +1,54 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Vertical flow with one gap between children (P1.DS.08). Spacing between siblings belongs to
+// the Stack, not to margins on the children.
+import type { HTMLAttributes } from 'astro/types';
+
+import '@/styles/layout.css';
+
+import { listRole, type BlockTag, type SpaceStep } from './layout';
+
+type StackAlign = 'stretch' | 'start' | 'center' | 'end';
+
+interface Props extends HTMLAttributes<'div'> {
+  as?: BlockTag;
+  gap?: SpaceStep;
+  align?: StackAlign;
+}
+
+const { as: Tag = 'div', gap = 5, align = 'stretch', class: className, ...rest } = Astro.props;
+---
+
+<Tag
+  class:list={['stack', `stack--${align}`, className]}
+  data-layout-gap={gap}
+  role={listRole(Tag)}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-gap);
+  }
+
+  /* Children may shrink below their content width instead of pushing past the viewport. */
+  .stack > :global(*) {
+    min-width: 0;
+  }
+
+  .stack--start {
+    align-items: flex-start;
+  }
+
+  .stack--center {
+    align-items: center;
+  }
+
+  .stack--end {
+    align-items: flex-end;
+  }
+</style>

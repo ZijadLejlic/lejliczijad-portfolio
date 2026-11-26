@@ -1,0 +1,55 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Vertical page section (P1.DS.08): the shared section rhythm (--section-padding-block) and, by
+// default, a Container inside. Name landmark sections with `aria-labelledby` pointing at their
+// heading; an unnamed <section> is not exposed as a region.
+import type { HTMLAttributes } from 'astro/types';
+
+import Container from './Container.astro';
+import type { ContainerWidth } from './layout';
+
+type SectionTag = 'section' | 'div' | 'article' | 'aside' | 'footer';
+type SectionSpacing = 'default' | 'compact' | 'none';
+
+interface Props extends HTMLAttributes<'section'> {
+  as?: SectionTag;
+  spacing?: SectionSpacing;
+  /** Wrap the content in a Container (default). Turn off for full-bleed content. */
+  contained?: boolean;
+  width?: ContainerWidth;
+}
+
+const {
+  as: Tag = 'section',
+  spacing = 'default',
+  contained = true,
+  width = 'default',
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<Tag class:list={['section', `section--${spacing}`, className]} {...rest}>
+  {contained ? (
+    <Container width={width}>
+      <slot />
+    </Container>
+  ) : (
+    <slot />
+  )}
+</Tag>
+
+<style>
+  .section--default {
+    padding-block: var(--section-padding-block);
+  }
+
+  /* Half the rhythm, for sections that follow a closely related one (e.g. a logo strip). */
+  .section--compact {
+    padding-block: calc(var(--section-padding-block) / 2);
+  }
+
+  .section--none {
+    padding-block: 0;
+  }
+</style>

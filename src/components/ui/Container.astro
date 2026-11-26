@@ -1,0 +1,33 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Page column (P1.DS.08): centered, capped at --container-max, with the fluid gutter on both
+// sides. `width="prose"` narrows it to a readable line length for long text.
+import type { HTMLAttributes } from 'astro/types';
+
+import type { BlockTag, ContainerWidth } from './layout';
+
+interface Props extends HTMLAttributes<'div'> {
+  as?: BlockTag;
+  width?: ContainerWidth;
+}
+
+const { as: Tag = 'div', width = 'default', class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={['container', `container--${width}`, className]} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .container {
+    width: 100%;
+    max-width: var(--container-max);
+    padding-inline: var(--gutter);
+    margin-inline: auto;
+  }
+
+  /* The gutter sits inside the max-width (border-box), so add it back for the text column. */
+  .container--prose {
+    max-width: calc(var(--measure-prose) + 2 * var(--gutter));
+  }
+</style>
