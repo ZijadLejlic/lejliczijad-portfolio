@@ -1,12 +1,37 @@
+import { execFileSync } from 'node:child_process';
+
+import cloudflare from '@astrojs/cloudflare';
 import { defineConfig, envField } from 'astro/config';
 
-// Rendering baseline from tech.md §4. The Cloudflare adapter is added in P1.ENV.13.
+// Commit shown by /api/health (tech.md §9.6). CI provides GITHUB_SHA; locally ask git.
+function appVersion(): string {
+  const sha = process.env.GITHUB_SHA;
+  if (sha) return sha.slice(0, 12);
+  try {
+    return execFileSync('git', ['rev-parse', '--short=12', 'HEAD'], { encoding: 'utf8' }).trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
+// Rendering baseline from tech.md §4. Worker settings live in wrangler.jsonc (P1.ENV.13).
 export default defineConfig({
   site: 'https://lejliczijad.com',
   trailingSlash: 'never',
   output: 'static',
+  adapter: cloudflare({
+    // Images are optimized once at build with Sharp (tech.md §2: astro:assets, AVIF + WebP);
+    // the Worker never transforms images, so no Cloudflare Images binding is needed.
+    imageService: 'compile',
+  }),
+  // No sessions (tech.md §1: no database, no sessions). Without this the adapter adds and
+  // auto-provisions a SESSION KV namespace on deploy.
+  session: false,
   build: {
     format: 'file',
+  },
+  vite: {
+    define: { __APP_VERSION__: JSON.stringify(appVersion()) },
   },
   prefetch: {
     prefetchAll: false,

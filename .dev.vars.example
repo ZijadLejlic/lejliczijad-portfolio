@@ -17,6 +17,6 @@ LEAD_TOKEN_SECRET=
 #   openssl rand -base64 32
 IP_HASH_SALT=
 
-# Plain Worker vars (not secret). In production they live in wrangler.jsonc `vars` (P1.ENV.13).
+# Plain Worker vars (not secret). In production they come from wrangler.jsonc `vars`.
 CONTACT_TO=support@lejliczijad.com
 MAIL_FROM="Zijad Lejlić <support@lejliczijad.com>"

@@ -32,7 +32,7 @@ Umami ID), so the copy works as is. Never put a secret in `.env`: every `PUBLIC_
 the client bundle.
 
 `.dev.vars.example` is the template for Worker runtime variables (`cp .dev.vars.example .dev.vars`).
-Nothing uses it yet; it is needed once the Worker and API land (P1.ENV.13, P1.CONT.*).
+`pnpm dev` and `pnpm preview` run the Worker in workerd and read it; the API needs it from P1.CONT.*.
 
 ### Common setup problems
 
@@ -51,7 +51,7 @@ Nothing uses it yet; it is needed once the Worker and API land (P1.ENV.13, P1.CO
 | `pnpm build` | Build into `dist/` (no content guard; used by CI and previews) |
 | `pnpm build:prod` | Content guard, then `astro build`; fails on `TODO(content)`, `lorem` or `PLACEHOLDER` in `src/` or `public/` |
 | `pnpm check:content` | Content guard on its own |
-| `pnpm preview` | Serves `dist/` locally (`astro preview`; becomes `wrangler dev` in P1.ENV.13) |
+| `pnpm preview` | Serves `dist/` locally in workerd (`astro preview` through the Cloudflare adapter) |
 | `pnpm check` | `lint` + `lint:css` + `typecheck` + `test:unit`; run before every PR |
 | `pnpm lint` / `pnpm lint:fix` | ESLint (0 warnings allowed) |
 | `pnpm lint:css` | Stylelint (tokens only, no hard-coded colors) |
@@ -115,7 +115,19 @@ GitHub Actions on every PR and push to `main`:
 
 ## Deploy
 
-Not set up yet. The target, from [tech.md §17](tech.md#17-cicd-i-okruženja):
+The Worker `lejliczijad` is configured in [`wrangler.jsonc`](wrangler.jsonc) (P1.ENV.13); the deploy
+workflow is not set up yet (P1.ENV.14). `astro build` writes the deployable config to
+`dist/server/wrangler.json`, and wrangler finds it on its own, so after a build:
+
+```bash
+pnpm exec wrangler deploy --dry-run
+```
+
+checks the bundle and bindings without touching Cloudflare. A real deploy needs Zijad's Cloudflare
+login and goes through CI only. Pages in `dist/client` are served as static assets; the Worker runs
+only for `/api/*` (`GET /api/health` returns `{ ok, version }`).
+
+The target, from [tech.md §17](tech.md#17-cicd-i-okruženja):
 
 | Environment | URL | Trigger |
 | --- | --- | --- |
@@ -123,6 +135,6 @@ Not set up yet. The target, from [tech.md §17](tech.md#17-cicd-i-okruženja):
 | preview | Workers preview URL per PR, `noindex` | every PR (`wrangler versions upload`) |
 | production | `https://lejliczijad.com` | merge to `main` (`wrangler deploy`) |
 
-The Worker and adapter come in P1.ENV.13, the deploy workflow in P1.ENV.14. Production secrets are
+The deploy workflow comes in P1.ENV.14. Production secrets are
 set by Zijad with `wrangler secret put`; they are never committed or shared with agents. Rollback
 will be documented in `docs/runbook.md` (P3.DOC.03).

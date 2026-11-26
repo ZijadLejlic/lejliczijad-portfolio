@@ -1,0 +1,38 @@
+// Cloudflare Worker "lejliczijad" (tech.md §1, §4, §17; ADR-002: Workers + Static Assets).
+// Every page is prerendered into dist/client and served as a static asset; the Worker only runs
+// for /api/*. `astro build` reads this file and writes the deployable config to
+// dist/server/wrangler.json, which `wrangler deploy` picks up through .wrangler/deploy/config.json.
+// Bindings for later tasks (RL_FORMS, RL_DOWNLOAD, RL_DAILY, GUIDES) are added with those tasks.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "lejliczijad",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  // Pinned so runtime behavior only changes on purpose. vitest.config.ts reads the same value for
+  // the api test project, so it must not be newer than the workerd bundled with
+  // @cloudflare/vitest-plugin (wrangler's workerd is usually a few days newer).
+  "compatibility_date": "2026-11-17",
+  "assets": {
+    "binding": "ASSETS",
+    // Pages are built as /about.html (build.format: 'file'); serve them at /about and 307 /about/
+    // to /about. The permanent 301 for trailing slashes is P1.SEO.06.
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page",
+    // Static assets never invoke the Worker, so they cost nothing and cannot hit Worker limits.
+    "run_worker_first": ["/api/*"],
+  },
+  // Plain runtime vars (tech.md §9.7). Secrets are set by Zijad with `wrangler secret put`.
+  "vars": {
+    "CONTACT_TO": "support@lejliczijad.com",
+    "MAIL_FROM": "Zijad Lejlić <support@lejliczijad.com>",
+  },
+  // Workers Logs with 100 % sampling; only /api/* runs in the Worker (tech.md §19).
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+  },
+  // No source maps in production (tech.md §13.1).
+  "upload_source_maps": false,
+  // workers.dev stays on for PR previews (P1.ENV.14); the custom domain is added in P1.LAUNCH.01.
+  "workers_dev": true,
+  "preview_urls": true,
+}
