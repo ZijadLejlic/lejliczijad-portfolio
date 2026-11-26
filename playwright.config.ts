@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import { site } from './src/data/site.ts';
+
 // Playwright setup (tech.md §16). One config serves e2e, visual, a11y and overflow specs; each
 // lives in its own folder under tests/ and the npm scripts pick the folder.
 //
@@ -33,7 +35,7 @@ export default defineConfig({
     reducedMotion: 'reduce',
     colorScheme: 'dark',
     locale: 'en-US',
-    timezoneId: 'Europe/Sarajevo',
+    timezoneId: site.timezone,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },

@@ -3,6 +3,8 @@ import { execFileSync } from 'node:child_process';
 import cloudflare from '@astrojs/cloudflare';
 import { defineConfig, envField } from 'astro/config';
 
+import { site } from './src/data/site.ts';
+
 // Commit shown by /api/health (tech.md §9.6). CI provides GITHUB_SHA; locally ask git.
 function appVersion(): string {
   const sha = process.env.GITHUB_SHA;
@@ -16,7 +18,7 @@ function appVersion(): string {
 
 // Rendering baseline from tech.md §4. Worker settings live in wrangler.jsonc (P1.ENV.13).
 export default defineConfig({
-  site: 'https://lejliczijad.com',
+  site: site.url,
   trailingSlash: 'never',
   output: 'static',
   adapter: cloudflare({
