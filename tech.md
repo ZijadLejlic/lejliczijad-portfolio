@@ -461,6 +461,8 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 | Gubitak konteksta | Poster se vrati; pokušaj obnove 1× |
 | `?fx=off` (testovi) | Kao `static`, deterministički za screenshotove |
 
+**Renderer (P1.FX.05):** `src/fx/core/renderer.ts`. `initRenderer({ canvas, quality })` vraća jedini three.js `WebGLRenderer` sajta (isti canvas → ista instanca, novi tier se primijeni; drugi canvas → stari se oslobodi). DPR cap po tieru: high 2 · medium 1.5 · low 1 (`cappedPixelRatio`). Veličina ide iz `ResizeObserver`a na canvasu (CSS px, `setSize(w, h, false)`) i iz promjene `devicePixelRatio` (media query `resolution`); nulta veličina se preskače. Kontekst: `lost` → `restored` je dozvoljen jednom (`MAX_CONTEXT_RESTORES = 1`); drugi gubitak ili obnova koja ne stigne za 30 s daje `failed` (poster ostaje, vlasnik zove `dispose()`). Događaji `resize`, `lost`, `restored`, `failed`; na `restored` vlasnici ponovo grade samo GPU resurse (render targeti, stanje simulacije), three sam ponovo uploaduje geometrije i teksture. `dispose()` ne zove `forceContextLoss()`, jer canvas preživljava navigaciju. Ručna i E2E provjera: dev stranica `/_dev/fx` (`?fx=high|medium|low`) i `tests/e2e/fx-renderer.spec.ts`.
+
 ---
 
 ## 8. Animacije i interakcije
