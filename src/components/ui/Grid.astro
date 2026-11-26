@@ -1,0 +1,57 @@
+---
+/* eslint-disable astro/no-unused-css-selector -- the root is a dynamic <Tag>, whose classes the rule cannot see; tests/unit/components covers them. */
+// Responsive grid without breakpoints (P1.DS.08): as many columns as fit, each at least the
+// `min` width, all equal. On a screen narrower than `min` the single column takes 100%, so a grid
+// never causes horizontal scroll.
+import type { HTMLAttributes } from 'astro/types';
+
+import '@/styles/layout.css';
+
+import { listRole, type BlockTag, type SpaceStep } from './layout';
+
+type GridMin = 'sm' | 'md' | 'lg';
+
+interface Props extends HTMLAttributes<'div'> {
+  as?: BlockTag;
+  /** Smallest column width: --grid-min-sm | md | lg in tokens.css. */
+  min?: GridMin;
+  gap?: SpaceStep;
+}
+
+const { as: Tag = 'div', min = 'md', gap = 5, class: className, ...rest } = Astro.props;
+---
+
+<Tag
+  class:list={['grid', `grid--${min}`, className]}
+  data-layout-gap={gap}
+  role={listRole(Tag)}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .grid {
+    display: grid;
+
+    /* auto-fill keeps columns the same width when a row is not full (one card stays card-sized). */
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--grid-min), 100%), 1fr));
+    gap: var(--layout-gap);
+  }
+
+  .grid > :global(*) {
+    min-width: 0;
+  }
+
+  .grid--sm {
+    --grid-min: var(--grid-min-sm);
+  }
+
+  .grid--md {
+    --grid-min: var(--grid-min-md);
+  }
+
+  .grid--lg {
+    --grid-min: var(--grid-min-lg);
+  }
+</style>
