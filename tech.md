@@ -273,21 +273,22 @@ export const site = {
 | `--color-bg` | `#050507` | Pozadina | – |
 | `--color-surface-1` | `#0B0B0F` | Kartice | – |
 | `--color-surface-2` | `#13131A` | Hover, modal | – |
-| `--color-border` | `rgb(255 255 255 / 0.08)` | Linije | – |
-| `--color-border-strong` | `rgb(255 255 255 / 0.16)` | Inputi | – |
-| `--color-text` | `#F4F4F6` | Primarni tekst | ~18:1 |
-| `--color-text-muted` | `#A1A1AA` | Sekundarni tekst | ~7,9:1 |
-| `--color-text-subtle` | `#7C7C86` | Meta, labele | ~4,9:1 (minimum za mali tekst) |
-| `--color-accent` | `#4D7CFF` | Linkovi, fokus, akcenti | ~5,5:1 |
-| `--color-accent-hover` | `#6B93FF` | Hover | ~6,9:1 |
-| `--color-accent-pressed` | `#3A66E6` | Active | – |
-| `--color-on-accent` | `#050507` | **Tekst na akcentnom dugmetu** | ~5,5:1 na `#4D7CFF` |
-| `--color-success` | `#22C55E` | Tačka dostupnosti | – |
-| `--color-danger` | `#F87171` | Greške u formi | ~7:1 |
-| `--color-focus` | `#4D7CFF` | Fokus prsten (2 px + 2 px offset) | ≥ 3:1 prema okolini |
+| `--color-border` | `rgb(255 255 255 / 8%)` | Linije (dekorativno) | 1,16:1 |
+| `--color-border-strong` | `rgb(255 255 255 / 16%)` | Jače linije (dekorativno; nije dovoljno kao jedina granica inputa) | 1,48:1 |
+| `--color-text` | `#F4F4F6` | Primarni tekst | 18,54:1 |
+| `--color-text-muted` | `#A1A1AA` | Sekundarni tekst | 7,95:1 |
+| `--color-text-subtle` | `#7C7C86` | Meta, labele (ne na `surface-2`: 4,48:1; ne iznad canvasa) | 4,93:1 |
+| `--color-accent` | `#4D7CFF` | Linkovi, fokus, akcenti | 5,47:1 |
+| `--color-accent-hover` | `#6B93FF` | Hover | 7,02:1 |
+| `--color-accent-pressed` | `#4570F5` | Active (P1.DS.02, Zijadova odluka 2026-11-26; `#3A66E6` je imao 4,10:1 s tamnim tekstom) | 4,74:1 |
+| `--color-on-accent` | `#050507` | **Tekst na akcentnom dugmetu** | 5,47:1 na accent · 7,02:1 na hover · 4,74:1 na pressed |
+| `--color-success` | `#22C55E` | Tačka dostupnosti | 8,94:1 |
+| `--color-danger` | `#F87171` | Greške u formi | 7,36:1 |
+| `--color-focus` | `#4D7CFF` | Fokus prsten (2 px + 2 px offset) | 5,47:1 |
 
-> **Važno:** bijeli tekst na `#4D7CFF` ima kontrast samo ~3,7:1 i **ne prolazi AA** za normalan tekst. Primarno dugme zato koristi tamni tekst (`--color-on-accent`).
+> **Važno:** bijeli tekst na `#4D7CFF` ima kontrast samo 3,72:1 i **ne prolazi AA** za normalan tekst. Primarno dugme zato koristi tamni tekst (`--color-on-accent`).
 > Kontrast se mjeri i na **najsvjetlijem dijelu vortexa** iza teksta (P1.FX.12).
+> Konačne vrijednosti (P1.DS.02) su u `src/styles/tokens.css`. Svi parovi na sve tri površine i pravila upotrebe su u [docs/design/contrast.md](docs/design/contrast.md); test `tests/unit/styles/tokens-contrast.test.ts` ruši `pnpm check` ako dozvoljeni par padne ispod praga.
 
 ### 6.2 Tipografija
 | Token | Font | Veličina (clamp) | Line-height | Tracking |

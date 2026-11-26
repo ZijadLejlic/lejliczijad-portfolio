@@ -19,6 +19,9 @@ export default getViteConfig({
           name: 'unit',
           environment: 'node',
           include: ['tests/unit/**/*.test.ts'],
+          // Vitest stubs CSS to an empty string by default, even with `?raw`. Token tests
+          // (tests/unit/styles) read the real source of src/styles, so let those through.
+          css: { include: [/src\/styles\/.+\.css/] },
         },
       },
       defineProject({

@@ -1,0 +1,44 @@
+/*
+ * Design tokens (tech.md §6). The only file where literal colors are allowed (.stylelintrc.json).
+ * Contrast of every text pair is documented in docs/design/contrast.md and enforced by
+ * tests/unit/styles/contrast.test.ts, so a change here that breaks AA fails `pnpm check`.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* --- Color (P1.DS.02) ------------------------------------------------------------------ */
+
+  /* Surfaces */
+  --color-bg: #050507;
+  --color-surface-1: #0b0b0f;
+  --color-surface-2: #13131a;
+
+  /* Lines. Decorative only: neither reaches 3:1, so they never mark an input on their own. */
+  --color-border: rgb(255 255 255 / 8%);
+  --color-border-strong: rgb(255 255 255 / 16%);
+
+  /* Text */
+  --color-text: #f4f4f6;
+  --color-text-muted: #a1a1aa;
+
+  /* 4.93:1 on bg but 4.48:1 on surface-2: never use it on surface-2 or above the FX canvas. */
+  --color-text-subtle: #7c7c86;
+
+  /* Accent */
+  --color-accent: #4d7cff;
+  --color-accent-hover: #6b93ff;
+
+  /* Was #3a66e6 (4.10:1 with on-accent text, fails AA); Zijad picked #4570f5 on 2026-11-26. */
+  --color-accent-pressed: #4570f5;
+
+  /* White on the accent is only 3.72:1, so text on accent fills is dark (tech.md §6.1). */
+  --color-on-accent: #050507;
+
+  /* Status */
+  --color-success: #22c55e;
+  --color-danger: #f87171;
+
+  /* Focus ring: 2px + 2px offset, so it sits on the page background (5.47:1 on bg). */
+  --color-focus: #4d7cff;
+}
