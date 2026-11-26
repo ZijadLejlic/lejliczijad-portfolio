@@ -1,0 +1,118 @@
+/*
+ * Self-hosted web fonts (P1.DS.03, tech.md §6.2, ADR-013).
+ * Clash Display and Satoshi are the unmodified WOFF2 files from the official Fontshare ZIPs
+ * (ITF FFL v2.0 forbids subsetting and format conversion). JetBrains Mono (OFL 1.1) is subset to
+ * latin + latin-ext. Sources and checksums: docs/licenses.md.
+ *
+ * Each real face has a metric-matched local fallback face, so swapping the web font in does not
+ * move text (CLS 0). size-adjust is the measured width ratio (web font / local font) over sample
+ * site copy in Chromium, because a lowercase-only average from the font tables got Clash Display
+ * wrong by ~9%. ascent/descent/line-gap overrides are the fonts' OS/2 typo metrics divided by
+ * that size-adjust. The local fonts (Arial, Arial Bold, Courier New) ship on macOS and Windows;
+ * other systems fall through to the generic family without overrides. Method and numbers:
+ * docs/licenses.md#fallback-metrike.
+ */
+
+/* --- Clash Display (headings) -------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Clash Display';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../assets/fonts/ClashDisplay-Medium.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../assets/fonts/ClashDisplay-Semibold.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display Fallback';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 105.93%;
+  ascent-override: 84.02%;
+  descent-override: 23.6%;
+  line-gap-override: 8.5%;
+}
+
+@font-face {
+  font-family: 'Clash Display Fallback';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 101.21%;
+  ascent-override: 87.94%;
+  descent-override: 24.7%;
+  line-gap-override: 8.89%;
+}
+
+/* --- Satoshi (body) ------------------------------------------------------------------------ */
+
+@font-face {
+  font-family: Satoshi;
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/Satoshi-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Satoshi;
+  font-style: normal;
+  font-weight: 500;
+  src: url('../assets/fonts/Satoshi-Medium.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi Fallback';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 97.72%;
+  ascent-override: 103.36%;
+  descent-override: 24.56%;
+  line-gap-override: 10.23%;
+}
+
+@font-face {
+  font-family: 'Satoshi Fallback';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 100.63%;
+  ascent-override: 100.37%;
+  descent-override: 23.85%;
+  line-gap-override: 9.94%;
+}
+
+/* --- JetBrains Mono (labels, numbers) ------------------------------------------------------ */
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../assets/fonts/JetBrainsMono-Medium.latin-ext.woff2') format('woff2');
+  font-display: swap;
+  unicode-range:
+    U+0000-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1EFF, U+2000-206F, U+20A0-20C0, U+2113,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+2C60-2C7F, U+A720-A7FF, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono Fallback';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Courier New'), local('CourierNewPSMT');
+  size-adjust: 99.98%;
+  ascent-override: 102.02%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+}
