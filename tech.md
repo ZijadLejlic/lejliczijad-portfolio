@@ -128,7 +128,7 @@ lejliczijad-portfolio/
 │  └─ .well-known/security.txt
 ├─ src/
 │  ├─ assets/
-│  │  ├─ fonts/               # woff2 (Clash/Satoshi originalni, bez subseta; ADR-013)
+│  │  ├─ fonts/               # woff2; Clash/Satoshi originalni, bez subseta (ADR-013), ne commituju se, preuzima ih `pnpm install` (ADR-017)
 │  │  ├─ images/              # globalne slike
 │  │  └─ fx/ face.bin  vortex-poster.avif
 │  ├─ components/
@@ -307,7 +307,7 @@ export const site = {
 Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabele), `--weight-regular|medium|semibold`, `--measure-prose: 68ch`. Vrijednosti po širini i provjera najduže riječi su u [docs/design/typography.md](docs/design/typography.md).
 
 - Minimalna veličina tekstnog sadržaja je 16 px. Dužina linije 60–75 znakova (`max-width: 68ch` za prozu).
-- Clash Display i Satoshi se self-hostuju kao **originalni WOFF2 fajlovi, bez subsettinga** (ITF FFL v2.0 zabranjuje subsetting; [ADR-013](docs/adr/013-fonts-no-subset.md)). JetBrains Mono (OFL) se smije subsetovati na `latin` + `latin-ext`. Svi fontovi moraju imati č, ć, š, ž, đ. Preload: **Clash Display 600** (font svih H1, uključujući hero H1, LCP) + Satoshi 400 ([ADR-015](docs/adr/015-preload-clash-600.md), zamjenjuje ADR-014), kroz `src/components/layout/FontPreload.astro`.
+- Clash Display i Satoshi se self-hostuju kao **originalni WOFF2 fajlovi, bez subsettinga** (ITF FFL v2.0 zabranjuje subsetting; [ADR-013](docs/adr/013-fonts-no-subset.md)). JetBrains Mono (OFL) se smije subsetovati na `latin` + `latin-ext`. Clash i Satoshi nisu u gitu: `pnpm install` ih preuzima i provjerava hash ([ADR-017](docs/adr/017-fonts-fetched-not-committed.md)). Svi fontovi moraju imati č, ć, š, ž, đ. Preload: **Clash Display 600** (font svih H1, uključujući hero H1, LCP) + Satoshi 400 ([ADR-015](docs/adr/015-preload-clash-600.md), zamjenjuje ADR-014), kroz `src/components/layout/FontPreload.astro`.
 - Fallback stack s `size-adjust`/`ascent-override` da CLS pri zamjeni fonta bude 0. Implementacija: `src/styles/fonts.css`; tokeni `--font-display`, `--font-body`, `--font-mono` u `tokens.css`; vrijednosti i metoda u [docs/licenses.md](docs/licenses.md#fallback-metrike).
 
 ### 6.3 Prostor, oblici, slojevi
@@ -798,5 +798,6 @@ Format: `ADR-NNN · Naslov · Status (Accepted/Superseded) · Datum · Kontekst 
 | ADR-014 | Preload Clash Display 500 (font hero H1) + Satoshi 400 umjesto Clash 600 ([docs/adr/014-preload-clash-500.md](docs/adr/014-preload-clash-500.md)) | Superseded (ADR-015) |
 | ADR-015 | Hero H1 i svi H1 u Clash Display 600; preload Clash Display 600 + Satoshi 400 ([docs/adr/015-preload-clash-600.md](docs/adr/015-preload-clash-600.md)) | Accepted |
 | ADR-016 | PR preview preko Workers Previews (`wrangler preview`, `pr-<broj>`) umjesto `wrangler versions upload`; preview ima odvojene vars i bindinge ([docs/adr/016-workers-previews.md](docs/adr/016-workers-previews.md)) | Accepted |
+| ADR-017 | Clash Display i Satoshi se ne commituju; `postinstall` (`scripts/fonts/fetch.ts`) ih preuzima iz Fontshare ZIP-ova i provjerava SHA-256 ([docs/adr/017-fonts-fetched-not-committed.md](docs/adr/017-fonts-fetched-not-committed.md)) | Accepted |
 
 Nove ADR-ove agent dodaje u `docs/adr/NNN-naslov.md`, a ovu tabelu ažurira u istom PR-u.

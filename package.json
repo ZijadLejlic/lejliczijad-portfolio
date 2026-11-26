@@ -13,6 +13,7 @@
     "build": "astro build",
     "build:prod": "node scripts/checks/content-guard.ts && astro build",
     "check:content": "node scripts/checks/content-guard.ts",
+    "fonts": "node scripts/fonts/fetch.ts",
     "preview": "astro preview",
     "typecheck": "astro check",
     "lint": "eslint . --max-warnings=0",
@@ -27,7 +28,8 @@
     "test:e2e:install": "playwright install --with-deps chromium firefox webkit",
     "test:watch": "vitest",
     "check": "pnpm lint && pnpm lint:css && pnpm typecheck && pnpm test:unit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "node scripts/fonts/fetch.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.4.9",

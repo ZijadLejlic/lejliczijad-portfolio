@@ -22,7 +22,7 @@ git clone https://github.com/ZijadLejlic/lejliczijad-portfolio.git
 cd lejliczijad-portfolio
 nvm install          # reads .nvmrc (Node 26.13.1)
 corepack enable      # provides the exact pnpm from package.json "packageManager"
-pnpm install         # also installs the Husky git hooks
+pnpm install         # also installs the Husky git hooks and downloads the licensed fonts (ADR-017)
 cp .env.example .env
 pnpm dev             # http://localhost:4321
 ```
@@ -57,6 +57,7 @@ the client bundle.
 | `pnpm lint:css` | Stylelint (tokens only, no hard-coded colors) |
 | `pnpm typecheck` | `astro check` (TypeScript strict) |
 | `pnpm format` / `pnpm format:check` | Prettier |
+| `pnpm fonts` | Download and verify the ITF fonts (also runs on `pnpm install`, ADR-017) |
 | `pnpm test` | All Vitest projects |
 | `pnpm test:unit` | Vitest, Node (`tests/unit`) |
 | `pnpm test:api` | Vitest in workerd (`tests/api`) |

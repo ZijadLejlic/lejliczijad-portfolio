@@ -19,7 +19,7 @@ Preuzeto i provjereno: **2026-11-26** (licenca u ZIP-u: `License/FFL.txt`, "ITF 
 - **Dozvoljeno:** komercijalna upotreba; self-hosting na vlastitom sajtu preko `@font-face` (izričito, §01); atribucija nije obavezna.
 - **Zabranjeno bez pismene dozvole ITF-a:** bilo kakva izmjena, uključujući **subsetting, konverziju formata i promjenu imena ili metapodataka** (§02). Zato su fajlovi bajt-za-bajt kopije iz ZIP-a ([ADR-013](adr/013-fonts-no-subset.md)).
 - **Zabranjena redistribucija:** drugi font servisi, **javno dostupni repozitoriji**, slanje fajlova trećim licima (dizajnerima, agencijama), nuđenje fonta kao izbora korisnicima nekog servisa.
-- **Posljedica za repo:** repo je privatan. Ako ikad postane javan, font fajlovi moraju izaći iz repoa i iz historije (ili treba dozvola ITF-a).
+- **Posljedica za repo:** ITF fajlovi se ne commituju ([ADR-017](adr/017-fonts-fetched-not-committed.md)). `pnpm install` ih preuzima iz Fontshare ZIP-ova i provjerava puni SHA-256 (`scripts/fonts/fetch.ts`, gdje su i puni hashevi). Javni repo dobija historiju bez njih (P1.ENV.20).
 
 ### SIL OFL 1.1 (JetBrains Mono)
 - Dozvoljeno korištenje, izmjena (uključujući subset) i redistribucija, uz tekst licence uz fajl (`src/assets/fonts/JetBrainsMono-OFL.txt`).

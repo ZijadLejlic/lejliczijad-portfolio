@@ -40,6 +40,12 @@ content/intake/_raw/
 content/intake/scan/*
 !content/intake/scan/.gitkeep
 
+# --- Licensed fonts (ITF FFL v2.0, ADR-017) ---------------------------------
+# Clash Display and Satoshi may not be redistributed via public repositories;
+# `pnpm install` downloads and verifies them (scripts/fonts/fetch.ts).
+src/assets/fonts/ClashDisplay-*.woff2
+src/assets/fonts/Satoshi-*.woff2
+
 # --- Logs --------------------------------------------------------------------
 *.log
 npm-debug.log*
