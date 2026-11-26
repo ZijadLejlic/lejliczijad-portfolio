@@ -506,7 +506,7 @@ Svaka stranica usluge:
 - [ ] **P1.LAY.11** 404 stranica (statična verzija; particle "404" se dodaje u P1.FX.20) · Ko: A · Gotovo kad: Worker vraća status 404 i `noindex`.
 
 #### P1.FX: WebGL: vortex, prelazi, kursor
-- [ ] **P1.FX.01** Detekcija mogućnosti: WebGL2, float teksture, `detect-gpu` tier, `deviceMemory`, `hardwareConcurrency`, reduced motion, save-data → `quality: high | medium | low | static` · Ko: A · Gotovo kad: unit testovi pokrivaju matricu odluka.
+- [~] **P1.FX.01** Detekcija mogućnosti: WebGL2, float teksture, `detect-gpu` tier, `deviceMemory`, `hardwareConcurrency`, reduced motion, save-data → `quality: high | medium | low | static` · Ko: A · Gotovo kad: unit testovi pokrivaju matricu odluka. (agent: claude, 2026-11-26)
 - [ ] **P1.FX.02** `FxCanvas.astro`: fixed canvas iza sadržaja, `aria-hidden`, `pointer-events: none`, persist kroz navigaciju · Ko: A · Zavisi: P1.LAY.07 · Gotovo kad: canvas je ispod sadržaja i ne hvata klikove.
 - [ ] **P1.FX.03** Statični fallback: AVIF poster vortexa + CSS gradijent (za `static`, bez JS-a i dok se WebGL ne učita) · Ko: A · Gotovo kad: nema praznog ekrana ni CLS-a pri zamjeni postera canvasom.
 - [ ] **P1.FX.04** Lijeno učitavanje FX bundlea (dynamic import nakon `load` + `requestIdleCallback`) · Ko: A · Gotovo kad: three.js nije u početnom JS bundleu (provjera bundle analizom).
