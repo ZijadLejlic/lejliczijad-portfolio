@@ -95,7 +95,8 @@ src/
   fx/          all WebGL code (public API: initFx, fx.setState, fx.dispose)
   layouts/  lib/  pages/  styles/
   server/      API-only code (never imported by client code, except schemas/)
-content/intake/  raw material from Zijad; never part of the build
+content/intake/  private repo (lejliczijad-private), cloned here and git-ignored;
+                 never part of the build or this repo
 docs/            ADRs, design mockups, guides
 scripts/         build checks, face pipeline, OG and PDF generation
 tests/           unit, api, e2e, visual, a11y, fixtures

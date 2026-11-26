@@ -271,7 +271,7 @@ Svaka stranica usluge:
   3. Funkcionalnosti (checkboxovi): custom design, auth & roles, payments, booking, admin dashboard, integrations (broj), AI feature, multilingual (broj jezika), SEO setup, content writing, data migration
   4. Rok: Standard · Fast-track
   5. **Rezultat:** raspon cijene (npr. `€4,500 – €7,000`), raspon trajanja (sedmice), šta je uključeno, disclaimer ("Estimate only; final quote after a discovery call") + CTA `Book a 45-min consultation` + opcija "Email me this estimate" (ime, email, Turnstile).
-- Formula i tabela sati su u [tech.md §11](tech.md#11-kalkulator-procjene). Satnica se nigdje ne prikazuje.
+- Formula je u [tech.md §11](tech.md#11-kalkulator-procjene); tabela sati i satnica su u privatnom `content/intake/pricing.md` (P1.ENV.21). Satnica se nigdje ne prikazuje.
 - Radi i na mobilnom, potpuno dostupan tastaturom i screen readerom (rezultat se najavljuje kroz `aria-live`).
 
 ### 7.10 Contact `/contact`
@@ -461,7 +461,8 @@ Svaka stranica usluge:
 - [x] **P1.ENV.17** `README.md` (pokretanje, komande, deploy, linkovi na prd, tech i AGENTS) · Ko: A · Gotovo kad: novi developer pokreće projekat u ≤ 5 min. · **Bilješka (2026-11-26):** svjež clone → `pnpm dev` (HTTP 200) za ~6 s s toplim pnpm cacheom; deploy sekcija opisuje ciljno stanje dok P1.ENV.13–14 nisu gotovi.
 - [x] **P1.ENV.18** Content guard: build u produkciji pada ako u sadržaju postoji `TODO(content)`, `lorem` ili `PLACEHOLDER` · Ko: A · Gotovo kad: test s placeholderom ruši `build:prod`. · **Bilješka (2026-11-26):** `scripts/checks/content-guard.ts` skenira `src/` i `public/`; `pnpm build:prod` = guard → `astro build`. Na današnjem `main` `build:prod` namjerno pada na `src/pages/index.astro` (`TODO(content)` za hero copy, P1.HOME.01). Deploy workflow (P1.ENV.14) mora koristiti `build:prod`.
 - [x] **P1.ENV.19** ITF fontovi (Clash Display, Satoshi) van repoa: skripta ih pri `pnpm install` preuzima iz zvaničnih Fontshare ZIP-ova i provjerava SHA-256; fajlovi su u `.gitignore` · Ko: A · Gotovo kad: svjež clone bez font fajlova → `pnpm install` → `pnpm build` radi lokalno i u CI-u; pogrešan hash ruši install s jasnom porukom. · **Bilješka (2026-11-26):** `scripts/fonts/fetch.ts` kao `postinstall` (ADR-017); svjež clone → install → build radi lokalno i u CI-u ([PR #39](https://github.com/ZijadLejlic/lejliczijad-portfolio/pull/39)). Stara historija i dalje sadrži fajlove (P1.ENV.20).
-- [ ] **P1.ENV.20** Novi javni repo s prepisanom historijom: `git filter-repo` uklanja ITF font fajlove iz svih commitova, autor email ide na GitHub noreply, gitleaks cijele nove historije, push u novi repo; secreti, varijable i Actions se ponovo podešavaju; stari repo ostaje privatan (arhiva) · Ko: Z (A vodi) · Zavisi: P1.ENV.19 · Gotovo kad: novi repo je javan, CI i deploy zeleni, nijedan commit ne sadrži ITF font fajl.
+- [x] **P1.ENV.21** Interni podaci van javnog repoa: `content/intake/**` i podaci kalkulatora (satnica, tabela sati, dodaci, množioci, pragovi) prelaze u privatni repo `lejliczijad-private`, kloniran lokalno u `content/intake/` (u `.gitignore`); tech.md §11 ostaje bez brojki; prepis iz P1.ENV.20 uklanja ih i iz historije · Ko: A+Z · Gotovo kad: stablo `main` nema satnicu, tabelu sati ni `content/intake/`; privatni repo postoji i sadrži ih; probni prepis ne nalazi ih ni u jednom commitu. · **Bilješka (2026-11-26):** privatni repo `ZijadLejlic/lejliczijad-private` je pushan (6 fajlova, uključujući `pricing.md`; `_raw/` i `scan/*` su ignorisani). Probni prepis ne nalazi `content/intake/`, cijene ni ITF fontove ni u jednom commitu (kontrola na staroj historiji: 131 blob s cijenama, 4 fonta).
+- [ ] **P1.ENV.20** Novi javni repo s prepisanom historijom: `git filter-repo` uklanja ITF font fajlove iz svih commitova, autor email ide na GitHub noreply, gitleaks cijele nove historije, push u novi repo; secreti, varijable i Actions se ponovo podešavaju; stari repo ostaje privatan (arhiva) · Ko: Z (A vodi) · Zavisi: P1.ENV.19, P1.ENV.21 · Gotovo kad: novi repo je javan, CI i deploy zeleni, nijedan commit ne sadrži ITF font fajl.
 
 #### P1.DS: Dizajn sistem
 - [x] **P1.DS.01** Tri vizuelna mockupa hero sekcije (crna + električno plava #4D7CFF, Clash Display + Satoshi + JetBrains Mono) kao HTML preview; Zijad bira smjer · Ko: A+Z · Gotovo kad: Zijad je odobrio jedan smjer. · **Izabrano: C · Off-axis** (2026-11-25), mockupi u `docs/design/p1-ds-01/`.
@@ -698,7 +699,7 @@ Svaka stranica usluge:
 - [ ] **P2.BLOG.09** IndexNow ping pri deployu novih članaka · Ko: A
 
 #### P2.EST: Kalkulator procjene
-- [ ] **P2.EST.01** Zijad pregleda i potvrdi tabelu sati i množioce iz [tech.md §11](tech.md#11-kalkulator-procjene) · Ko: Z · Gotovo kad: tabela ima oznaku "approved".
+- [ ] **P2.EST.01** Zijad pregleda i potvrdi tabelu sati i množioce iz privatnog `content/intake/pricing.md` (model u [tech.md §11](tech.md#11-kalkulator-procjene)) · Ko: Z · Gotovo kad: tabela ima oznaku "approved".
 - [ ] **P2.EST.02** Čista funkcija `estimate(input): Result` + konfiguracija `src/data/pricing.ts` · Ko: A · Zavisi: P2.EST.01 · Gotovo kad: 100 % pokrivenost unit testovima, uključujući granične slučajeve.
 - [ ] **P2.EST.03** UI korak 1: tip projekta (radio kartice) · Ko: A
 - [ ] **P2.EST.04** UI korak 2: obim (dinamična polja po tipu) · Ko: A
@@ -836,11 +837,12 @@ Riješiti prije taska koji je naveden.
 |---|---|---|---|
 | Q1 | Tačan H1 i vrijednosna propozicija | P1.HOME.02 | Agent predlaže 3 varijante (P1.HOME.01) |
 | Q2 | Live linkovi i demo nalozi za 5 glavnih projekata | P1.WORK.* | Bez linka, samo screenshotovi |
-| Q3 | Konačna tabela sati za kalkulator | P2.EST.02 | Draft iz tech.md §11 |
+| Q3 | Konačna tabela sati za kalkulator | P2.EST.02 | Draft iz privatnog `content/intake/pricing.md` |
 | Q4 | Smije li telefon biti javan u Impressumu | P1.LEGAL.02 | Samo email + adresa |
 | Q5 | Način plaćanja za strane klijente (Wise, PayPal, Payoneer…) za FAQ i Process | P2.PAGES.01–02 | "Bank transfer (SEPA/SWIFT) or Wise" |
 | Q6 | Jezici koje Zijad govori (za About i CV) | P1.ABOUT.01 | English, Bosnian/Croatian/Serbian |
 | Q7 | Koje su godine iskustva i ukupan broj projekata (za Stats) | P1.HOME.07 | Sekcija se ne prikazuje bez potvrde |
+| Q8 | Kako kalkulator računa bez otkrivanja satnice u javnom kodu i JS bundleu (npr. računanje samo na serveru, a brojke kao Worker secret ili privatni modul pri buildu) | P2.EST.02 | Agent predlaže 2–3 varijante prije P2.EST.02 |
 
 ---
 
@@ -872,3 +874,4 @@ Riješiti prije taska koji je naveden.
 | 2026-11-26 | `--text-display` = `clamp(2.5rem, 0.6rem + 8.4vw, 10rem)` (P1.DS.04) | Sa 48 px na 320 px duge riječi ("Infrastructure") nisu stajale u kolonu; od ~600 px krivulja je skoro ista; Zijadov izbor |
 | 2026-11-26 | Svi H1, uključujući hero H1, u Clash Display 600; preload Clash Display 600 + Satoshi 400 (ADR-015, zamjenjuje ADR-014 i težinu H1 iz hero smjera C) | Zijad je uporedio 500 i 600 lokalno i izabrao 600; preloadovan je font LCP naslova na svim stranicama |
 | 2026-11-26 | PR preview preko Workers Previews (`wrangler preview`) umjesto `wrangler versions upload` (ADR-016); produkcijski deploy na `main` namjerno pada dok postoji `TODO(content)` | Version URL-ovi koriste produkcijske resurse, a Cloudflare za PR-ove preporučuje Previews; na produkciju ne ide sadržaj s placeholderima; Zijadov izbor (P1.ENV.14) |
+| 2026-11-26 | `content/intake/**` i podaci kalkulatora (satnica, tabela sati) prelaze u privatni repo `lejliczijad-private`, kloniran u `content/intake/`; prepis za javni repo ih uklanja i iz historije (P1.ENV.21) | Javni repo bi otkrio satnicu i interne bilješke o klijentima; Zijadov izbor |

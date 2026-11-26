@@ -107,7 +107,7 @@ lejliczijad-portfolio/
 │  ├─ workflows/ ci.yml  security.yml  deploy.yml  lighthouse.yml  zap.yml
 │  ├─ PULL_REQUEST_TEMPLATE.md  ISSUE_TEMPLATE/  CODEOWNERS  dependabot.yml
 ├─ content/
-│  └─ intake/                 # sirovi materijali od Zijada, NE ulaze u build
+│  └─ intake/                 # privatni repo lejliczijad-private (P1.ENV.21), u .gitignore; NE ulazi u build
 │     ├─ project-questionnaire.md  <projekat>-notes.md  short-projects.md
 │     ├─ testimonials/  logos/  photo/  assets/<projekat>/
 │     └─ _raw/                # .gitignore: sken, sirovi video, veliki fajlovi
@@ -185,7 +185,7 @@ lejliczijad-portfolio/
 
 **Pravila:**
 - `src/server/**` se nikad ne importuje iz klijentskog koda (ESLint `no-restricted-imports`). Izuzetak su `schemas/*`, koje su dijeljene.
-- `content/intake/**` nikad ne ulazi u `dist/` (provjera `scripts/checks/dist-leaks.ts`).
+- `content/intake/**` nikad ne ulazi u `dist/` (provjera `scripts/checks/dist-leaks.ts`) ni u ovaj repo. To je zaseban privatni repo `lejliczijad-private`, kloniran lokalno u `content/intake/` (P1.ENV.21). CI ga nema, pa build i testovi ne smiju zavisiti od njega.
 - Jedna komponenta = jedan fajl. Ime komponente je PascalCase, sve ostalo kebab-case ili camelCase prema tipu fajla.
 - **Path alias:** jedan alias `@/*` → `./src/*`, definisan samo u `tsconfig.json` (`compilerOptions.paths`). Astro (i Vite ispod njega) ga čita odatle, pa se ne duplira u `astro.config.ts`. Primjeri: `@/components/ui/Button.astro`, `@/lib/seo/meta`, `@/server/http`, `@/fx`. Vitest ga dobija preko `getViteConfig()` iz `astro/config` za projekat `unit`, a projekat `api` (workerd, bez Astro pluginova) preko Vite opcije `resolve.tsconfigPaths` (P1.ENV.08).
 - Prazni folderi iz ove strukture se drže kroz `.gitkeep` dok ne dobiju prve fajlove; tada se `.gitkeep` briše.

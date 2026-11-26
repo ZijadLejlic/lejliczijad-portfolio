@@ -32,13 +32,12 @@ playwright/.cache/
 *.key
 *.p12
 
-# --- Raw intake material (stays on Zijad's disk and cloud, see tech.md §3) ---
-# Raw scans, original photos and video are large and personal.
-content/intake/_raw/
-# Face scan exports (.glb 4-17 MB) and reference photos; the pipeline reads
-# from _raw/, so nothing here is needed in the repo.
-content/intake/scan/*
-!content/intake/scan/.gitkeep
+# --- Private intake material (P1.ENV.21) ------------------------------------
+# content/intake/ is its own private repo (lejliczijad-private), cloned here.
+# It holds client notes, testimonials, assets and the calculator pricing data,
+# none of which may land in this public repo. Raw scans and photos stay out of
+# both repos (see that repo's .gitignore).
+content/intake/
 
 # --- Licensed fonts (ITF FFL v2.0, ADR-017) ---------------------------------
 # Clash Display and Satoshi may not be redistributed via public repositories;
