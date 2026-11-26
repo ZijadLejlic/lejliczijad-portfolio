@@ -239,7 +239,7 @@ lejliczijad-portfolio/
 }
 ```
 
-**Implementacija (P1.CNT.01):** shema je u `src/content/schemas/projects.ts` kao fabrika `projectSchema({ image, clientRef, testimonialRef })`, da je unit testovi (`tests/unit/content/projects-schema.test.ts`) mogu provjeriti bez Astro content layera; `src/content.config.ts` joj daje `image()` i `reference()`. Loader je `glob('*/index.mdx')` (zato `@astrojs/mdx`), a `projectIdFromEntry()` ruši build ako se `slug` i ime foldera razlikuju. Objekti su `z.strictObject` (zod 4 ekvivalent `.strict()`); nepoznato polje daje poruku s imenom polja. Dodatna pravila uz tabelu: kebab-case `slug`; `liveUrl` samo `https://`; `hoverVideo` je putanja iz `public/` (`/….mp4|webm`); `youtubeId` 11 znakova i obavezan za `type: video`; `services`, `stack` i `seo.keywords` neprazni i bez duplikata; `year` ≥ 2000 i ne poslije godine `publishedAt`; `updatedAt` ne prije `publishedAt`. `draft` se filtrira pri čitanju kolekcije (P1.WORK.01), ne u shemi. Reference na `clients` i `testimonials` rade tek kad P1.CNT.02 definiše te kolekcije.
+**Implementacija (P1.CNT.01):** shema je u `src/content/schemas/projects.ts` kao fabrika `projectSchema({ image, clientRef, testimonialRef })`, da je unit testovi (`tests/unit/content/projects-schema.test.ts`) mogu provjeriti bez Astro content layera; `src/content.config.ts` joj daje `image()` i `reference()`. Loader je `glob('*/index.mdx')` (zato `@astrojs/mdx`), a `projectIdFromEntry()` ruši build ako se `slug` i ime foldera razlikuju. Objekti su `z.strictObject` (zod 4 ekvivalent `.strict()`); nepoznato polje daje poruku s imenom polja. Dodatna pravila uz tabelu: kebab-case `slug`; `liveUrl` samo `https://`; `hoverVideo` je putanja iz `public/` (`/….mp4|webm`); `youtubeId` 11 znakova i obavezan za `type: video`; `services`, `stack` i `seo.keywords` neprazni i bez duplikata; `year` ≥ 2000 i ne poslije godine `publishedAt`; `updatedAt` ne prije `publishedAt`. `draft` se filtrira pri čitanju kolekcije (P1.WORK.01), ne u shemi. Reference na `clients` i `testimonials` rade od P1.CNT.02.
 
 ### 5.2 Ostale kolekcije
 - **testimonials:** `{ id, quote (≤ 400), author, role, company, photo?: image, linkedin?: url, projectRef?, videoYoutubeId?, rating?: 1..5, source: 'direct'|'clutch'|'google', date, consent: true }`. Build pada ako je `consent !== true`.
@@ -247,7 +247,15 @@ lejliczijad-portfolio/
 - **services:** `{ slug, title, h1, summary, deliverables[], audience[], process[], tech[], fromPrice?: number, relatedProjects: reference('projects')[], faq: {q,a}[], seo }`
 - **posts:** `{ title, slug, description, publishedAt, updatedAt?, tags[], cover, coverAlt, draft, seo, relatedProjects? }`
 - **faq:** `{ group, items: {q, a, id}[] }`
-- **lab:** `{ slug, title, description, tech[], component: string, cover, publishedAt }`
+- **lab:** `{ slug, title, description, tech[], component: string, cover, coverAlt, publishedAt }`
+
+**Implementacija (P1.CNT.02):** svaka shema je fabrika u `src/content/schemas/<kolekcija>.ts` (kao `projects`), a zajednički dijelovi (`strictObject`, `uniqueList`, `seoSchema`, datumi, `idFromEntry`) su u `shared.ts`; testovi su u `tests/unit/content/`. Loaderi: `testimonials`, `clients` i `faq` su `*.json`, `services` i `lab` su `*.mdx`, `posts` je `*/index.mdx`. ID unosa je ime fajla (ili foldera), a `id`/`slug` u sadržaju mora biti isti, inače build pada s oba imena; `faq` nema svoje ID polje (ime fajla je ID grupe, `group` je naslov). Dodatna pravila uz listu:
+- `testimonials` i `clients`: `consent` mora biti doslovno `true`; `linkedin` je `https://…linkedin.com/in/…`; `rating` cijeli broj 1–5; `url` samo `https://`.
+- `services`: `slug` je jedan od 6 slugova usluga; `process` su koraci `{ title, description }`; `faq` ima 4–6 pitanja i `relatedProjects` 2–3 različita projekta (prd.md §7.4); `fromPrice` je cijeli broj eura > 0; `seo` ima ista ograničenja kao `projects`.
+- `posts`: slug bez datuma (`YYYY-MM`, prd.md §5; sama godina je dozvoljena); `description` ≤ 160 (kartica), meta je `seo.description`; tagovi kebab-case bez duplikata; `updatedAt` ne prije `publishedAt`.
+- `faq`: `items[].id` je kebab-case anchor, jedinstven u grupi.
+- `lab`: `component` je PascalCase ime Svelte komponente; `coverAlt` je dodan jer svaka slika mora imati `alt` (AGENTS.md §6.2).
+- **Poznato ograničenje:** Astro referencu na nepostojeći unos (npr. `relatedProjects: [ghost]`) samo loguje kao `[ERROR] Invalid content reference`, a build završava s exit 0. Provjera koja to ruši još ne postoji.
 
 ### 5.3 `src/data/site.ts`
 ```ts
