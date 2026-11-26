@@ -472,7 +472,7 @@ Svaka stranica usluge:
 - [x] **P1.DS.05** Spacing, radius, border, shadow, z-index tokeni · Ko: A · Gotovo kad: tokeni postoje; z-index skala je dokumentovana.
 - [x] **P1.DS.06** Motion tokeni (trajanja, easing krivulje) + globalni `prefers-reduced-motion` reset · Ko: A · Gotovo kad: uz reduced motion nema animacija dužih od 0,01 s osim opacity fade. · **Bilješka (2026-11-26):** reset je u `src/styles/motion.css`; opacity fade je opt-in preko `data-motion="fade"`; provjereno u Chromiumu primjenom pravila iz media bloka (emulacija reduced motion nije bila dostupna, E2E ide s Playwrightom u P1.QA.09).
 - [x] **P1.DS.07** CSS reset, base stilovi, `::selection`, `:focus-visible` prsten (akcentni, 2 px + offset), stilovi scrollbara · Ko: A · Gotovo kad: fokus je vidljiv na svim interaktivnim elementima.
-- [ ] **P1.DS.08** Layout primitivi: `Container`, `Section`, `Grid`, `Stack`, `Cluster` · Ko: A · Gotovo kad: komponente su dokumentovane na `/_dev/ui`.
+- [~] **P1.DS.08** Layout primitivi: `Container`, `Section`, `Grid`, `Stack`, `Cluster` · Ko: A · Gotovo kad: komponente su dokumentovane na `/_dev/ui`. (agent: claude, 2026-11-26)
 - [ ] **P1.DS.09** `Heading`, `Eyebrow` (mono labela), `Text`, `Prose` (MDX stilovi) · Ko: A · Gotovo kad: prikazane na `/_dev/ui`.
 - [ ] **P1.DS.10** `Button` (primary, secondary, ghost; veličine; s ikonom; kao link; disabled; loading) · Ko: A · Gotovo kad: sva stanja su prikazana i dostupna tastaturom.
 - [ ] **P1.DS.11** `Link` (interni, spoljni s ikonom i `rel="noopener"`, animirana podvlaka) · Ko: A · Gotovo kad: spoljni linkovi se automatski prepoznaju.
