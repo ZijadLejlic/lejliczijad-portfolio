@@ -340,8 +340,6 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 | `--dur-fast` | 200 ms |
 | `--dur-base` | 400 ms |
 | `--dur-slow` | 700 ms |
-| `--ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` |
-| `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` |
 | `--dur-fade` | 150 ms (jedina animacija dozvoljena uz reduced motion) |
 | `--ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` |
 | `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` |
