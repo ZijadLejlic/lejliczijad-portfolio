@@ -1,4 +1,5 @@
-// Dev-only pages such as the component gallery at /_dev/ui (P1.DS.08, P1.DS.26).
+// Dev-only pages: the component gallery at /_dev/ui (P1.DS.08, P1.DS.26) and the renderer harness
+// at /_dev/fx (P1.FX.05).
 //
 // Astro never routes files whose name starts with `_`, so `src/pages/_dev/*.astro` produce no page
 // on their own. astro.config.ts injects them as routes only when `shouldServeDevPages()` says so,
@@ -11,6 +12,7 @@ export interface DevPage {
 
 export const DEV_PAGES: readonly DevPage[] = [
   { pattern: '/_dev/ui', entrypoint: './src/pages/_dev/ui.astro' },
+  { pattern: '/_dev/fx', entrypoint: './src/pages/_dev/fx.astro' },
 ];
 
 type AstroCommand = 'dev' | 'build' | 'preview' | 'sync';
