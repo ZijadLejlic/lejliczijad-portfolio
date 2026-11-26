@@ -303,7 +303,7 @@ export const site = {
 | `--text-mono` | JetBrains Mono 500 | `0.75rem`–`0.875rem` | 1.4 | 0.08em, uppercase |
 
 - Minimalna veličina tekstnog sadržaja je 16 px. Dužina linije 60–75 znakova (`max-width: 68ch` za prozu).
-- Clash Display i Satoshi se self-hostuju kao **originalni WOFF2 fajlovi, bez subsettinga** (ITF FFL v2.0 zabranjuje subsetting; [ADR-013](docs/adr/013-fonts-no-subset.md)). JetBrains Mono (OFL) se smije subsetovati na `latin` + `latin-ext`. Svi fontovi moraju imati č, ć, š, ž, đ. Preload: **Clash Display 500** (font hero H1, LCP) + Satoshi 400 ([ADR-014](docs/adr/014-preload-clash-500.md)), kroz `src/components/layout/FontPreload.astro`.
+- Clash Display i Satoshi se self-hostuju kao **originalni WOFF2 fajlovi, bez subsettinga** (ITF FFL v2.0 zabranjuje subsetting; [ADR-013](docs/adr/013-fonts-no-subset.md)). JetBrains Mono (OFL) se smije subsetovati na `latin` + `latin-ext`. Svi fontovi moraju imati č, ć, š, ž, đ. Preload: **Clash Display 600** (font svih H1, uključujući hero H1, LCP) + Satoshi 400 ([ADR-015](docs/adr/015-preload-clash-600.md), zamjenjuje ADR-014), kroz `src/components/layout/FontPreload.astro`.
 - Fallback stack s `size-adjust`/`ascent-override` da CLS pri zamjeni fonta bude 0. Implementacija: `src/styles/fonts.css`; tokeni `--font-display`, `--font-body`, `--font-mono` u `tokens.css`; vrijednosti i metoda u [docs/licenses.md](docs/licenses.md#fallback-metrike).
 
 ### 6.3 Prostor, oblici, slojevi
@@ -764,6 +764,7 @@ Format: `ADR-NNN · Naslov · Status (Accepted/Superseded) · Datum · Kontekst 
 | ADR-011 | Lead magnet PDF u privatnom R2, download preko HMAC tokena | Accepted |
 | ADR-012 | US English za sav sadržaj sajta | Accepted |
 | ADR-013 | Clash Display i Satoshi se self-hostuju bez subsettinga (ITF FFL v2.0); JetBrains Mono (OFL) se smije subsetovati ([docs/adr/013-fonts-no-subset.md](docs/adr/013-fonts-no-subset.md)) | Accepted |
-| ADR-014 | Preload Clash Display 500 (font hero H1) + Satoshi 400 umjesto Clash 600 ([docs/adr/014-preload-clash-500.md](docs/adr/014-preload-clash-500.md)) | Accepted |
+| ADR-014 | Preload Clash Display 500 (font hero H1) + Satoshi 400 umjesto Clash 600 ([docs/adr/014-preload-clash-500.md](docs/adr/014-preload-clash-500.md)) | Superseded (ADR-015) |
+| ADR-015 | Hero H1 i svi H1 u Clash Display 600; preload Clash Display 600 + Satoshi 400 ([docs/adr/015-preload-clash-600.md](docs/adr/015-preload-clash-600.md)) | Accepted |
 
 Nove ADR-ove agent dodaje u `docs/adr/NNN-naslov.md`, a ovu tabelu ažurira u istom PR-u.
