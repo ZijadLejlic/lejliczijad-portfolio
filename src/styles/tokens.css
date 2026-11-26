@@ -49,4 +49,49 @@
   --font-display: 'Clash Display', 'Clash Display Fallback', sans-serif;
   --font-body: Satoshi, 'Satoshi Fallback', sans-serif;
   --font-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
+
+  /* --- Type scale (P1.DS.04, tech.md §6.2) ------------------------------------------------ */
+
+  /* Fluid sizes: a rem part (scales with browser zoom, WCAG 1.4.4) plus a vw part, clamped.
+     Longest-word check at 320-2560 px is in docs/design/typography.md.
+
+     tech.md started at clamp(3rem, 1.2rem + 7.5vw, 10rem); at 320-360 px a 14-letter word did
+     not fit (329 px in 288 px). Zijad approved this curve on 2026-11-26: 40 px on small phones,
+     near-identical from ~600 px up, 160 px from ~1790 px. */
+  --text-display: clamp(2.5rem, 0.6rem + 8.4vw, 10rem);
+  --text-h1: clamp(2.5rem, 1.4rem + 4.6vw, 6rem);
+  --text-h2: clamp(2rem, 1.3rem + 2.8vw, 4rem);
+  --text-h3: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  --text-lead: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --text-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --text-small: 0.875rem;
+
+  /* Uppercase labels only (12-14 px); never for running text, which stays >= 16 px. */
+  --text-mono: clamp(0.75rem, 0.71rem + 0.2vw, 0.875rem);
+
+  /* Line height per size step */
+  --leading-display: 0.92;
+  --leading-h1: 0.98;
+  --leading-h2: 1.05;
+  --leading-h3: 1.15;
+  --leading-lead: 1.5;
+  --leading-body: 1.65;
+  --leading-small: 1.5;
+  --leading-mono: 1.4;
+
+  /* Letter spacing per size step (mono labels are uppercase, so they open up) */
+  --tracking-display: -0.03em;
+  --tracking-h1: -0.025em;
+  --tracking-h2: -0.02em;
+  --tracking-h3: -0.01em;
+  --tracking-body: 0;
+  --tracking-mono: 0.08em;
+
+  /* Only the weights that are self-hosted (src/styles/fonts.css). */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* Line length for prose: 60-75 characters. */
+  --measure-prose: 68ch;
 }
