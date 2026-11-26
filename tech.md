@@ -249,19 +249,21 @@ lejliczijad-portfolio/
 
 ### 5.3 `src/data/site.ts`
 ```ts
-export const site = {
+export const site: Site = {
   name: 'Zijad Lejlić',
   url: 'https://lejliczijad.com',
   email: 'support@lejliczijad.com',
   jobTitle: 'Full-Stack Developer',
   timezone: 'Europe/Sarajevo',
-  availability: { status: 'available' | 'limited' | 'booked', label: string, from?: 'YYYY-MM' },
+  availability: { status: 'available' | 'limited' | 'booked', from?: 'YYYY-MM' }, // labelu gradi availabilityLabel()
   cal: { intro: 'https://cal.com/<user>/intro-15', consultation: 'https://cal.com/<user>/consultation-45' },
   social: { linkedin, github, youtube, clutch, google },
   introVideoYoutubeId?: string,   // ako nedostaje, "Meet me" se ne prikazuje
   facePlaceholder: boolean,       // true dok ne stigne sken
-} as const;
+};
 ```
+
+**Implementacija (P1.CNT.03):** tip `Site` i `site` su u `src/data/site.ts`; tu su i `MAIL_FROM` (`Ime <email>`) i čista funkcija `availabilityLabel()` (`Available for new projects — January 2027`, `Limited availability`, `Fully booked until …`), pa se tekst badgea ne piše ručno. Profili koji još ne postoje se izostavljaju iz `social`, a komponente prikazuju samo postojeće. `astro.config.ts` (`site`) i `playwright.config.ts` (`timezoneId`) importuju vrijednosti iz `site.ts`. Fajlovi koji ne mogu importovati TS (`wrangler.jsonc` vars i previews, `.dev.vars.example`, `.env.example`) ponavljaju email, `MAIL_FROM` i URL, a `tests/unit/data/site.test.ts` ruši `pnpm check` ako se razilaze.
 
 ---
 
