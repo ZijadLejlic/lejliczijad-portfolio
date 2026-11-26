@@ -1,0 +1,193 @@
+/*
+ * Button (P1.DS.10). Global, not scoped, so Svelte islands can reuse the same classes
+ * (src/components/ui/button.ts). Every rule starts with `.button`.
+ *
+ * States:
+ * - disabled:  native `disabled` on <button>; a link drops its href and gets aria-disabled.
+ *              Both leave the tab order and fade to --opacity-disabled.
+ * - loading:   `data-loading` + aria-disabled. It stays focusable (focus is not lost while a form
+ *              sends), button-guard.ts swallows its clicks, the label hides behind a spinner but
+ *              keeps its width, so nothing shifts.
+ */
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  min-block-size: var(--control-height-md);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-5);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-small);
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: transparent;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The inner wrapper carries the label and icons. The magnetic effect (P1.FX.18) moves this,
+   never the button itself, so layout never shifts. */
+.button__inner {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.button__label {
+  min-width: 0;
+}
+
+.button__icon {
+  display: inline-flex;
+  flex: none;
+}
+
+/* Icons follow the label size and color; 1.25em is the icon box next to a line of text. */
+.button__icon :where(svg) {
+  inline-size: 1.25em;
+  block-size: 1.25em;
+}
+
+/* --- Sizes --------------------------------------------------------------------------------- */
+
+.button--sm {
+  min-block-size: var(--control-height-sm);
+  padding-block: var(--space-1);
+  padding-inline: var(--space-4);
+  font-size: var(--text-small);
+}
+
+.button--lg {
+  min-block-size: var(--control-height-lg);
+  padding-inline: var(--space-6);
+}
+
+.button--block {
+  display: flex;
+  width: 100%;
+}
+
+/* --- Disabled and loading ------------------------------------------------------------------ */
+
+.button:is([disabled], [aria-disabled='true']) {
+  cursor: not-allowed;
+}
+
+.button:is([disabled], [aria-disabled='true']):not([data-loading]) {
+  opacity: var(--opacity-disabled);
+}
+
+.button[data-loading] {
+  cursor: progress;
+}
+
+/* --- Variants ------------------------------------------------------------------------------ */
+
+/* Dark label on the accent: 5.47:1, hover 7.02:1, pressed 4.74:1 (docs/design/contrast.md). */
+.button--primary {
+  color: var(--color-on-accent);
+  background-color: var(--color-accent);
+}
+
+/* The label identifies the control, so the hairline border is decoration (WCAG 1.4.11). The
+   translucent fill keeps it legible above the FX canvas. */
+.button--secondary {
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  background-color: color-mix(in srgb, var(--color-bg) 60%, transparent);
+  border-color: var(--color-border-strong);
+}
+
+.button--ghost {
+  color: var(--color-text);
+}
+
+/* Hover only on devices that hover, so a tap does not leave a stuck hover state. */
+@media (hover: hover) {
+  .button--primary:not([disabled], [aria-disabled='true']):hover {
+    background-color: var(--color-accent-hover);
+  }
+
+  .button--secondary:not([disabled], [aria-disabled='true']):hover {
+    border-color: var(--color-text-muted);
+  }
+
+  .button--ghost:not([disabled], [aria-disabled='true']):hover {
+    background-color: var(--color-surface-2);
+  }
+}
+
+.button--primary:not([disabled], [aria-disabled='true']):active {
+  background-color: var(--color-accent-pressed);
+}
+
+.button--secondary:not([disabled], [aria-disabled='true']):active,
+.button--ghost:not([disabled], [aria-disabled='true']):active {
+  background-color: var(--color-surface-2);
+}
+
+/* A small press-in; 0.97 reads as feedback without moving neighbors (transform only). */
+.button:not([disabled], [aria-disabled='true']):active {
+  transform: scale(0.97);
+}
+
+/* opacity, not visibility: the label stays in the accessibility tree and keeps its width. */
+.button[data-loading] .button__inner {
+  opacity: 0;
+}
+
+.button__spinner {
+  position: absolute;
+  inset: 0;
+  inline-size: 1.25em;
+  block-size: 1.25em;
+  margin: auto;
+  border: var(--border-width-strong) solid currentcolor;
+  border-inline-end-color: transparent;
+  border-radius: var(--radius-pill);
+  animation: button-spin var(--dur-slow) linear infinite;
+}
+
+/* Reduced motion (motion.css) stops the spin; the open ring still reads as "busy". */
+@keyframes button-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Spoken after the label while loading ("Send message, Sending"). */
+.button__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* Windows High Contrast: keep the border and mark inactive controls with the system color. */
+@media (forced-colors: active) {
+  .button {
+    border-color: buttonborder;
+  }
+
+  .button:is([disabled], [aria-disabled='true']) {
+    color: graytext;
+    border-color: graytext;
+  }
+}
