@@ -1,7 +1,8 @@
 ---
-// Component gallery (P1.DS.08–09, completed by P1.DS.26). Served at /_dev/ui by `astro dev` and in
+// Component gallery (P1.DS.08–10, completed by P1.DS.26). Served at /_dev/ui by `astro dev` and in
 // preview builds only; the route is injected in astro.config.ts and never exists in production
 // (src/lib/dev-pages.ts). Global styles are imported here until BaseLayout exists (P1.LAY.01).
+import Button from '@/components/ui/Button.astro';
 import Cluster from '@/components/ui/Cluster.astro';
 import Container from '@/components/ui/Container.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
@@ -130,6 +131,22 @@ const COMPONENTS: GalleryEntry[] = [
     purpose:
       'Wrapper for MDX and long-form text: block rhythm, lists, quotes, code and tables, capped at 68ch.',
     props: [{ name: 'as', values: 'div, article, section', fallback: 'div' }],
+  },
+  {
+    id: 'button',
+    name: 'Button',
+    purpose:
+      'A <button>, or an <a> when href is set. Icons go in the icon-start / icon-end slots. Loading keeps focus but ignores clicks; disabled leaves the tab order.',
+    props: [
+      { name: 'variant', values: 'primary, secondary, ghost', fallback: 'primary' },
+      { name: 'size', values: 'sm (40 px), md (48 px), lg (56 px)', fallback: 'md' },
+      { name: 'href', values: 'URL (renders an <a>)', fallback: '–' },
+      { name: 'type', values: 'button, submit, reset', fallback: 'button' },
+      { name: 'block', values: 'true, false (full width)', fallback: 'false' },
+      { name: 'disabled', values: 'true, false', fallback: 'false' },
+      { name: 'loading', values: 'true, false', fallback: 'false' },
+      { name: 'loadingLabel', values: 'text spoken while loading', fallback: 'Loading' },
+    ],
   },
 ];
 
@@ -334,6 +351,83 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                 </Stack>
               )}
 
+              {primitive.id === 'button' && (
+                <Stack gap={6}>
+                  {(['primary', 'secondary', 'ghost'] as const).map((variant) => (
+                    <Stack gap={2}>
+                      <Eyebrow>variant="{variant}"</Eyebrow>
+                      <Cluster gap={3}>
+                        <Button variant={variant} size="sm">
+                          Small
+                        </Button>
+                        <Button variant={variant}>Medium</Button>
+                        <Button variant={variant} size="lg">
+                          Large
+                        </Button>
+                      </Cluster>
+                    </Stack>
+                  ))}
+
+                  <Stack gap={2}>
+                    <Eyebrow>With icons · as links</Eyebrow>
+                    <Cluster gap={3}>
+                      <Button href="#button">
+                        Book a call
+                        <svg slot="icon-end" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                          <path d="M3 8h10M9 4l4 4-4 4" stroke-width="1.5" />
+                        </svg>
+                      </Button>
+                      <Button variant="secondary" href="#button-form">
+                        <svg slot="icon-start" viewBox="0 0 16 16" fill="currentColor">
+                          <path d="M4 2.5v11l9-5.5z" />
+                        </svg>
+                        Meet me
+                      </Button>
+                      <Button variant="ghost" href="https://example.com" target="_blank">
+                        Opens in a new tab
+                      </Button>
+                    </Cluster>
+                  </Stack>
+
+                  <Stack gap={2}>
+                    <Eyebrow>Disabled · loading</Eyebrow>
+                    <Cluster gap={3}>
+                      <Button disabled>Disabled button</Button>
+                      <Button variant="secondary" href="#button" disabled>
+                        Disabled link
+                      </Button>
+                      <Button loading loadingLabel="Sending">
+                        Send message
+                      </Button>
+                      <Button variant="secondary" loading>
+                        Loading
+                      </Button>
+                    </Cluster>
+                  </Stack>
+
+                  <Stack gap={2}>
+                    <Eyebrow>Busy submit button blocks the form</Eyebrow>
+                    <form action="/_dev/ui" method="get" id="button-form">
+                      <Stack gap={3} align="start">
+                        <label for="button-form-name">Name</label>
+                        <input id="button-form-name" name="name" type="text" class="demo-input" />
+                        <Button type="submit" loading loadingLabel="Sending">
+                          Submit form
+                        </Button>
+                      </Stack>
+                    </form>
+                  </Stack>
+
+                  <Stack gap={2}>
+                    <Eyebrow>block · long label</Eyebrow>
+                    <Button block>Full-width button</Button>
+                    <Button variant="secondary">
+                      A deliberately long button label that has to wrap on a narrow phone screen
+                    </Button>
+                  </Stack>
+                </Stack>
+              )}
+
               {primitive.id === 'prose' && (
                 <Prose>
                   <h2 id="prose-sample">The challenge</h2>
@@ -452,6 +546,15 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
   .demo :global(.outline) {
     outline: var(--border-width) solid var(--color-accent);
     outline-offset: calc(-1 * var(--border-width));
+  }
+
+  .demo-input {
+    min-block-size: var(--control-height-md);
+    padding-inline: var(--space-3);
+    color: var(--color-text);
+    background-color: var(--color-surface-2);
+    border: var(--border-width) solid var(--color-text-subtle);
+    border-radius: var(--radius-sm);
   }
 
   .visually-hidden {

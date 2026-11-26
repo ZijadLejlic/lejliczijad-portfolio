@@ -134,6 +134,16 @@
   --border-width: 1px;
   --border-width-strong: 2px;
 
+  /* Height of interactive controls (P1.DS.10; inputs in P1.DS.21 reuse them): 40 / 48 / 56 px.
+     sm is for dense desktop rows; md and lg clear the 44 px touch target (AGENTS.md §9). */
+  --control-height-sm: 2.5rem;
+  --control-height-md: 3rem;
+  --control-height-lg: 3.5rem;
+
+  /* Disabled controls fade instead of changing color, so the variant stays recognizable.
+     WCAG 1.4.3 exempts inactive controls from the contrast minimum. */
+  --opacity-disabled: 0.45;
+
   /* Focus ring (P1.DS.07 applies it): 2 px ring with a 2 px gap, per tech.md §6.1. */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;

@@ -1,0 +1,94 @@
+---
+// Button (P1.DS.10): primary, secondary or ghost; three sizes; optional icons; rendered as a
+// <button>, or as an <a> when `href` is set. Styles live in src/styles/button.css so Svelte
+// islands can share them. Icons go in the `icon-start` / `icon-end` slots and are hidden from
+// assistive tech; the label is the accessible name.
+import type { HTMLAttributes } from 'astro/types';
+
+import { buttonClasses, linkRel, type ButtonSize, type ButtonVariant } from './button';
+import '@/styles/button.css';
+
+interface CommonProps {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  /** Full width of the container (e.g. a form's submit button on mobile). */
+  block?: boolean;
+  disabled?: boolean;
+  /** Busy state: spinner, stays focusable, clicks do nothing (button-guard.ts). */
+  loading?: boolean;
+  /** Spoken after the label while loading. */
+  loadingLabel?: string;
+}
+
+type ButtonProps = CommonProps &
+  Omit<HTMLAttributes<'button'>, 'disabled'> & {
+    href?: undefined;
+  };
+
+type LinkProps = CommonProps &
+  HTMLAttributes<'a'> & {
+    href: string;
+  };
+
+type Props = ButtonProps | LinkProps;
+
+const {
+  variant = 'primary',
+  size = 'md',
+  block = false,
+  disabled = false,
+  loading = false,
+  loadingLabel = 'Loading',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = [...buttonClasses({ variant, size, block }), className];
+const busy = loading && !disabled;
+
+// A disabled or busy link has no href, so it leaves the tab order like a disabled button;
+// role="link" keeps it announced as a link.
+const Tag = rest.href === undefined ? 'button' : 'a';
+// Record: the two attribute shapes cannot be checked against a tag that is one of two elements.
+const attributes: Record<string, unknown> =
+  rest.href === undefined
+    ? {
+        type: 'button' as const,
+        ...rest,
+        disabled,
+        'aria-disabled': busy ? ('true' as const) : undefined,
+      }
+    : {
+        ...rest,
+        href: disabled || busy ? undefined : rest.href,
+        rel: linkRel(rest.target ?? undefined, rest.rel ?? undefined),
+        role: disabled || busy ? ('link' as const) : undefined,
+        'aria-disabled': disabled || busy ? ('true' as const) : undefined,
+      };
+---
+
+<Tag {...attributes} class:list={classes} data-loading={busy ? '' : undefined}>
+  <span class="button__inner">
+    {Astro.slots.has('icon-start') && (
+      <span class="button__icon" aria-hidden="true">
+        <slot name="icon-start" />
+      </span>
+    )}
+    <span class="button__label">
+      <slot />
+    </span>
+    {Astro.slots.has('icon-end') && (
+      <span class="button__icon" aria-hidden="true">
+        <slot name="icon-end" />
+      </span>
+    )}
+  </span>
+  {busy && <span class="button__spinner" aria-hidden="true" />}
+  {busy && <span class="button__status">{loadingLabel}</span>}
+</Tag>
+
+<script>
+  import { installButtonGuard } from './button-guard';
+
+  installButtonGuard(document);
+</script>
