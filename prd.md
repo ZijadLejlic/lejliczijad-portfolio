@@ -518,7 +518,7 @@ Svaka stranica usluge:
 - [ ] **P1.FX.10** Interakcija s mišem (pozicija u svjetskim koordinatama, polje odbijanja, inercija) · Ko: A · Gotovo kad: efekat je primjetan, ali ne ometa čitanje.
 - [ ] **P1.FX.11** Reakcija na skrol (brzina skrola → brzina i rotacija vrtloga, mapirano preko uniforma) · Ko: A · Gotovo kad: nema trzanja pri brzom skrolu.
 - [ ] **P1.FX.12** Čitljivost: sloj za "dimming" vortexa iza teksta i sekcija (uniform `uDim` po sekciji) · Ko: A · Gotovo kad: kontrast teksta ≥ 4,5:1 mjeren na najsvjetlijem dijelu vortexa.
-- [ ] **P1.FX.13** Kontroler stanja FX-a (`idle`, `hero`, `transition-out`, `transition-in`, `section:<id>`) s tweenovanim uniformama · Ko: A · Gotovo kad: stanja su unit-testirana (bez WebGL-a).
+- [~] **P1.FX.13** Kontroler stanja FX-a (`idle`, `hero`, `transition-out`, `transition-in`, `section:<id>`) s tweenovanim uniformama · Ko: A · Gotovo kad: stanja su unit-testirana (bez WebGL-a). (agent: claude, 2026-11-26)
 - [ ] **P1.FX.14** Page transition: `transition-out` (ubrzanje + gutanje), `swap`, `transition-in`; ukupno ≤ 700 ms; navigacija ne čeka animaciju duže od 350 ms · Ko: A · Zavisi: P1.FX.13, P1.LAY.07 · Gotovo kad: Zijad odobri video prelaza.
 - [ ] **P1.FX.15** Fallback prelaz (CSS View Transition cross-fade) za `low`/`static` + bez animacije uz reduced motion · Ko: A · Gotovo kad: sva tri moda su testirana.
 - [ ] **P1.FX.16** Custom kursor: krug + tačka, inercija, `mix-blend-mode`, skriven na touch, reduced motion i iznad inputa · Ko: A · Gotovo kad: nema laga (rAF, `transform` samo).
