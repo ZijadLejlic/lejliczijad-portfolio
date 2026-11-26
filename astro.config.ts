@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 
 import cloudflare from '@astrojs/cloudflare';
+import mdx from '@astrojs/mdx';
 import { defineConfig, envField } from 'astro/config';
 
 import { site } from './src/data/site.ts';
@@ -21,6 +22,8 @@ export default defineConfig({
   site: site.url,
   trailingSlash: 'never',
   output: 'static',
+  // MDX for content collections (tech.md §2, §5): case studies, posts, services, lab.
+  integrations: [mdx()],
   adapter: cloudflare({
     // Images are optimized once at build with Sharp (tech.md §2: astro:assets, AVIF + WebP);
     // the Worker never transforms images, so no Cloudflare Images binding is needed.
