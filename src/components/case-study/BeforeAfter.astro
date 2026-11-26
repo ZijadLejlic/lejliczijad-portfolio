@@ -1,0 +1,90 @@
+---
+// Before / after comparison (prd.md §7.3, section 8) as two labelled columns, which prd.md allows
+// and which works without JS. P1.DS.24 adds the keyboard-operable slider on top of this markup;
+// the MDX API stays the same.
+// TODO(P1.DS.23): swap astro:assets <Picture> for the shared Picture wrapper.
+import { Picture } from 'astro:assets';
+
+import { IMAGE_FORMATS, type CaseStudyImage } from './case-study';
+
+interface Props {
+  before: CaseStudyImage;
+  after: CaseStudyImage;
+  /** Says what is compared, e.g. "Paper intake form vs. the new check-in screen". */
+  caption: string;
+  beforeLabel?: string;
+  afterLabel?: string;
+}
+
+const { before, after, caption, beforeLabel = 'Before', afterLabel = 'After' } = Astro.props;
+const sides = [
+  { label: beforeLabel, image: before },
+  { label: afterLabel, image: after },
+];
+---
+
+<figure class="before-after">
+  <div class="before-after__sides">
+    {sides.map(({ label, image }) => (
+      <div class="before-after__side">
+        <span class="before-after__label">{label}</span>
+        <Picture
+          class="before-after__image"
+          src={image.src}
+          alt={image.alt}
+          formats={[...IMAGE_FORMATS]}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 48em) 50vw, 100vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    ))}
+  </div>
+  <figcaption class="before-after__caption">{caption}</figcaption>
+</figure>
+
+<style>
+  .before-after {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .before-after__sides {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: var(--space-5);
+  }
+
+  .before-after__side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .before-after__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    line-height: var(--leading-mono);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+  }
+
+  /* <Picture> renders the img, so the class is reached from the scoped parent. */
+  .before-after :global(.before-after__image) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .before-after__caption {
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--color-text-muted);
+  }
+</style>

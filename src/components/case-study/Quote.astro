@@ -1,0 +1,106 @@
+---
+// Client testimonial in a case study (prd.md §7.3, section 11). The text must come verbatim from
+// the testimonials collection (consent: true, AGENTS.md §7); the case-study layout (P1.WORK.03)
+// passes the entry's fields, so a quote is never typed into MDX by hand.
+// TODO(P1.DS.23): swap astro:assets <Picture> for the shared Picture wrapper.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+import { IMAGE_FORMATS } from './case-study';
+
+interface Props {
+  quote: string;
+  author: string;
+  role: string;
+  company: string;
+  photo?: ImageMetadata;
+}
+
+const { quote, author, role, company, photo } = Astro.props;
+// Avatar size in CSS px; the 2x width covers high-density screens.
+const PHOTO_SIZE = 56;
+---
+
+<figure class="quote">
+  <blockquote class="quote__text">
+    <p>{quote}</p>
+  </blockquote>
+  <figcaption class="quote__author">
+    {photo && (
+      <Picture
+        class="quote__photo"
+        src={photo}
+        alt=""
+        formats={[...IMAGE_FORMATS]}
+        width={PHOTO_SIZE}
+        height={PHOTO_SIZE}
+        densities={[1, 2]}
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+    <span class="quote__who">
+      <span class="quote__name">{author}</span>
+      <span class="quote__role">
+        {role}, {company}
+      </span>
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .quote {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    max-width: var(--measure-prose);
+    padding-inline-start: var(--space-5);
+    border-inline-start: var(--border-width-strong) solid var(--color-accent);
+  }
+
+  .quote__text {
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    color: var(--color-text);
+  }
+
+  /* Curly quotes are typography, not part of the verbatim text. */
+  .quote__text p::before {
+    content: '“';
+  }
+
+  .quote__text p::after {
+    content: '”';
+  }
+
+  .quote__author {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  /* <Picture> renders the img, so the class is reached from the scoped parent. */
+  .quote :global(.quote__photo) {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: cover;
+    border-radius: var(--radius-pill);
+  }
+
+  .quote__who {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .quote__name {
+    font-weight: var(--weight-medium);
+  }
+
+  .quote__role {
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--color-text-muted);
+  }
+</style>

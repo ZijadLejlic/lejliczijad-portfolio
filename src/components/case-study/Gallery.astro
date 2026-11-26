@@ -1,0 +1,78 @@
+---
+// Screenshot gallery (prd.md §7.3: process sketches, short case studies). A list of figures in
+// a responsive grid; screenshots must never show real patient or customer data (AGENTS.md §7).
+// TODO(P1.DS.23): swap astro:assets <Picture> for the shared Picture wrapper.
+import { Picture } from 'astro:assets';
+
+import { IMAGE_FORMATS, type CaseStudyImage } from './case-study';
+
+interface GalleryImage extends CaseStudyImage {
+  caption?: string;
+}
+
+interface Props {
+  images: GalleryImage[];
+  /** Names the list for screen readers, e.g. "Booking app screens". */
+  label: string;
+}
+
+const { images, label } = Astro.props;
+if (images.length === 0) throw new Error(`Gallery "${label}": images must not be empty.`);
+// Explicit, because Safari drops list semantics with list-style: none (src/styles/reset.css).
+const LIST_ROLE = 'list';
+---
+
+<ul role={LIST_ROLE} class="gallery" aria-label={label}>
+  {images.map((image) => (
+    <li class="gallery__item">
+      <figure class="gallery__figure">
+        <Picture
+          class="gallery__image"
+          src={image.src}
+          alt={image.alt}
+          formats={[...IMAGE_FORMATS]}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 64em) 33vw, (min-width: 48em) 50vw, 100vw"
+          loading="lazy"
+          decoding="async"
+        />
+        {image.caption && <figcaption class="gallery__caption">{image.caption}</figcaption>}
+      </figure>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: var(--space-5);
+    padding: 0;
+  }
+
+  .gallery__item,
+  .gallery__figure {
+    min-width: 0;
+  }
+
+  .gallery__figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* <Picture> renders the img, so the class is reached from the scoped parent. */
+  .gallery :global(.gallery__image) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .gallery__caption {
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--color-text-muted);
+  }
+</style>
