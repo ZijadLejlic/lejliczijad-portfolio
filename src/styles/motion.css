@@ -1,0 +1,30 @@
+/*
+ * Global reduced-motion reset (P1.DS.06, tech.md §6.5, AGENTS.md §9).
+ *
+ * With prefers-reduced-motion: reduce, every animation and transition on the site is cut to
+ * 0.01ms (it still fires its end events, so JS waiting on transitionend/animationend does not
+ * hang). The only exception is an opacity fade: an element that opts in with
+ * data-motion="fade" may fade opacity for up to --dur-fade (150 ms), and nothing else.
+ *
+ * !important is allowed here and only here (AGENTS.md §6.3): the reset has to win over every
+ * component style. JS-driven motion (FX in P1.FX.01, Lenis in P1.LAY.10, GSAP in P1.HOME.11)
+ * must check the same media query itself, because CSS cannot stop requestAnimationFrame.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  [data-motion='fade'] {
+    transition-duration: var(--dur-fade) !important;
+    transition-property: opacity !important;
+  }
+}
