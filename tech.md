@@ -314,6 +314,22 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 - Radius: `--radius-sm` 6 px · `--radius-md` 12 px · `--radius-lg` 20 px · `--radius-pill` 999 px
 - Z-index: `fx -1` · `base 0` · `header 50` · `menu 60` · `cursor 70` · `modal 80` · `toast 90` · `skip-link 100`
 
+**Implementacija (P1.DS.05)**, sve u `src/styles/tokens.css`:
+- Razmaci i forme: `--space-1` … `--space-11` (rem); `--section-padding-block`; `--container-max: 90rem` (= 1440 px pri 16 px, ali raste s korisnikovom veličinom fonta); `--gutter`; `--radius-sm|md|lg|pill`; `--border-width` 1 px i `--border-width-strong` 2 px; `--focus-ring-width` i `--focus-ring-offset` (2 px + 2 px).
+- Sjene: `--shadow-1` (dropdown, kartica u hoveru) i `--shadow-2` (meni, modal, toast). Na skoro crnoj pozadini elevaciju nose prvenstveno `surface-1/2`, a sjena samo odvaja plutajuće slojeve od canvasa.
+- Slojevi: `--z-*`. Sirovi broj za `z-index` se ne koristi. Redoslijed čuva test `tests/unit/styles/scales.test.ts`.
+
+| Sloj | Token | Vrijednost | Ko ga koristi |
+|---|---|---|---|
+| FX canvas | `--z-fx` | −1 | `FxCanvas` i poster vortexa (iza sadržaja) |
+| Sadržaj | `--z-base` | 0 | `main`, sekcije |
+| Header | `--z-header` | 50 | sticky header |
+| Mobilni meni | `--z-menu` | 60 | fullscreen overlay (iznad headera) |
+| Kursor | `--z-cursor` | 70 | `.cursor-dot`, `.cursor-ring` (iznad menija, ispod modala) |
+| Modal | `--z-modal` | 80 | `<dialog>` i njegov backdrop (top layer ga ionako podiže) |
+| Toast | `--z-toast` | 90 | statusne poruke forme |
+| Skip link | `--z-skip-link` | 100 | uvijek na vrhu kad je fokusiran |
+
 ### 6.4 Breakpointi (u `em` u media queryjima)
 `xs 360` · `sm 480` · `md 768` · `lg 1024` · `xl 1280` · `2xl 1536` · `3xl 1920`. Mobile-first. Container queries za komponente gdje ima smisla (kartice).
 
