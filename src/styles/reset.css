@@ -11,7 +11,10 @@
 }
 
 html {
-  /* Stop iOS/Android from inflating text in landscape; user zoom still works. */
+  /* Stop iOS/Android from inflating text in landscape; user zoom still works.
+     iOS Safari only knows the prefixed property, and the build does not autoprefix. */
+  /* stylelint-disable-next-line property-no-vendor-prefix -- needed for iOS Safari, see above */
+  -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
