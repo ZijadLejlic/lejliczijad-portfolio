@@ -1,3 +1,5 @@
+# Agent worktrees (.claude/worktrees/*) are full repo copies owned by other sessions.
+.claude/
 dist/
 .astro/
 node_modules/
