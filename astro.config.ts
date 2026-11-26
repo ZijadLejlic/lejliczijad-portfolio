@@ -4,6 +4,7 @@ import cloudflare from '@astrojs/cloudflare';
 import mdx from '@astrojs/mdx';
 import { defineConfig, envField } from 'astro/config';
 
+import { contentReferences } from './scripts/checks/content-references.ts';
 import { site } from './src/data/site.ts';
 
 // Commit shown by /api/health (tech.md §9.6). CI provides GITHUB_SHA; locally ask git.
@@ -23,7 +24,8 @@ export default defineConfig({
   trailingSlash: 'never',
   output: 'static',
   // MDX for content collections (tech.md §2, §5): case studies, posts, services, lab.
-  integrations: [mdx()],
+  // contentReferences() fails the build on a reference to a missing entry (P1.CNT.05).
+  integrations: [mdx(), contentReferences()],
   adapter: cloudflare({
     // Images are optimized once at build with Sharp (tech.md §2: astro:assets, AVIF + WebP);
     // the Worker never transforms images, so no Cloudflare Images binding is needed.
