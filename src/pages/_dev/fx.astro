@@ -1,0 +1,222 @@
+---
+// Renderer harness (P1.FX.05). Served at /_dev/fx by `astro dev` and in preview builds only
+// (src/lib/dev-pages.ts). It drives the real renderer on a full-screen canvas and simulates context
+// loss through WEBGL_lose_context, so recovery can be checked by hand and by
+// tests/e2e/fx-renderer.spec.ts. It ignores reduced motion and the capability check on purpose:
+// the tier comes from `?fx=high|medium|low` (default high), so any browser with WebGL2 can test it.
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import Stack from '@/components/ui/Stack.astro';
+import Text from '@/components/ui/Text.astro';
+import FontPreload from '@/components/layout/FontPreload.astro';
+import '@/styles/tokens.css';
+import '@/styles/fonts.css';
+import '@/styles/reset.css';
+import '@/styles/base.css';
+import '@/styles/motion.css';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>FX renderer — dev</title>
+    <FontPreload />
+  </head>
+  <body>
+    <canvas id="fx" class="fx-canvas" aria-hidden="true"></canvas>
+    <main class="panel">
+      <Container>
+        <Stack gap={5}>
+          <Heading level={1} size="h2">
+            FX renderer
+          </Heading>
+          <Text tone="muted">
+            Draws a spinning triangle with the site renderer. Lose and restore the WebGL context to
+            check recovery: one restore is allowed, a second loss ends in "failed".
+          </Text>
+          <dl class="status" aria-live="polite">
+            <dt>Status</dt>
+            <dd data-fx="status">starting</dd>
+            <dt>Quality</dt>
+            <dd data-fx="quality">–</dd>
+            <dt>Size</dt>
+            <dd data-fx="size">–</dd>
+            <dt>Restores</dt>
+            <dd data-fx="restores">0</dd>
+            <dt>Frames</dt>
+            <dd data-fx="frames">0</dd>
+            <dt>GL error</dt>
+            <dd data-fx="gl-error">–</dd>
+          </dl>
+          <div class="actions">
+            <button type="button" data-fx-action="lose">
+              Lose context
+            </button>
+            <button type="button" data-fx-action="restore">
+              Restore context
+            </button>
+          </div>
+        </Stack>
+      </Container>
+    </main>
+  </body>
+</html>
+
+<script>
+  import {
+    BufferAttribute,
+    BufferGeometry,
+    Mesh,
+    MeshBasicMaterial,
+    OrthographicCamera,
+    Scene,
+  } from 'three';
+
+  import { parseFxOverride } from '@/fx/core/capabilities';
+  import { initRenderer, type RenderQuality } from '@/fx/core/renderer';
+
+  const ROTATION_PER_FRAME = 0.02;
+  const GL_ERROR_SAMPLE_FRAMES = 30;
+  const TRIANGLE = new Float32Array([0, 0.3, 0, -0.26, -0.15, 0, 0.26, -0.15, 0]);
+  // Below the status panel on every screen shape (camera fits the shorter side to [-1, 1]).
+  const TRIANGLE_Y = -0.6;
+
+  function field(name: string): HTMLElement {
+    const element = document.querySelector<HTMLElement>(`[data-fx="${name}"]`);
+    if (!element) throw new Error(`Missing [data-fx="${name}"]`);
+    return element;
+  }
+
+  function show(name: string, value: string | number): void {
+    field(name).textContent = String(value);
+  }
+
+  const canvas = document.querySelector<HTMLCanvasElement>('#fx');
+  const forced = parseFxOverride(location.search).quality;
+  const quality: RenderQuality = forced && forced !== 'static' ? forced : 'high';
+
+  if (canvas) {
+    try {
+      const fx = initRenderer({ canvas, quality });
+      const gl = fx.three.getContext();
+      // Keep the extension object: after a loss getExtension() returns null.
+      const loseContext = gl.getExtension('WEBGL_lose_context');
+
+      const scene = new Scene();
+      const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const geometry = new BufferGeometry();
+      geometry.setAttribute('position', new BufferAttribute(TRIANGLE, 3));
+      // Dev-only page: the accent from tokens.css (#4D7CFF) as a hex literal for three.
+      const mesh = new Mesh(geometry, new MeshBasicMaterial({ color: 0x4d7cff }));
+      mesh.position.y = TRIANGLE_Y;
+      scene.add(mesh);
+
+      // Fits the shorter side to [-1, 1], so the triangle stays inside portrait screens too.
+      const fitCamera = (): void => {
+        const aspect = fx.size.width / Math.max(fx.size.height, 1);
+        const x = Math.max(aspect, 1);
+        const y = Math.max(1 / aspect, 1);
+        camera.left = -x;
+        camera.right = x;
+        camera.top = y;
+        camera.bottom = -y;
+        camera.updateProjectionMatrix();
+      };
+
+      const render = (): void => {
+        show('status', fx.status);
+        show('quality', fx.quality);
+        show('size', `${fx.size.width}×${fx.size.height} @${fx.size.pixelRatio}`);
+        show('restores', fx.restores);
+        // The last frame before a loss reads CONTEXT_LOST_WEBGL; that is expected, not a bug.
+        if (fx.status !== 'ready') show('gl-error', '–');
+      };
+
+      let frames = 0;
+      const frame = (): void => {
+        if (fx.status === 'ready') {
+          mesh.rotation.z += ROTATION_PER_FRAME;
+          fx.three.render(scene, camera);
+          frames += 1;
+          show('frames', frames);
+          // getError() waits for the GPU, so it is sampled, not called every frame.
+          if (frames % GL_ERROR_SAMPLE_FRAMES === 1) {
+            show('gl-error', gl.getError() === gl.NO_ERROR ? 'none' : 'error');
+          }
+        }
+        if (fx.status !== 'failed' && fx.status !== 'disposed') requestAnimationFrame(frame);
+      };
+
+      fx.on('resize', () => {
+        fitCamera();
+        render();
+      });
+      fx.on('lost', render);
+      fx.on('restored', render);
+      fx.on('failed', render);
+      fitCamera();
+      render();
+      requestAnimationFrame(frame);
+
+      document.querySelector('[data-fx-action="lose"]')?.addEventListener('click', () => {
+        if (fx.status === 'ready') loseContext?.loseContext();
+      });
+      document.querySelector('[data-fx-action="restore"]')?.addEventListener('click', () => {
+        if (fx.status === 'lost') loseContext?.restoreContext();
+      });
+    } catch (error) {
+      show('status', 'unsupported');
+      console.error(error);
+    }
+  }
+</script>
+
+<style>
+  /* Not --z-fx: body paints its own background (base.css), which would cover a canvas at -1.
+     Placing the site canvas under content is P1.FX.02's job; here the panel simply comes later. */
+  .fx-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-base);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .panel {
+    position: relative;
+    padding-block: var(--space-8);
+  }
+
+  .status {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-2) var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-small);
+  }
+
+  dt {
+    color: var(--color-text-muted);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  button {
+    min-block-size: 2.75rem;
+    padding-inline: var(--space-5);
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+    border-radius: var(--radius-pill);
+  }
+
+  button:hover {
+    background: var(--color-accent-hover);
+  }
+</style>
