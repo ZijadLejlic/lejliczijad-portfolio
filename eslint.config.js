@@ -37,7 +37,8 @@ export default defineConfig([
     // Agent worktrees are full repo copies; linting them double-counts and confuses tsconfig lookup.
     '.claude/',
     'dist/',
-    '.astro/',
+    // Any depth: test fixtures that run `astro build` (tests/fixtures/*) generate their own .astro/.
+    '**/.astro/',
     'node_modules/',
     'coverage/',
     'playwright-report/',
