@@ -369,6 +369,11 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 - Labela se trimuje (`Astro.slots.render`), jer bi razmak iz labele u više redova bio podvučen. `set:html` vraća samo već escapovan izlaz slota (izuzetak od `astro/no-set-html-directive`, komentar u komponenti).
 - Stilovi su globalni u `src/styles/link.css` (svako pravilo počinje sa `.link`, čuva test). MDX linkovi u `Prose` za sada ostaju obični `<a>`; šabloni (P1.WORK.03, P2.BLOG.02) mogu mapirati `a` na `Link` kroz `components`.
 
+**Tag, Badge, AvailabilityBadge (P1.DS.12)**, `src/components/ui/`; tipovi i mapiranje su u `badge.ts`, testovi u `tests/unit/components/badge.test.ts` i `tests/e2e/badge.spec.ts`.
+- `Tag` (`as: span | li`, `tone: default | accent`): neinteraktivna labela za stack ili temu; više tagova ide u `<Cluster as="ul">` sa `as="li"`. Filteri na Work (P1.WORK.02) su dugmad s `aria-pressed`, ne tagovi, pa zaseban `Chip` ne postoji.
+- `Badge` (`as: span | p | div`, `tone: neutral | accent | success`, `dot`, `pulse`): tekst je uvijek `--color-text`, a tačka (`aria-hidden`) samo ponavlja značenje bojom (WCAG 1.4.1). Puls je prsten iz `::after` (samo `transform` i `opacity`, token `--dur-pulse` 2 s) koji uz reduced motion dobija `animation: none`.
+- `AvailabilityBadge` čita `site.availability` i tekst gradi sa `availabilityLabel()`; stranice ne prosljeđuju propse (prop `availability` je samo za `/_dev/ui` i testove). Izgled po statusu (`availabilityBadgeLook()`): `available` → zelena tačka koja pulsira, `limited` → akcentna, `booked` → muted, bez pulsa.
+
 | Sloj | Token | Vrijednost | Ko ga koristi |
 |---|---|---|---|
 | FX canvas | `--z-fx` | −1 | `FxCanvas` i poster vortexa (iza sadržaja) |
@@ -391,6 +396,7 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 | `--dur-base` | 400 ms |
 | `--dur-slow` | 700 ms |
 | `--dur-fade` | 150 ms (jedina animacija dozvoljena uz reduced motion) |
+| `--dur-pulse` | 2000 ms (jedan ciklus pulsa tačke dostupnosti, P1.DS.12) |
 | `--ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` |
 | `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` |
 | `--ease-spring` | GSAP `elastic.out(1, 0.5)` samo za magnetni povratak (konstanta u JS-u, nije CSS token) |

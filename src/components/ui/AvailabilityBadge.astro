@@ -1,0 +1,23 @@
+---
+// Availability badge (P1.DS.12, prd.md §6.7): reads site.availability, so changing src/data/site.ts
+// updates the header, hero, Contact and footer at once. The label comes from availabilityLabel().
+// `availability` is only for previews and tests; pages never pass it.
+import type { HTMLAttributes } from 'astro/types';
+
+import { availabilityLabel, site, type Availability } from '@/data/site';
+
+import Badge from './Badge.astro';
+import { availabilityBadgeLook } from './badge';
+
+interface Props extends HTMLAttributes<'span'> {
+  as?: 'span' | 'p' | 'div';
+  availability?: Availability;
+}
+
+const { availability = site.availability, ...rest } = Astro.props;
+const { tone, pulse } = availabilityBadgeLook(availability.status);
+---
+
+<Badge tone={tone} pulse={pulse} data-availability={availability.status} {...rest}>
+  {availabilityLabel(availability)}
+</Badge>

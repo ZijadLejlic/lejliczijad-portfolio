@@ -176,6 +176,10 @@
   /* The one animation reduced motion still allows: an opacity fade, at most 150 ms. */
   --dur-fade: 150ms;
 
+  /* One cycle of a looping status pulse (availability dot, P1.DS.12): slow enough to read as
+     calm, far below the 3 flashes per second limit (WCAG 2.3.1). */
+  --dur-pulse: 2000ms;
+
   /* Easing. The magnetic "spring" return is GSAP elastic.out(1, 0.5) in JS, not a CSS token. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -188,5 +192,6 @@
     --dur-fast: 0.01ms;
     --dur-base: 0.01ms;
     --dur-slow: 0.01ms;
+    --dur-pulse: 0.01ms;
   }
 }
