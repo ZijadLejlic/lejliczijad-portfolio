@@ -2,6 +2,7 @@
 // Minimal placeholder page for the scaffold. Real Home content arrives in P1.HOME.*, and the
 // global style imports move into BaseLayout in P1.LAY.01 (order matters: tokens first).
 import FontPreload from '@/components/layout/FontPreload.astro';
+import { site } from '@/data/site';
 import { ROBOTS_META } from '@/lib/deploy-env';
 import '@/styles/tokens.css';
 import '@/styles/fonts.css';
@@ -16,12 +17,12 @@ import '@/styles/motion.css';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content={ROBOTS_META} />
-    <title>Zijad Lejlić</title>
+    <title>{site.name}</title>
     <FontPreload />
   </head>
   <body>
     <main>
-      <h1>Zijad Lejlić</h1>
+      <h1>{site.name}</h1>
       <!-- TODO(content): hero copy is chosen in P1.HOME.01 -->
     </main>
   </body>

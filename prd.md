@@ -544,7 +544,7 @@ Svaka stranica usluge:
 #### P1.CNT: Content model (MDX)
 - [ ] **P1.CNT.01** Zod shema `projects` prema [tech.md §5](tech.md#5-content-model) · Ko: A · Gotovo kad: neispravan frontmatter ruši build s jasnom porukom.
 - [ ] **P1.CNT.02** Zod sheme `testimonials`, `clients`, `services`, `faq`, `posts`, `lab` · Ko: A · Gotovo kad: sve kolekcije su tipizirane.
-- [ ] **P1.CNT.03** `src/data/site.ts` (ime, URL, email, social, dostupnost, vremenska zona, Cal.com linkovi) · Ko: A · Gotovo kad: nijedan od tih podataka nije hardkodiran van ovog fajla.
+- [x] **P1.CNT.03** `src/data/site.ts` (ime, URL, email, social, dostupnost, vremenska zona, Cal.com linkovi) · Ko: A · Gotovo kad: nijedan od tih podataka nije hardkodiran van ovog fajla. · **Bilješka (2026-11-26):** Cal.com linkovi su s naloga (`cal.com/lejliczijad/intro-15`, `consultation-45`); GitHub je `github.com/ZijadLejlic`. Dostupnost je "Available for new projects", bez mjeseca (Zijadova potvrda). Ostali profili čekaju P0.ACC.10–13 (`TODO(content)`). `wrangler.jsonc`, `.dev.vars.example` i `.env.example` ponavljaju vrijednosti, a `tests/unit/data/site.test.ts` čuva da se ne raziđu.
 - [ ] **P1.CNT.04** MDX komponente za case study (`Summary`, `Feature`, `ArchitectureDiagram`, `Gallery`, `Metric`, `Quote`, `BeforeAfter`, `VideoWalkthrough`) · Ko: A · Gotovo kad: primjer MDX-a koristi sve komponente.
 
 #### P1.HOME: Home stranica
