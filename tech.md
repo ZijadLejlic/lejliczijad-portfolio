@@ -239,6 +239,8 @@ lejliczijad-portfolio/
 }
 ```
 
+**Implementacija (P1.CNT.01):** shema je u `src/content/schemas/projects.ts` kao fabrika `projectSchema({ image, clientRef, testimonialRef })`, da je unit testovi (`tests/unit/content/projects-schema.test.ts`) mogu provjeriti bez Astro content layera; `src/content.config.ts` joj daje `image()` i `reference()`. Loader je `glob('*/index.mdx')` (zato `@astrojs/mdx`), a `projectIdFromEntry()` ruši build ako se `slug` i ime foldera razlikuju. Objekti su `z.strictObject` (zod 4 ekvivalent `.strict()`); nepoznato polje daje poruku s imenom polja. Dodatna pravila uz tabelu: kebab-case `slug`; `liveUrl` samo `https://`; `hoverVideo` je putanja iz `public/` (`/….mp4|webm`); `youtubeId` 11 znakova i obavezan za `type: video`; `services`, `stack` i `seo.keywords` neprazni i bez duplikata; `year` ≥ 2000 i ne poslije godine `publishedAt`; `updatedAt` ne prije `publishedAt`. `draft` se filtrira pri čitanju kolekcije (P1.WORK.01), ne u shemi. Reference na `clients` i `testimonials` rade tek kad P1.CNT.02 definiše te kolekcije.
+
 ### 5.2 Ostale kolekcije
 - **testimonials:** `{ id, quote (≤ 400), author, role, company, photo?: image, linkedin?: url, projectRef?, videoYoutubeId?, rating?: 1..5, source: 'direct'|'clutch'|'google', date, consent: true }`. Build pada ako je `consent !== true`.
 - **clients:** `{ id, name, logo: image | svg, url?, consent: true }`
