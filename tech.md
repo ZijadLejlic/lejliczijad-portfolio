@@ -120,7 +120,7 @@ lejliczijad-portfolio/
 │  ├─ face/ prepare.py  sample.ts
 │  ├─ og/ generate.ts
 │  ├─ pdf/ resume.ts  guide.ts
-│  └─ checks/ content-guard.ts  headings.ts  dist-leaks.ts  overflow-report.ts
+│  └─ checks/ content-guard.ts  content-references.ts  headings.ts  dist-leaks.ts  overflow-report.ts
 ├─ public/
 │  ├─ _headers                # security i cache headeri
 │  ├─ favicon.svg  favicon-32.png  apple-touch-icon.png  icon-192.png  icon-512.png
@@ -255,7 +255,7 @@ lejliczijad-portfolio/
 - `posts`: slug bez datuma (`YYYY-MM`, prd.md §5; sama godina je dozvoljena); `description` ≤ 160 (kartica), meta je `seo.description`; tagovi kebab-case bez duplikata; `updatedAt` ne prije `publishedAt`.
 - `faq`: `items[].id` je kebab-case anchor, jedinstven u grupi.
 - `lab`: `component` je PascalCase ime Svelte komponente; `coverAlt` je dodan jer svaka slika mora imati `alt` (AGENTS.md §6.2).
-- **Poznato ograničenje:** Astro referencu na nepostojeći unos (npr. `relatedProjects: [ghost]`) samo loguje kao `[ERROR] Invalid content reference`, a build završava s exit 0. Provjera koja to ruši još ne postoji.
+- **Nevažeće reference (P1.CNT.05):** Astro (7.4.13) referencu na nepostojeći unos (npr. `relatedProjects: [ghost]`) samo loguje kao `[ERROR] [content] Invalid content reference: …` i ne nudi opciju da to bude greška. Zato integracija `contentReferences()` (`scripts/checks/content-references.ts`, uključena u `astro.config.ts`) tokom sinhronizacije sadržaja bilježi te poruke sa dijeljenog loggera i u `astro:build:start` ruši build (`pnpm build`, `build:prod`, CI) sa spiskom svih nevažećih referenci, prije renderovanja stranica. `astro dev` i `astro sync` samo loguju, da nedovršen unos ne ruši dev server. Test `tests/unit/content-references.test.ts` radi pravi `astro build` nad `tests/fixtures/content-references/`, pa nadogradnja Astra koja promijeni oblik poruke ruši `pnpm check`.
 
 ### 5.3 `src/data/site.ts`
 ```ts
