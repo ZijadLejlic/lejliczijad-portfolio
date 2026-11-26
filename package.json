@@ -21,6 +21,8 @@
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:api": "vitest run --project api",
+    "test:e2e": "playwright test tests/e2e",
+    "test:e2e:install": "playwright install --with-deps chromium firefox webkit",
     "test:watch": "vitest",
     "check": "pnpm lint && pnpm lint:css && pnpm typecheck && pnpm test:unit",
     "prepare": "husky"
@@ -34,6 +36,7 @@
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
     "astro-eslint-parser": "3.2.0",
     "eslint": "10.15.0",
     "eslint-config-prettier": "10.1.8",

@@ -34,6 +34,8 @@ const SERVER_IMPORT_PATTERNS = [
 
 export default defineConfig([
   globalIgnores([
+    // Agent worktrees are full repo copies; linting them double-counts and confuses tsconfig lookup.
+    '.claude/',
     'dist/',
     '.astro/',
     'node_modules/',
