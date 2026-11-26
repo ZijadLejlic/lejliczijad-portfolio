@@ -1,0 +1,18 @@
+# Code owners (P1.ENV.16). Zijad is the only approver on this project (AGENTS.md, intro), so he owns
+# everything. The explicit lines below keep the sensitive paths visible and make it easy to add a
+# second reviewer per area later. The last matching pattern wins, so the catch-all stays first.
+
+*                         @ZijadLejlic
+
+# Security-sensitive: server code, API, headers/CSP, CI and secrets handling (AGENTS.md §14.3).
+/src/server/              @ZijadLejlic
+/src/pages/api/           @ZijadLejlic
+/public/_headers          @ZijadLejlic
+/.github/                 @ZijadLejlic
+/wrangler.jsonc           @ZijadLejlic
+
+# Decisions and rules: changes need Zijad's approval (AGENTS.md §0.3).
+/AGENTS.md                @ZijadLejlic
+/prd.md                   @ZijadLejlic
+/tech.md                  @ZijadLejlic
+/docs/adr/                @ZijadLejlic

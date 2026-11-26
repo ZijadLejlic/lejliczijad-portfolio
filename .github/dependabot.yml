@@ -1,0 +1,63 @@
+# Dependabot version updates (P1.ENV.12, tech.md §13.1 supply chain).
+#
+# - Weekly, Monday morning Sarajevo time, so the PRs are waiting at the start of the week.
+# - Minor and patch bumps are grouped into one PR per ecosystem; every major gets its own PR,
+#   because a major needs a changelog read and a regression pass (prd.md P4.05).
+# - Nothing is auto-merged. There is no auto-merge workflow in this repo, and a PR still needs a
+#   green CI and Zijad's approval (AGENTS.md §3.11).
+# - Cooldown skips releases younger than a few days, which keeps a compromised or broken release
+#   out of the PR until the ecosystem has had time to notice. Security updates ignore cooldown.
+# - Versions stay exact: `.npmrc` has `save-exact=true` and `increase` rewrites the pinned version.
+# - Commit prefixes match commitlint scopes (AGENTS.md §5.2): `deps` for packages, `ci` for actions.
+# - Labels are left to Dependabot's defaults (`dependencies` + ecosystem), which it creates itself.
+
+version: 2
+
+updates:
+  # pnpm uses the `npm` ecosystem value; Dependabot reads pnpm-lock.yaml.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Sarajevo
+    versioning-strategy: increase
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    commit-message:
+      prefix: chore(deps)
+    groups:
+      npm-minor-patch:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+
+  # Actions are pinned to commit SHAs with a version comment; Dependabot updates both.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Sarajevo
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore(ci)
+    groups:
+      actions-minor-patch:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
