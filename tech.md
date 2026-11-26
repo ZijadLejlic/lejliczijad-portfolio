@@ -342,9 +342,19 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 | `--dur-slow` | 700 ms |
 | `--ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` |
 | `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` |
-| `--ease-spring` | GSAP `elastic.out(1, 0.5)` samo za magnetni povratak |
+| `--dur-fade` | 150 ms (jedina animacija dozvoljena uz reduced motion) |
+| `--ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` |
+| `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` |
+| `--ease-spring` | GSAP `elastic.out(1, 0.5)` samo za magnetni povratak (konstanta u JS-u, nije CSS token) |
 
 `@media (prefers-reduced-motion: reduce)`: sve tranzicije ≤ 0,01 ms osim opacity (≤ 150 ms), bez parallaxa, bez marqueeja, bez smooth scrolla, FX je `static`.
+
+**Implementacija (P1.DS.06):**
+- `tokens.css` uz reduced motion spušta `--dur-instant|fast|base|slow` na 0,01 ms, pa se automatski skraćuje sve što se tajmira tokenima (i CSS i JS koji ih čita).
+- `src/styles/motion.css` je globalni reset. Za `*`, `::before` i `::after` postavlja `transition-duration` i `animation-duration` na 0,01 ms, `animation-iteration-count: 1`, delay 0 i `scroll-behavior: auto`, sve uz `!important`.
+- `transitionend` i `animationend` se i dalje okidaju, pa JS ne visi.
+- Izuzetak je samo element s `data-motion="fade"`: on smije animirati **samo** `opacity`, najviše `--dur-fade`.
+- Reset ne pokriva inline `style` s `!important`, kao ni JS animacije (rAF, GSAP, Lenis, FX). One same provjeravaju `matchMedia('(prefers-reduced-motion: reduce)')`.
 
 ---
 

@@ -147,4 +147,29 @@
   --z-modal: 80;
   --z-toast: 90;
   --z-skip-link: 100;
+
+  /* --- Motion (P1.DS.06, tech.md §6.5) ---------------------------------------------------- */
+
+  /* Durations. Under reduced motion they collapse (see the media block below and motion.css). */
+  --dur-instant: 100ms;
+  --dur-fast: 200ms;
+  --dur-base: 400ms;
+  --dur-slow: 700ms;
+
+  /* The one animation reduced motion still allows: an opacity fade, at most 150 ms. */
+  --dur-fade: 150ms;
+
+  /* Easing. The magnetic "spring" return is GSAP elastic.out(1, 0.5) in JS, not a CSS token. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    /* Anything timed with the tokens (CSS or JS reading them) becomes effectively instant. */
+    --dur-instant: 0.01ms;
+    --dur-fast: 0.01ms;
+    --dur-base: 0.01ms;
+    --dur-slow: 0.01ms;
+  }
 }
