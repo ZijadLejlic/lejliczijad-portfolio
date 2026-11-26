@@ -463,7 +463,7 @@ Svaka stranica usluge:
 
 #### P1.DS: Dizajn sistem
 - [x] **P1.DS.01** Tri vizuelna mockupa hero sekcije (crna + električno plava #4D7CFF, Clash Display + Satoshi + JetBrains Mono) kao HTML preview; Zijad bira smjer · Ko: A+Z · Gotovo kad: Zijad je odobrio jedan smjer. · **Izabrano: C · Off-axis** (2026-11-25), mockupi u `docs/design/p1-ds-01/`.
-- [~] **P1.DS.02** Color tokeni (`--color-*`) prema [tech.md §6](tech.md#6-dizajn-tokeni) + dokumentovan kontrast svakog para · Ko: A · Zavisi: P1.DS.01 · Gotovo kad: svi tekstualni parovi ≥ 4,5:1 (veliki tekst ≥ 3:1). (agent: claude, 2026-11-26)
+- [x] **P1.DS.02** Color tokeni (`--color-*`) prema [tech.md §6](tech.md#6-dizajn-tokeni) + dokumentovan kontrast svakog para · Ko: A · Zavisi: P1.DS.01 · Gotovo kad: svi tekstualni parovi ≥ 4,5:1 (veliki tekst ≥ 3:1). · **Bilješka (2026-11-26):** `--color-accent-pressed` je `#4570F5` (Zijadova odluka; `#3A66E6` je imao 4,10:1); parovi u `docs/design/contrast.md`, provjera u `tests/unit/styles/tokens-contrast.test.ts`.
 - [ ] **P1.DS.03** Self-host fontova (WOFF2; Clash Display i Satoshi originalni, bez subsettinga prema ADR-013; JetBrains Mono subset latin + latin-ext; provjeriti č/ć/š/ž/đ), `font-display: swap`, preload 2 fonta, fallback metrike (`size-adjust`) protiv CLS-a · Ko: A · Gotovo kad: CLS od fontova = 0; licence su dokumentovane u `docs/licenses.md`.
 - [ ] **P1.DS.04** Fluidna tipografska skala (clamp) + tokeni za line-height i letter-spacing · Ko: A · Gotovo kad: naslovi skaliraju 320–2560 px bez prelamanja riječi.
 - [ ] **P1.DS.05** Spacing, radius, border, shadow, z-index tokeni · Ko: A · Gotovo kad: tokeni postoje; z-index skala je dokumentovana.
