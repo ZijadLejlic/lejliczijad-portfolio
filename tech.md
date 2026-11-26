@@ -689,6 +689,8 @@ Privacy Policy mora navesti svaki red iz ove tabele. Dodavanje reda zahtijeva AD
 | Sigurnost | gitleaks, CodeQL, audit, ZAP baseline | Repo i preview | CI + sedmično |
 | Ručno | Checkliste | Tastatura, VoiceOver, pravi uređaji, FX vizual | Prije svakog lansiranja |
 
+**Playwright (P1.ENV.09):** `playwright.config.ts`, projekti `chromium`, `firefox`, `webkit`, `pixel-7`, `iphone-15`. Specovi su u `tests/{e2e,visual,a11y,overflow}/**/*.spec.ts` i importuju `test` iz `tests/fixtures/stable.ts`: svaki `page.goto` dobija `?fx=off`, a kontekst radi s `reducedMotion: 'reduce'`, `en-US` i `Europe/Sarajevo`. FX specovi importuju `test` direktno iz `@playwright/test`. Lokalno se pokreće `pnpm build` + `astro preview` na portu 4322; ako je postavljen `PLAYWRIGHT_BASE_URL` (CI protiv preview deploya, P1.ENV.10), lokalni server se ne pokreće. Prva instalacija browsera: `pnpm test:e2e:install`. FX sloj mora poštovati `?fx=off` (P1.FX.01).
+
 **Pravilo:** bug fix = prvo test koji reprodukuje bug, pa popravka.
 
 ---

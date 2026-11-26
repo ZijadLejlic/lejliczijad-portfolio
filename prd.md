@@ -450,7 +450,7 @@ Svaka stranica usluge:
 - [x] **P1.ENV.06** `.editorconfig`, `.gitattributes`, `.gitignore` (uključujući `.env*`, `.dev.vars`, `content/intake/scan/*.glb` ako je prevelik) · Ko: A · Gotovo kad: fajlovi postoje.
 - [x] **P1.ENV.07** Shema env varijabli (`astro:env` ili zod) + `.env.example` + `.dev.vars.example` · Ko: A · Gotovo kad: build pada s jasnom porukom ako fali obavezna varijabla.
 - [x] **P1.ENV.08** Vitest setup (+ `@cloudflare/vitest-pool-workers` za API) · Ko: A · Gotovo kad: primjer testa prolazi u `pnpm test`; smoke test potvrđuje da `@/*` alias radi u Vitestu (preneseno iz P1.ENV.02). · **Bilješka (2026-11-25):** paket je preimenovan u `@cloudflare/vitest-plugin` (stari je deprecated); projekti `unit` (Node) i `api` (workerd) u `vitest.config.ts`.
-- [ ] **P1.ENV.09** Playwright setup (chromium, webkit, firefox, Pixel 7, iPhone 15) + `?fx=off` mod za stabilne screenshotove · Ko: A · Gotovo kad: smoke test prolazi.
+- [x] **P1.ENV.09** Playwright setup (chromium, webkit, firefox, Pixel 7, iPhone 15) + `?fx=off` mod za stabilne screenshotove · Ko: A · Gotovo kad: smoke test prolazi.
 - [ ] **P1.ENV.10** GitHub Actions `ci.yml`: install (cache) → lint → typecheck → unit → build → e2e · Ko: A · Zavisi: P1.ENV.03–09 · Gotovo kad: CI je zelen na PR-u.
 - [ ] **P1.ENV.11** GitHub Actions `security.yml`: `pnpm audit`, gitleaks, CodeQL · Ko: A · Gotovo kad: radi na PR-u i sedmično (cron).
 - [ ] **P1.ENV.12** Dependabot ili Renovate (sedmično, grupisano, bez auto-mergea majora) · Ko: A · Gotovo kad: konfiguracija je u repou.
