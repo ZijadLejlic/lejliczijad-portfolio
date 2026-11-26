@@ -1,0 +1,91 @@
+import ArchitectureDiagram from '@/components/case-study/ArchitectureDiagram.astro';
+import BeforeAfter from '@/components/case-study/BeforeAfter.astro';
+import Feature from '@/components/case-study/Feature.astro';
+import Gallery from '@/components/case-study/Gallery.astro';
+import Metric from '@/components/case-study/Metric.astro';
+import Quote from '@/components/case-study/Quote.astro';
+import Summary from '@/components/case-study/Summary.astro';
+import VideoWalkthrough from '@/components/case-study/VideoWalkthrough.astro';
+
+import Architecture from './architecture.svg';
+import after from './images/after.png';
+import avatar from './images/avatar.png';
+import before from './images/before.png';
+import poster from './images/poster.png';
+import calendar from './images/screen-calendar.png';
+import dashboard from './images/screen-dashboard.png';
+import mobile from './images/screen-mobile.png';
+// Example case study body that uses every case-study MDX component (P1.CNT.04). Demo content
+// only: no real client, number or quote. Rendered by tests/unit/components/case-study.test.ts.
+
+<Summary
+  client="Demo Clinic"
+  industry="Healthcare (demo)"
+  services={['Web app development', 'SEO']}
+  timeline="4 months (demo)"
+  stack={['Astro', 'TypeScript', 'PostgreSQL']}
+  role="Solo full-stack developer"
+  result="Demo result sentence for the summary card."
+  liveUrl="https://www.example.com"
+/>
+
+## The solution
+
+<Feature
+  title="Demo feature with a screenshot"
+  image={{ src: dashboard, alt: 'Demo dashboard with placeholder charts' }}
+>
+  Demo description of what the feature does for the people who use it.
+</Feature>
+
+<Feature
+  title="Demo feature, reversed"
+  image={{ src: calendar, alt: 'Demo calendar with placeholder appointments' }}
+  reverse
+>
+  Demo description, image on the other side.
+</Feature>
+
+<Feature title="Demo feature without an image">Text-only feature block.</Feature>
+
+<Gallery
+  label="Demo screens"
+  images={[
+    { src: dashboard, alt: 'Demo dashboard', caption: 'Dashboard (demo)' },
+    { src: calendar, alt: 'Demo calendar' },
+    { src: mobile, alt: 'Demo mobile screen', caption: 'Mobile (demo)' },
+  ]}
+/>
+
+## Architecture
+
+<ArchitectureDiagram caption="Demo diagram: browser, Worker and email service.">
+  <Architecture />
+</ArchitectureDiagram>
+
+## Before and after
+
+<BeforeAfter
+  caption="Demo comparison of an old and a new screen."
+  before={{ src: before, alt: 'Demo old screen' }}
+  after={{ src: after, alt: 'Demo new screen' }}
+/>
+
+## Results
+
+<Metric value="40%" label="demo metric, approximate" approximate source="tests/fixtures (demo)" />
+<Metric value="120" label="demo metric, exact" approximate={false} source="tests/fixtures (demo)" />
+
+## Video walkthrough
+
+<VideoWalkthrough youtubeId="aaaaaaaaaaa" title="Demo walkthrough" duration="2:40" poster={poster}>
+  Demo transcript paragraph.
+</VideoWalkthrough>
+
+<Quote
+  quote="Demo quote text. Real quotes come verbatim from the testimonials collection."
+  author="Demo Author"
+  role="Demo Role"
+  company="Demo Company"
+  photo={avatar}
+/>

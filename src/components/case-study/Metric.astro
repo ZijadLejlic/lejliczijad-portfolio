@@ -1,0 +1,65 @@
+---
+// One result number (prd.md §7.3, section 9). Every number needs a source (AGENTS.md §7): the
+// `source` prop is required but never rendered. Approximate numbers always get "~", which
+// screen readers hear as "about".
+import { metricValue } from './case-study';
+
+interface Props {
+  value: string;
+  /** What the number measures, e.g. "less time on paperwork". */
+  label: string;
+  approximate: boolean;
+  /** Where the number comes from (content/intake/*). Internal, not shown. */
+  source: string;
+}
+
+const { value, label, approximate, source } = Astro.props;
+if (source.trim() === '') throw new Error(`Metric "${label}": source must not be empty.`);
+const shown = metricValue(value);
+---
+
+<p class="metric">
+  <span class="metric__value">
+    {approximate && (
+      <>
+        <span aria-hidden="true">~</span>
+        <span class="metric__sr">about </span>
+      </>
+    )}
+    {shown}
+  </span>
+  <span class="metric__label">{label}</span>
+</p>
+
+<style>
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .metric__value {
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    font-weight: var(--weight-medium);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--leading-h2);
+    color: var(--color-text);
+    letter-spacing: var(--tracking-h2);
+  }
+
+  .metric__label {
+    color: var(--color-text-muted);
+  }
+
+  /* Read by screen readers, invisible on screen. */
+  .metric__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+</style>

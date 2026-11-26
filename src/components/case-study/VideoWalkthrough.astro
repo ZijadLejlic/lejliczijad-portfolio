@@ -1,0 +1,141 @@
+---
+// Video walkthrough (prd.md §7.3, section 10) with a collapsible transcript (default slot).
+// Baseline without third parties: a link to the video on YouTube, so nothing loads from YouTube
+// until the visitor clicks (NFR-08). P1.DS.20 replaces the link with the lite youtube-nocookie
+// embed; the MDX API stays the same.
+// TODO(P1.DS.23): swap astro:assets <Picture> for the shared Picture wrapper.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+import { IMAGE_FORMATS, youtubeWatchUrl } from './case-study';
+
+interface Props {
+  youtubeId: string;
+  /** Video title; also names the link for screen readers. */
+  title: string;
+  /** Duration as shown, e.g. "2:40". */
+  duration?: string;
+  /** Local poster, decorative (the link text names the video). No i.ytimg.com thumbnail, so the
+   *  page makes no YouTube request. */
+  poster?: ImageMetadata;
+}
+
+const { youtubeId, title, duration, poster } = Astro.props;
+const href = youtubeWatchUrl(youtubeId);
+const hasTranscript = Astro.slots.has('default');
+---
+
+<div class="video">
+  <a class="video__link" href={href} rel="noopener noreferrer" data-cursor="play">
+    {poster && (
+      <Picture
+        class="video__poster"
+        src={poster}
+        alt=""
+        formats={[...IMAGE_FORMATS]}
+        widths={[480, 800, 1200]}
+        sizes="(min-width: 64em) 66vw, 100vw"
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+    <span class="video__meta">
+      <svg class="video__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M8 5v14l11-7z" fill="currentColor"></path>
+      </svg>
+      <span class="video__text">
+        <span class="video__title">{title}</span>
+        <span class="video__hint">Watch on YouTube{duration && ` · ${duration}`}</span>
+      </span>
+    </span>
+  </a>
+  {hasTranscript && (
+    <details class="video__transcript">
+      <summary>Transcript</summary>
+      <div class="video__transcript-body">
+        <slot />
+      </div>
+    </details>
+  )}
+</div>
+
+<style>
+  .video {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .video__link {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--color-text);
+    text-decoration: none;
+    background-color: var(--color-surface-1);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .video__link:hover {
+    color: var(--color-text);
+    background-color: var(--color-surface-2);
+  }
+
+  /* <Picture> renders the img, so the class is reached from the scoped parent. */
+  .video :global(.video__poster) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .video__meta {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-5);
+  }
+
+  .video__icon {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: var(--space-2);
+    color: var(--color-on-accent);
+    background-color: var(--color-accent);
+    border-radius: var(--radius-pill);
+  }
+
+  .video__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .video__title {
+    font-weight: var(--weight-medium);
+    overflow-wrap: anywhere;
+  }
+
+  .video__hint {
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--color-text-muted);
+  }
+
+  .video__transcript summary {
+    /* 44 px tall target on touch screens (AGENTS.md §9). */
+    min-height: 2.75rem;
+    padding-block: var(--space-2);
+    cursor: pointer;
+  }
+
+  .video__transcript-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: var(--measure-prose);
+    padding-block-start: var(--space-3);
+    color: var(--color-text-muted);
+  }
+</style>

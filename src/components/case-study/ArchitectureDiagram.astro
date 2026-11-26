@@ -1,0 +1,47 @@
+---
+// Architecture section figure (prd.md §7.3, section 6). The default slot takes the diagram as an
+// imported SVG component (`import Diagram from './architecture.svg'`), never as SVG typed into
+// MDX: MDX parses text inside inline SVG as Markdown and breaks it. The SVG carries role="img",
+// <title> and <desc> (template in P1.WORK.07); the caption is required.
+interface Props {
+  caption: string;
+}
+
+const { caption } = Astro.props;
+---
+
+<figure class="diagram">
+  <div class="diagram__canvas">
+    <slot />
+  </div>
+  <figcaption class="diagram__caption">{caption}</figcaption>
+</figure>
+
+<style>
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .diagram__canvas {
+    padding: var(--space-5);
+    background-color: var(--color-surface-1);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  /* The diagram scales with its box instead of overflowing it on a phone. */
+  .diagram__canvas :global(svg) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .diagram__caption {
+    font-size: var(--text-small);
+    line-height: var(--leading-small);
+    color: var(--color-text-muted);
+  }
+</style>

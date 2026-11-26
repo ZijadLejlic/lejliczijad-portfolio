@@ -276,6 +276,22 @@ export const site: Site = {
 
 **Implementacija (P1.CNT.03):** tip `Site` i `site` su u `src/data/site.ts`; tu su i `MAIL_FROM` (`Ime <email>`) i čista funkcija `availabilityLabel()` (`Available for new projects — January 2027`, `Limited availability`, `Fully booked until …`), pa se tekst badgea ne piše ručno. Profili koji još ne postoje se izostavljaju iz `social`, a komponente prikazuju samo postojeće. `astro.config.ts` (`site`) i `playwright.config.ts` (`timezoneId`) importuju vrijednosti iz `site.ts`. Fajlovi koji ne mogu importovati TS (`wrangler.jsonc` vars i previews, `.dev.vars.example`, `.env.example`) ponavljaju email, `MAIL_FROM` i URL, a `tests/unit/data/site.test.ts` ruši `pnpm check` ako se razilaze.
 
+### 5.4 MDX komponente za case study (P1.CNT.04)
+U `src/components/case-study/`; čisti helperi su u `case-study.ts`, testovi u `tests/unit/components/case-study.test.ts`, a primjer MDX-a sa svih 8 komponenti (demo slike, bez stvarnih podataka) u `tests/fixtures/case-study/example.mdx`.
+
+| Komponenta | Props | Napomena |
+|---|---|---|
+| `Summary` | `client`, `industry`, `services[]`, `timeline`, `stack[]`, `role`, `result`, `liveUrl?` | `<dl>`; live link samo `https://`, prikazuje se host |
+| `Feature` | `title`, `image?: { src, alt }`, `level?: 3 \| 4`, `reverse?`; slot = opis | dvije kolone od 48rem širine bloka (container query) |
+| `ArchitectureDiagram` | `caption`; slot = SVG | SVG se **importuje** kao Astro komponenta (`import D from './arch.svg'`); SVG upisan u MDX se lomi, jer MDX tekst u njemu parsira kao Markdown |
+| `Gallery` | `label`, `images[]: { src, alt, caption? }` | `<ul>` figura; prazna lista ruši build |
+| `Metric` | `value`, `label`, `approximate`, `source` | `source` je obavezan i ne prikazuje se; `approximate` uvijek daje "~" (čitač ekrana čuje "about") |
+| `Quote` | `quote`, `author`, `role`, `company`, `photo?` | tekst dolazi doslovno iz kolekcije `testimonials`; layout (P1.WORK.03) prosljeđuje polja unosa |
+| `BeforeAfter` | `before`, `after` (`{ src, alt }`), `caption`, `beforeLabel?`, `afterLabel?` | bazna verzija: dvije kolone bez JS-a; slider dodaje P1.DS.24 bez promjene MDX API-ja |
+| `VideoWalkthrough` | `youtubeId`, `title`, `duration?`, `poster?`; slot = transkript | bazna verzija: link na YouTube, lokalni poster, 0 zahtjeva prema YouTubeu prije klika; lite embed dodaje P1.DS.20; neispravan ID ruši build |
+
+Slike idu kroz `astro:assets` `<Picture>` (AVIF + WebP, `loading="lazy"`) dok P1.DS.23 ne uvede zajednički `Picture` wrapper.
+
 ---
 
 ## 6. Dizajn tokeni

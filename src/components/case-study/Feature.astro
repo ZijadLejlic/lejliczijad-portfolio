@@ -1,0 +1,90 @@
+---
+// One key feature in "The solution" (prd.md §7.3, section 5): a heading, a short description
+// (default slot) and an optional screenshot. Two columns once the block is wide enough.
+// TODO(P1.DS.23): swap astro:assets <Picture> for the shared Picture wrapper.
+import { Picture } from 'astro:assets';
+
+import { IMAGE_FORMATS, type CaseStudyImage } from './case-study';
+
+interface Props {
+  title: string;
+  image?: CaseStudyImage;
+  /** Features sit under the "The solution" h2, so h3 by default. */
+  level?: 3 | 4;
+  /** Puts the image on the other side, to alternate a run of features. */
+  reverse?: boolean;
+}
+
+const { title, image, level = 3, reverse = false } = Astro.props;
+const Heading = `h${level}` as const;
+---
+
+<div class:list={['feature', { 'feature--reverse': reverse, 'feature--media': image }]}>
+  <div class="feature__inner">
+    <div class="feature__text">
+      <Heading class="feature__title">{title}</Heading>
+      <slot />
+    </div>
+    {image && (
+      <Picture
+        class="feature__image"
+        src={image.src}
+        alt={image.alt}
+        formats={[...IMAGE_FORMATS]}
+        widths={[480, 800, 1200]}
+        sizes="(min-width: 64em) 50vw, 100vw"
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+  </div>
+</div>
+
+<style>
+  .feature {
+    container-type: inline-size;
+  }
+
+  .feature__inner {
+    display: grid;
+    gap: var(--space-6);
+    align-items: center;
+  }
+
+  .feature__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    max-width: var(--measure-prose);
+  }
+
+  /* Dynamic heading tag and <Picture> output: the scoped-CSS lint cannot see their classes. */
+  .feature :global(.feature__title) {
+    font-size: var(--text-h3);
+  }
+
+  .feature :global(.feature__image) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  /* 48rem of block width, not of viewport, so it also behaves inside narrow layouts. */
+  @container (width >= 48rem) {
+    .feature--media .feature__inner {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+
+    .feature--reverse .feature__inner {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+
+    /* Visual order only; the text stays first in the DOM and in reading order. */
+    .feature--reverse .feature__text {
+      order: 2;
+    }
+  }
+</style>
