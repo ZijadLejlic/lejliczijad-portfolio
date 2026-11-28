@@ -10,6 +10,8 @@ import Container from '@/components/ui/Container.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import Grid from '@/components/ui/Grid.astro';
 import Heading from '@/components/ui/Heading.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { ICON_NAMES } from '@/components/ui/icons';
 import Link from '@/components/ui/Link.astro';
 import Prose from '@/components/ui/Prose.astro';
 import Section from '@/components/ui/Section.astro';
@@ -207,6 +209,21 @@ const COMPONENTS: GalleryEntry[] = [
     props: [
       { name: 'as', values: 'span, p, div', fallback: 'span' },
       { name: 'availability', values: 'previews and tests only', fallback: 'site.availability' },
+    ],
+  },
+  {
+    id: 'icon',
+    name: 'Icon',
+    purpose:
+      'Inline Lucide SVG from src/components/ui/icons.ts (no sprite, no request). Stroke is currentColor. Decorative and aria-hidden unless label is set.',
+    props: [
+      { name: 'name', values: 'one of the icons below (typed)', fallback: 'required' },
+      {
+        name: 'size',
+        values: 'inherit (1em), sm (16 px), md (20 px), lg (24 px)',
+        fallback: 'inherit',
+      },
+      { name: 'label', values: 'text → role="img" + aria-label', fallback: 'none (aria-hidden)' },
     ],
   },
 ];
@@ -485,14 +502,10 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                     <Cluster gap={3}>
                       <Button href="#button">
                         Book a call
-                        <svg slot="icon-end" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                          <path d="M3 8h10M9 4l4 4-4 4" stroke-width="1.5" />
-                        </svg>
+                        <Icon slot="icon-end" name="arrow-right" />
                       </Button>
                       <Button variant="secondary" href="#button-form">
-                        <svg slot="icon-start" viewBox="0 0 16 16" fill="currentColor">
-                          <path d="M4 2.5v11l9-5.5z" />
-                        </svg>
+                        <Icon slot="icon-start" name="play" />
                         Meet me
                       </Button>
                       <Button variant="ghost" href="https://example.com" target="_blank">
@@ -572,6 +585,42 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                     </Badge>
                     <Badge dot={false}>No dot</Badge>
                   </Cluster>
+                </Stack>
+              )}
+
+              {primitive.id === 'icon' && (
+                <Stack gap={4}>
+                  <Stack gap={2}>
+                    <Eyebrow>Every icon in the set (size lg)</Eyebrow>
+                    <Grid as="ul" min="sm" gap={3}>
+                      {ICON_NAMES.map((iconName) => (
+                        <li class="demo-icon">
+                          <Icon name={iconName} size="lg" />
+                          <code>{iconName}</code>
+                        </li>
+                      ))}
+                    </Grid>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>Sizes · inherit follows the text</Eyebrow>
+                    <Cluster gap={4}>
+                      <Icon name="check" size="sm" />
+                      <Icon name="check" size="md" />
+                      <Icon name="check" size="lg" />
+                      <Text size="lead">
+                        <Icon name="mail" /> support@lejliczijad.com
+                      </Text>
+                    </Cluster>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>Meaningful icon (label) · accent color via currentColor</Eyebrow>
+                    <Text tone="muted">
+                      Status:{' '}
+                      <span class="demo-icon-accent">
+                        <Icon name="check" size="md" label="Done" />
+                      </span>
+                    </Text>
+                  </Stack>
                 </Stack>
               )}
 
@@ -712,6 +761,18 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
   .demo :global(.outline) {
     outline: var(--border-width) solid var(--color-accent);
     outline-offset: calc(-1 * var(--border-width));
+  }
+
+  .demo-icon {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .demo-icon-accent {
+    color: var(--color-accent);
   }
 
   .demo-input {

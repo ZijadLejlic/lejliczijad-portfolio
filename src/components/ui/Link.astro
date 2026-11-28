@@ -2,12 +2,13 @@
 // Link (P1.DS.11): a text link with an animated underline. External links are detected from the
 // href (another host than site.url): they get an arrow icon, `rel="noopener noreferrer"`,
 // `data-cursor="open"` (P1.FX.17) and open in a new tab with a spoken hint. Styles live in
-// src/styles/link.css so Svelte islands can share them. The arrow is Lucide `arrow-up-right`
-// (ISC License, Copyright (c) Lucide Contributors; docs/licenses.md).
+// src/styles/link.css so Svelte islands can share them. The arrow is the `arrow-up-right` Icon
+// (P1.DS.13); link.css sizes it to the label.
 import type { HTMLAttributes } from 'astro/types';
 
 import { site } from '@/data/site';
 
+import Icon from './Icon.astro';
 import { classifyHref, linkClasses, mergeRel, type LinkVariant } from './link';
 import '@/styles/link.css';
 
@@ -56,21 +57,6 @@ const label = (await Astro.slots.render('default')).trim();
 >
   {/* eslint-disable-next-line astro/no-set-html-directive -- trimmed slot output, see above */}
   <span class="link__label" set:html={label} />
-  {external && (
-    <svg
-      class="link__icon"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d="M7 7h10v10" />
-      <path d="M7 17 17 7" />
-    </svg>
-  )}
+  {external && <Icon name="arrow-up-right" class="link__icon" />}
   {newTab && <span class="link__hint"> {newTabLabel}</span>}
 </a>

@@ -140,6 +140,11 @@
   --control-height-md: 3rem;
   --control-height-lg: 3.5rem;
 
+  /* Fixed icon sizes (P1.DS.13): 16 / 20 / 24 px. Icons next to text default to 1em instead. */
+  --icon-size-sm: 1rem;
+  --icon-size-md: 1.25rem;
+  --icon-size-lg: 1.5rem;
+
   /* Disabled controls fade instead of changing color, so the variant stays recognizable.
      WCAG 1.4.3 exempts inactive controls from the contrast minimum. */
   --opacity-disabled: 0.45;

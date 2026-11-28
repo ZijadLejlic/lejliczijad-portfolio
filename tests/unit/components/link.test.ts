@@ -114,7 +114,7 @@ describe('Link', () => {
     expect(tag).toContain('target="_blank"');
     expect(tag).toContain('rel="noopener noreferrer"');
     expect(tag).toContain('data-cursor="open"');
-    expect(html).toMatch(/<svg class="link__icon"[^>]*aria-hidden="true"/);
+    expect(html).toMatch(/<svg [^>]*aria-hidden="true"[^>]*class="[^"]*link__icon/);
     expect(html).toContain('(opens in a new tab)');
   });
 
