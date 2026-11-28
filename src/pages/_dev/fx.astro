@@ -9,7 +9,8 @@
 // 6× CPU throttle (tests/e2e/fx-quality.spec.ts).
 // `?scene=vortex` replaces the triangle with the vortex simulation (P1.FX.08) at the tier's particle
 // count; adaptive tier changes rebuild it, and `?fx=off|static` there starts nothing (as on the
-// site). `?panel=off` hides the status panel for screenshots and video.
+// site). `?panel=off` hides the status panel for screenshots and video. The vortex scene makes the
+// page tall, so scrolling drives the scroll reaction (P1.FX.11, tests/e2e/fx-scroll.spec.ts).
 import Container from '@/components/ui/Container.astro';
 import Heading from '@/components/ui/Heading.astro';
 import Stack from '@/components/ui/Stack.astro';
@@ -73,6 +74,12 @@ import '@/styles/motion.css';
             <dd data-fx="sim-steps">–</dd>
             <dt>Sim build</dt>
             <dd data-fx="sim-build">–</dd>
+            <dt>Scroll</dt>
+            <dd data-fx="scroll">–</dd>
+            <dt>Scroll peak</dt>
+            <dd data-fx="scroll-peak">–</dd>
+            <dt>Scroll max step</dt>
+            <dd data-fx="scroll-max-step">–</dd>
             <dt>GL error</dt>
             <dd data-fx="gl-error">–</dd>
           </dl>
@@ -90,6 +97,7 @@ import '@/styles/motion.css';
         </Stack>
       </Container>
     </main>
+    <div class="scroll-space" aria-hidden="true"></div>
   </body>
 </html>
 
@@ -111,6 +119,7 @@ import '@/styles/motion.css';
   import { initRenderer, type RenderQuality } from '@/fx/core/renderer';
   import { createStateController } from '@/fx/core/state';
   import { createVortexParticles, type VortexParticles } from '@/fx/vortex/particles';
+  import { attachScrollReaction } from '@/fx/vortex/scroll';
   import { createVortexSimulation, type VortexSimulation } from '@/fx/vortex/simulation';
 
   // One turn every ~5 s, independent of the frame rate (the loop's delta is in seconds).
@@ -138,6 +147,7 @@ import '@/styles/motion.css';
   const isVortex = params.get('scene') === 'vortex';
   // Read in the browser: the page is prerendered, so the query string does not exist at build time.
   if (params.get('panel') === 'off') document.body.dataset.panel = 'off';
+  if (isVortex) document.body.dataset.scene = 'vortex';
   const forced = parseFxOverride(location.search).quality;
   // On the site `static` (and `?fx=off`) never creates a renderer; the vortex scene does the same.
   const vortexOff = isVortex && forced === 'static';
@@ -224,6 +234,21 @@ import '@/styles/motion.css';
         );
         // The owner advances the state tween before the simulation reads it.
         loop.subscribe(({ delta }) => fxState.update(delta), { order: -200 });
+        const scrollVel = sim.inputs.uScrollVel;
+        attachScrollReaction({ loop, target: scrollVel });
+        // Largest change between two frames: the "no jerk" check of tests/e2e/fx-scroll.spec.ts.
+        let lastScroll = 0;
+        let scrollPeak = 0;
+        let scrollMaxStep = 0;
+        loop.subscribe(() => {
+          const value = scrollVel.value;
+          scrollPeak = Math.max(scrollPeak, value);
+          scrollMaxStep = Math.max(scrollMaxStep, Math.abs(value - lastScroll));
+          lastScroll = value;
+          show('scroll', value.toFixed(3));
+          show('scroll-peak', scrollPeak.toFixed(3));
+          show('scroll-max-step', scrollMaxStep.toFixed(3));
+        });
       } else {
         const geometry = new BufferGeometry();
         geometry.setAttribute('position', new BufferAttribute(TRIANGLE, 3));
@@ -369,6 +394,16 @@ import '@/styles/motion.css';
 
   :global([data-panel='off']) .panel {
     display: none;
+  }
+
+  /* Room to scroll the vortex scene; the canvas is fixed, so only the scroll position changes. */
+  .scroll-space {
+    display: none;
+  }
+
+  :global([data-scene='vortex']) .scroll-space {
+    display: block;
+    block-size: 400vh;
   }
 
   .status {

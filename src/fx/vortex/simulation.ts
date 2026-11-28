@@ -6,7 +6,7 @@
 // subscription that advances the simulation once per frame before anything draws. What it does
 // not own: drawing (particles.ts reads `positionTexture`), the scene and camera, the state tween
 // (the owner calls `state.update(delta)`; this module only copies `state.values` into uniforms) and
-// input (`inputs.uMouse` / `uScrollVel` are written by P1.FX.10 and P1.FX.11).
+// input (`inputs.uMouse` is written by P1.FX.10, `uScrollVel` by scroll.ts, P1.FX.11).
 //
 // Lifecycle: building is asynchronous and split into short tasks (seed data in chunks, then shader
 // compilation), so no task blocks the main thread for long (AGENTS.md §6.4: never > 50 ms).
@@ -37,6 +37,7 @@ import curlNoiseGlsl from '../shaders/curl-noise.glsl?raw';
 import commonGlsl from '../shaders/vortex-common.glsl?raw';
 import positionGlsl from '../shaders/vortex-position.glsl?raw';
 import velocityGlsl from '../shaders/vortex-velocity.glsl?raw';
+import { SCROLL_SPEED_BOOST, SCROLL_SWIRL_BOOST } from './scroll';
 
 // --- Sizes per tier (tech.md §7.2) -----------------------------------------------------------------
 
@@ -107,6 +108,9 @@ export const VORTEX = {
   /** Lifespan range in seconds; each particle gets a fixed random value. */
   LIFESPAN_MIN: 6,
   LIFESPAN_MAX: 20,
+  /** Scroll reaction at uScrollVel = 1 (P1.FX.11, scroll.ts): time scale and swirl boosts. */
+  SCROLL_SPEED_BOOST,
+  SCROLL_SWIRL_BOOST,
 } as const;
 
 /** Octaves of curl noise (tech.md §7.3: 2–3); each costs three noise samples per particle. */
