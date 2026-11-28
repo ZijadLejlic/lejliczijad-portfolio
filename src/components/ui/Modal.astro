@@ -1,0 +1,92 @@
+---
+// Modal (P1.DS.19): a native <dialog> opened with showModal(), named by its title
+// (aria-labelledby). Open it with any button that carries modalTriggerAttributes(id), e.g.
+// <Button {...modalTriggerAttributes('meet-me')}>Meet me</Button>, or call openModal() from
+// modal-controller.ts. Focus trap, Esc, focus return and scroll lock live in the controller;
+// styles in src/styles/modal.css so Svelte islands can render the same markup.
+import type { HTMLAttributes } from 'astro/types';
+
+import Icon from './Icon.astro';
+import { MODAL_BACKDROP_CLOSE_ATTR, MODAL_CLOSE_ATTR, modalClasses, modalIds } from './modal';
+import type { ModalSize } from './modal';
+import '@/styles/modal.css';
+
+interface Props extends Omit<HTMLAttributes<'dialog'>, 'id' | 'open' | 'title'> {
+  /** Unique on the page; triggers point at it. */
+  id: string;
+  /** Visible title; it is the dialog's accessible name. */
+  title: string;
+  /** Optional line under the title, announced as the description. */
+  description?: string;
+  /** Heading level of the title; the dialog starts a new context, so 2 is the default. */
+  titleLevel?: 2 | 3;
+  size?: ModalSize;
+  /** Close on a backdrop click. Turn it off for forms. Esc always closes. */
+  closeOnBackdrop?: boolean;
+  /** Accessible name of the close (X) button. */
+  closeLabel?: string;
+}
+
+const {
+  id,
+  title,
+  description,
+  titleLevel = 2,
+  size = 'md',
+  closeOnBackdrop = true,
+  closeLabel = 'Close dialog',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const ids = modalIds(id);
+const TitleTag = `h${titleLevel}` as const;
+const hasFooter = Astro.slots.has('footer');
+---
+
+<dialog
+  {...rest}
+  id={id}
+  class:list={[...modalClasses(size), className]}
+  aria-labelledby={ids.title}
+  aria-describedby={description ? ids.description : undefined}
+  data-motion="fade"
+  {...(closeOnBackdrop ? { [MODAL_BACKDROP_CLOSE_ATTR]: '' } : {})}
+>
+  <div class="modal__panel">
+    <header class="modal__header">
+      <div class="modal__heading">
+        <TitleTag id={ids.title} class="modal__title">
+          {title}
+        </TitleTag>
+        {description && (
+          <p id={ids.description} class="modal__description">
+            {description}
+          </p>
+        )}
+      </div>
+      <button
+        type="button"
+        class="modal__close"
+        aria-label={closeLabel}
+        {...{ [MODAL_CLOSE_ATTR]: '' }}
+      >
+        <Icon name="x" size="md" />
+      </button>
+    </header>
+    <div class="modal__body">
+      <slot />
+    </div>
+    {hasFooter && (
+      <footer class="modal__footer">
+        <slot name="footer" />
+      </footer>
+    )}
+  </div>
+</dialog>
+
+<script>
+  import { installModalTriggers } from './modal-controller';
+
+  installModalTriggers(document);
+</script>

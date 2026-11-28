@@ -1,0 +1,190 @@
+/*
+ * Modal (P1.DS.19). Global, not scoped, so Svelte islands can render the same markup
+ * (src/components/ui/modal.ts). Every rule starts with `.modal`, except the page scroll lock on
+ * <html>, which modal-controller.ts sets while a modal is open.
+ *
+ * Motion: the panel and backdrop fade in and the panel rises a little (opacity + transform only).
+ * The exit plays too where `transition-behavior: allow-discrete` is supported; elsewhere the
+ * dialog just disappears. The dialog has data-motion="fade", so with reduced motion only the
+ * opacity fade remains (motion.css), at most --dur-fade, and closing is instant.
+ */
+
+/* --- Page scroll lock ---------------------------------------------------------------------- */
+
+html[data-scroll-lock] {
+  overflow: hidden;
+}
+
+/* Keep the classic scrollbar's space, so the page does not jump sideways (only set when the page
+   had one; a gutter on a page without a scrollbar would shift it instead). */
+html[data-scroll-lock='gutter'] {
+  scrollbar-gutter: stable;
+}
+
+/* --- Dialog -------------------------------------------------------------------------------- */
+
+.modal {
+  --modal-width: var(--dialog-width-md);
+  --modal-space: clamp(var(--space-3), 4vw, var(--space-5));
+
+  z-index: var(--z-modal);
+  inline-size: min(var(--modal-width), 100% - 2 * var(--gutter));
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  padding: 0;
+  margin: auto;
+  overflow: visible;
+  color: var(--color-text);
+  background-color: var(--color-surface-1);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  transform: translateY(var(--space-4));
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    overlay var(--dur-base) var(--ease-out) allow-discrete,
+    display var(--dur-base) var(--ease-out) allow-discrete;
+}
+
+.modal--sm {
+  --modal-width: var(--dialog-width-sm);
+}
+
+.modal--lg {
+  --modal-width: var(--dialog-width-lg);
+}
+
+.modal[open] {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .modal[open] {
+    opacity: 0;
+    transform: translateY(var(--space-4));
+  }
+}
+
+/* Dims the page and the FX canvas behind; the panel's own surface keeps the text contrast. */
+.modal::backdrop {
+  background-color: var(--color-bg);
+  background-color: color-mix(in srgb, var(--color-bg) 80%, transparent);
+  opacity: 0;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    overlay var(--dur-base) var(--ease-out) allow-discrete,
+    display var(--dur-base) var(--ease-out) allow-discrete;
+}
+
+.modal[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+/* --- Layout -------------------------------------------------------------------------------- */
+
+/* The panel fills the dialog, so a click that lands on the dialog element itself came from the
+   backdrop (modal-controller.ts). It caps the height to the screen; only the body scrolls. */
+.modal__panel {
+  display: flex;
+  flex-direction: column;
+  max-block-size: calc(100vh - 2 * var(--gutter));
+  max-block-size: calc(100dvh - 2 * var(--gutter));
+}
+
+.modal__header {
+  display: flex;
+  flex: none;
+  gap: var(--space-3);
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-block: var(--modal-space) var(--space-3);
+  padding-inline: var(--modal-space);
+}
+
+.modal__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  padding-block-start: var(--space-1);
+}
+
+.modal__title {
+  font-size: var(--text-h3);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
+  overflow-wrap: anywhere;
+}
+
+.modal__description {
+  font-size: var(--text-small);
+  line-height: var(--leading-small);
+  color: var(--color-text-muted);
+}
+
+/* 48 px square: clears the 44 px touch target (AGENTS.md §9). */
+.modal__close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--control-height-md);
+  block-size: var(--control-height-md);
+  margin-block-start: calc(-1 * var(--space-2));
+  margin-inline-end: calc(-1 * var(--space-2));
+  color: var(--color-text-muted);
+  cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .modal__close:hover {
+    color: var(--color-text);
+    background-color: var(--color-surface-2);
+  }
+}
+
+.modal__close:active {
+  background-color: var(--color-surface-2);
+}
+
+.modal__body {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  padding-block: 0 var(--modal-space);
+  padding-inline: var(--modal-space);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal__footer {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  padding: var(--space-4) var(--modal-space);
+  border-block-start: var(--border-width) solid var(--color-border);
+}
+
+/* Windows High Contrast: keep a visible edge around the panel. */
+@media (forced-colors: active) {
+  .modal {
+    border-color: CanvasText;
+  }
+}
