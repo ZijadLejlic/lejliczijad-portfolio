@@ -122,6 +122,12 @@
   --grid-min-md: 18rem;
   --grid-min-lg: 24rem;
 
+  /* Widest a <Modal> panel gets (P1.DS.19); it is always capped by the viewport minus the
+     gutter. sm fits a confirmation, md a short form, lg a 16:9 video (Meet me, P1.HOME.03). */
+  --dialog-width-sm: 28rem;
+  --dialog-width-md: 40rem;
+  --dialog-width-lg: 60rem;
+
   /* --- Shape ------------------------------------------------------------------------------ */
 
   /* Corners: 6 / 12 / 20 px; pill for badges and tags. */
