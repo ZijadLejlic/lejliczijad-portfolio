@@ -54,3 +54,13 @@ Lokalni fontovi postoje na macOS-u i Windowsu; na Androidu i Linuxu fallback ide
 | `src/components/ui/icons.ts` (set za `Icon.astro`, P1.DS.13; koristi ga i `Link.astro`) | Lucide `arrow-down`, `arrow-left`, `arrow-right`, `arrow-up-right`, `calendar`, `check`, `chevron-down`, `chevron-left`, `chevron-right`, `clock`, `mail`, `map-pin`, `menu`, `play`, `x` | [lucide.dev](https://lucide.dev/icons), `lucide-static` 1.83.0 (djeca SVG elementa, prepisana kao podaci) | ISC, Copyright (c) 2026 Lucide Icons and Contributors (dio ikona izveden iz Feathera, MIT) | Ne (oblici su isti; komponenta dodaje samo `class`, `aria-*`, `focusable`, `data-icon`) |
 
 Provjereno: **2026-11-28**. ISC i MIT dozvoljavaju upotrebu i izmjenu uz očuvanje napomene o licenci; napomena je u komentaru na vrhu `icons.ts`. Npm paket se ne koristi (Zijadova odluka 2026-11-28); nova ikona se kopira s lucide.dev i dodaje u ovu listu.
+
+## Shader kod (P1.FX.08)
+
+| Gdje | Šta | Izvor | Licenca | Izmijenjen? |
+|---|---|---|---|---|
+| `src/fx/shaders/curl-noise.glsl` (`snoise`, `mod289`, `permute`, `taylorInvSqrt`) | 3D simplex noise s analitičkim gradijentom | [webgl-noise](https://github.com/stegu/webgl-noise) (Ian McEwan, Stefan Gustavson, Ashima Arts), verzija iz 2022. | MIT | Da: samo formatiranje i komentari; `curlNoise()` je naš |
+| `src/fx/shaders/vortex-common.glsl` (`hash33`), `vortex-points.vert.glsl` (`hash12`) | Hash without sine | Dave Hoskins, [Shadertoy 4djSRW](https://www.shadertoy.com/view/4djSRW) | MIT | Ne |
+
+Provjereno: **2026-11-28**. Obje licence dozvoljavaju upotrebu i izmjenu uz navođenje autora; napomena je u komentaru na vrhu shadera.
+
