@@ -1,6 +1,6 @@
 # P1.FX.09: shader za čestice vortexa (screenshotovi za pregled)
 
-> Status: **čeka Zijadovo odobrenje izgleda** ("Zijad odobri izgled na screenshotu i videu").
+> Status: **odobreno** (Zijad, 2026-11-28).
 > Poređenje: bazno crtanje iz P1.FX.08 je u [`../p1-fx-08/`](../p1-fx-08/README.md). Mjesto i nagib diska na stranici određuju P1.FX.02 i hero (P1.FACE.10).
 
 Snimljeno na `/_dev/fx?scene=vortex&fx=high&panel=off`, high tier (131.072 čestice), headed Chromium, Apple M4 (Metal), DPR 2 (slike smanjene na 1×), nakon ~10 s rada. Na 1280 px panel pokazuje 60 FPS i `GL error: none`.
