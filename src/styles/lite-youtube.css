@@ -1,0 +1,99 @@
+/*
+ * LiteYouTube (P1.DS.20). Global, not scoped, so a Svelte island could render the same markup
+ * (src/components/media/lite-youtube.ts). Every rule starts with `.lite-youtube`.
+ *
+ * The box has a fixed aspect ratio, so swapping the poster for the iframe cannot shift the layout.
+ * Only transform and opacity move (hover on the play button).
+ */
+
+.lite-youtube {
+  --lite-youtube-button-size: 4.5rem;
+  --lite-youtube-portrait-width: 22rem;
+
+  position: relative;
+  inline-size: 100%;
+  overflow: hidden;
+  background-color: var(--color-surface-1);
+  background-image: radial-gradient(
+    120% 90% at 50% 0%,
+    var(--color-surface-2),
+    var(--color-surface-1)
+  );
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.lite-youtube--landscape {
+  aspect-ratio: 16 / 9;
+}
+
+.lite-youtube--portrait {
+  max-inline-size: min(100%, var(--lite-youtube-portrait-width));
+  aspect-ratio: 9 / 16;
+  margin-inline: auto;
+}
+
+.lite-youtube__play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-on-accent);
+  text-decoration: none;
+}
+
+/* <Picture> renders the img, so the class lands on it. */
+.lite-youtube__poster {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.lite-youtube__button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: var(--lite-youtube-button-size);
+  block-size: var(--lite-youtube-button-size);
+  font-size: 1.75rem;
+  background-color: var(--color-accent);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-2);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+/* The triangle looks off-center in a circle; a small nudge optically centers it. */
+.lite-youtube__button svg {
+  fill: currentcolor;
+  transform: translateX(0.06em);
+}
+
+.lite-youtube__play:hover .lite-youtube__button,
+.lite-youtube__play:focus-visible .lite-youtube__button {
+  background-color: var(--color-accent-hover);
+  transform: scale(1.08);
+}
+
+.lite-youtube__label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.lite-youtube__frame {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+}
+
+/* Keep the ring inside the rounded, clipped box. */
+.lite-youtube__play:focus-visible {
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}

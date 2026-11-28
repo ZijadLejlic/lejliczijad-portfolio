@@ -1,0 +1,78 @@
+---
+// LiteYouTube (P1.DS.20, prd.md §6.9): poster and play link, nothing from YouTube until the click.
+// The click swaps the link for a youtube-nocookie iframe (lite-youtube-controller.ts). Without JS
+// the link opens the video on YouTube. The poster is local (astro:assets), never i.ytimg.com, so
+// the page makes no YouTube request before the click. Inside a Modal the video stops on close.
+// TODO(P1.DS.23): swap astro:assets <Picture> for the shared Picture wrapper.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import type { HTMLAttributes } from 'astro/types';
+
+import Icon from '@/components/ui/Icon.astro';
+import {
+  LITE_YOUTUBE_ID_ATTR,
+  LITE_YOUTUBE_PLAY_ATTR,
+  LITE_YOUTUBE_ROOT_ATTR,
+  LITE_YOUTUBE_TITLE_ATTR,
+  liteYouTubeClasses,
+  watchUrl,
+} from './lite-youtube';
+import type { LiteYouTubeAspect } from './lite-youtube';
+import '@/styles/lite-youtube.css';
+
+interface Props extends Omit<HTMLAttributes<'div'>, 'title'> {
+  /** 11-character YouTube video ID; a malformed one fails the build. */
+  youtubeId: string;
+  /** Video title: names the play link and the iframe for assistive tech. */
+  title: string;
+  /** Local poster, decorative (the link names the video). Without it a plain surface shows. */
+  poster?: ImageMetadata;
+  /** `portrait` is for reels and Shorts (9:16). */
+  aspect?: LiteYouTubeAspect;
+}
+
+const { youtubeId, title, poster, aspect = 'landscape', class: className, ...rest } = Astro.props;
+const href = watchUrl(youtubeId);
+---
+
+<div
+  {...rest}
+  class:list={[...liteYouTubeClasses(aspect), className]}
+  data-state="idle"
+  {...{
+    [LITE_YOUTUBE_ROOT_ATTR]: '',
+    [LITE_YOUTUBE_ID_ATTR]: youtubeId,
+    [LITE_YOUTUBE_TITLE_ATTR]: title,
+  }}
+>
+  <a
+    class="lite-youtube__play"
+    href={href}
+    rel="noopener noreferrer"
+    data-cursor="play"
+    {...{ [LITE_YOUTUBE_PLAY_ATTR]: '' }}
+  >
+    {poster && (
+      <Picture
+        class="lite-youtube__poster"
+        src={poster}
+        alt=""
+        formats={['avif', 'webp']}
+        widths={[480, 800, 1200]}
+        sizes="(min-width: 64em) 66vw, 100vw"
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+    <span class="lite-youtube__button" aria-hidden="true">
+      <Icon name="play" />
+    </span>
+    <span class="lite-youtube__label">Play video: {title}</span>
+  </a>
+</div>
+
+<script>
+  import { installLiteYouTube } from './lite-youtube-controller';
+
+  installLiteYouTube(document);
+</script>

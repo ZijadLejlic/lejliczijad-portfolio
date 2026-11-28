@@ -15,11 +15,13 @@ import { ICON_NAMES } from '@/components/ui/icons';
 import Link from '@/components/ui/Link.astro';
 import Modal from '@/components/ui/Modal.astro';
 import { MODAL_CLOSE_ATTR, modalTriggerAttributes } from '@/components/ui/modal';
+import LiteYouTube from '@/components/media/LiteYouTube.astro';
 import Prose from '@/components/ui/Prose.astro';
 import Section from '@/components/ui/Section.astro';
 import Stack from '@/components/ui/Stack.astro';
 import Tag from '@/components/ui/Tag.astro';
 import Text from '@/components/ui/Text.astro';
+import poster from '../../../tests/fixtures/case-study/images/poster.png';
 import FontPreload from '@/components/layout/FontPreload.astro';
 import '@/styles/tokens.css';
 import '@/styles/fonts.css';
@@ -242,6 +244,22 @@ const COMPONENTS: GalleryEntry[] = [
       { name: 'closeOnBackdrop', values: 'true, false (forms)', fallback: 'true' },
       { name: 'closeLabel', values: 'text', fallback: 'Close dialog' },
       { name: 'slots', values: 'default (body), footer', fallback: '–' },
+    ],
+  },
+  {
+    id: 'lite-youtube',
+    name: 'LiteYouTube',
+    purpose:
+      'Poster and play link; the youtube-nocookie iframe is created on click, so nothing loads from YouTube before it. Local poster only. Inside a Modal the video stops when the dialog closes.',
+    props: [
+      {
+        name: 'youtubeId',
+        values: '11-character video ID (bad ID fails the build)',
+        fallback: 'required',
+      },
+      { name: 'title', values: 'text (names the link and the iframe)', fallback: 'required' },
+      { name: 'poster', values: 'ImageMetadata (local, decorative)', fallback: 'none' },
+      { name: 'aspect', values: 'landscape (16:9), portrait (9:16)', fallback: 'landscape' },
     ],
   },
 ];
@@ -697,6 +715,27 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                         </div>
                       </Stack>
                     </form>
+                  </Modal>
+                </Stack>
+              )}
+
+              {primitive.id === 'lite-youtube' && (
+                <Stack gap={4}>
+                  <Stack gap={2}>
+                    <Eyebrow>Landscape with poster · demo ID, no real video</Eyebrow>
+                    <LiteYouTube youtubeId="aaaaaaaaaaa" title="Demo walkthrough" poster={poster} />
+                  </Stack>
+                  <Stack gap={2}>
+                    <Eyebrow>Portrait, no poster</Eyebrow>
+                    <LiteYouTube youtubeId="bbbbbbbbbbb" title="Demo reel" aspect="portrait" />
+                  </Stack>
+                  <div>
+                    <Button variant="secondary" {...modalTriggerAttributes('demo-modal-video')}>
+                      Open video in a dialog
+                    </Button>
+                  </div>
+                  <Modal id="demo-modal-video" title="Video in a dialog" size="lg">
+                    <LiteYouTube youtubeId="ccccccccccc" title="Demo dialog video" />
                   </Modal>
                 </Stack>
               )}
