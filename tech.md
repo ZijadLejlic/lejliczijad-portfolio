@@ -450,6 +450,15 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 
 `?fx=debug` zadržava automatski tier i samo postavlja `debug: true`. Rezultat sadrži i `floatRenderTarget: 'float' | 'half'`, koji simulacija (P1.FX.08) koristi za tip render targeta. Sonda pravi jedan privremeni WebGL2 kontekst i oslobađa ga (`WEBGL_lose_context`) prije nego renderer napravi svoj.
 
+**Implementacija (P1.FX.07):** `src/fx/core/quality.ts`. `createQualityGovernor({ initial, isMobile, adaptive? })` je čista logika bez vlastitog sata: dobija `delta` iz render petlje (`sample(delta)`) i vraća promjenu tiera ili `null`. Pravila:
+- FPS je prosjek trajanja frameova: prvi prozor (2 s) nakon starta ili promjene tiera je običan prosjek, a zatim EMA po vremenu (težina `1 − e^(−delta/2 s)`), pa je prozor 2 s pri svakom FPS-u. Prosjek se računa iz trajanja frameova, ne iz FPS-a, da jedan dug frame ne nestane u prosjeku.
+- Odluka traži pun prozor svježih frameova: nakon svake promjene mjerenje kreće ispočetka, pa se novi tier ne sudi po frameovima starog. Spuštanje: `high → medium → low → static`. `static` znači da vlasnik (FxCanvas, P1.FX.02–04) zaustavlja efekte i vraća poster; tada se više ništa ne mjeri.
+- Oporavak je jedan nivo naviše, najviše jednom (`MAX_RECOVERIES`), nakon 10 s neprekidno > 58 FPS, i nikad iznad početnog (detektovanog) tiera.
+- Frameovi s `delta` 0 (prvi nakon starta ili pauze) se ne broje, a pauze (`hidden`, `offscreen`, `context`) ionako ne daju frameove. Petlja ograničava `delta` na 0,05 s, pa izmjereni FPS ne pada ispod 20; pragovi (50 i 28) su iznad toga.
+- Forsirani `?fx=high|medium|low` isključuje adaptaciju (`adaptive: false`): FPS se mjeri (za debug panel, P1.FX.19), ali se tier ne mijenja. `?fx=debug` zadržava adaptaciju.
+
+`attachAdaptiveQuality({ loop, renderer, … , onChange })` se prijavljuje na petlju (zadnji u frameu), novi tier šalje rendereru (`setQuality`, DPR cap), a svaku promjenu javlja vlasniku; na `static` se sam odjavljuje. Testovi: `tests/unit/fx/quality.test.ts` i `tests/e2e/fx-quality.spec.ts` (samo Chromium: CDP `Emulation.setCPUThrottlingRate` 6× na `/_dev/fx?work=4`, gdje `work` dodaje kalibrisan CPU posao po frameu kao zamjenu za simulaciju; bez throttlea ista stranica drži 60 FPS i `high`).
+
 ### 7.3 Vortex simulacija
 - `GPUComputationRenderer`: dvije teksture (pozicija `RGBA32F`, brzina `RGBA32F`), ping-pong.
 - Sila = vrtložno polje oko Y ose (tangencijalna komponenta ∝ 1/r, ograničena) + **curl noise** (3D simplex, 2–3 oktave) + slabo privlačenje prema torusu radijusa `R` + polje miša (odbijanje, radijus `uMouseRadius`) + modulacija skrolom (`uScrollVel` → ugaona brzina).
