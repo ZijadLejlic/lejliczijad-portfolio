@@ -374,6 +374,12 @@ Tokeni (P1.DS.04): `--text-*`, `--leading-*`, `--tracking-*` (po koraku iz tabel
 - `Badge` (`as: span | p | div`, `tone: neutral | accent | success`, `dot`, `pulse`): tekst je uvijek `--color-text`, a tačka (`aria-hidden`) samo ponavlja značenje bojom (WCAG 1.4.1). Puls je prsten iz `::after` (samo `transform` i `opacity`, token `--dur-pulse` 2 s) koji uz reduced motion dobija `animation: none`.
 - `AvailabilityBadge` čita `site.availability` i tekst gradi sa `availabilityLabel()`; stranice ne prosljeđuju propse (prop `availability` je samo za `/_dev/ui` i testove). Izgled po statusu (`availabilityBadgeLook()`): `available` → zelena tačka koja pulsira, `limited` → akcentna, `booked` → muted, bez pulsa.
 
+**Icon (P1.DS.13)**, `src/components/ui/Icon.astro` + `icons.ts`; testovi u `tests/unit/components/icon.test.ts` i `tests/e2e/icon.spec.ts`.
+- Ikone su **inline SVG** (bez spritea i bez fajla), pa nema mrežnog zahtjeva. Oblici su kopirani iz Lucidea (`lucide-static` 1.83.0, ISC; [docs/licenses.md](docs/licenses.md#ikone)), bez npm paketa (Zijadova odluka 2026-11-28). U `icons.ts` su kao tipizirani podaci (`path`, `circle`, `rect`), ne kao SVG stringovi, pa komponenta renderuje prave elemente i ne treba `set:html`.
+- Props: `name` (tip `IconName`, samo ikone iz seta; nepoznato ime ruši build), `size: inherit | sm | md | lg` (`inherit` = 1em i default; ostalo tokeni `--icon-size-sm|md|lg` 16/20/24 px) i `label`. Bez `label` ikona je `aria-hidden="true"`; s njim dobija `role="img"` i `aria-label`. Uvijek `stroke="currentColor"`, `focusable="false"` i `data-icon`.
+- Default veličina je `:global(:where(.icon))`, sa specifičnošću 0, pa je kontejner mijenja jednom klasom (Button 1.25em, `.link__icon` 0.8em). Astro scope atribut stavlja van `:where`, zato `:global`.
+- `Link` koristi `<Icon name="arrow-up-right" class="link__icon" />`, a Button prima `<Icon slot="icon-start|icon-end" … />`. Nova ikona: djeca SVG-a s lucide.dev bez izmjena, abecedni red u `ICONS`, red u `docs/licenses.md`.
+
 | Sloj | Token | Vrijednost | Ko ga koristi |
 |---|---|---|---|
 | FX canvas | `--z-fx` | −1 | `FxCanvas` i poster vortexa (iza sadržaja) |

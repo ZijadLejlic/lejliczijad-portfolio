@@ -51,6 +51,6 @@ Lokalni fontovi postoje na macOS-u i Windowsu; na Androidu i Linuxu fallback ide
 
 | Gdje | Ikona | Izvor | Licenca | Izmijenjena? |
 |---|---|---|---|---|
-| `src/components/ui/Link.astro` (inline SVG, oznaka spoljnog linka, P1.DS.11) | Lucide `arrow-up-right` | [lucide.dev](https://lucide.dev/icons/arrow-up-right), dvije putanje (`M7 7h10v10`, `M7 17 17 7`) | ISC (Lucide; dio ikona izveden iz Feathera, MIT) | Ne (samo `class`, `aria-hidden`, `focusable`) |
+| `src/components/ui/icons.ts` (set za `Icon.astro`, P1.DS.13; koristi ga i `Link.astro`) | Lucide `arrow-down`, `arrow-left`, `arrow-right`, `arrow-up-right`, `calendar`, `check`, `chevron-down`, `chevron-left`, `chevron-right`, `clock`, `mail`, `map-pin`, `menu`, `play`, `x` | [lucide.dev](https://lucide.dev/icons), `lucide-static` 1.83.0 (djeca SVG elementa, prepisana kao podaci) | ISC, Copyright (c) 2026 Lucide Icons and Contributors (dio ikona izveden iz Feathera, MIT) | Ne (oblici su isti; komponenta dodaje samo `class`, `aria-*`, `focusable`, `data-icon`) |
 
-Provjereno: **2026-11-26**. ISC i MIT dozvoljavaju upotrebu i izmjenu uz očuvanje napomene o licenci; napomena je u komentaru komponente. Cijeli set ikona (P1.DS.13) će dobiti zajednički zapis ovdje.
+Provjereno: **2026-11-28**. ISC i MIT dozvoljavaju upotrebu i izmjenu uz očuvanje napomene o licenci; napomena je u komentaru na vrhu `icons.ts`. Npm paket se ne koristi (Zijadova odluka 2026-11-28); nova ikona se kopira s lucide.dev i dodaje u ovu listu.
