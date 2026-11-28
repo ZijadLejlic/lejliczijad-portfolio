@@ -7,6 +7,9 @@
 // high with adaptive quality on, so any browser with WebGL2 can test it. `?work=<ms>` adds that
 // much CPU work per frame (calibrated at load), a stand-in for the simulation's cost: fine at full speed, too slow under a
 // 6× CPU throttle (tests/e2e/fx-quality.spec.ts).
+// `?scene=vortex` replaces the triangle with the vortex simulation (P1.FX.08) at the tier's particle
+// count; adaptive tier changes rebuild it, and `?fx=off|static` there starts nothing (as on the
+// site). `?panel=off` hides the status panel for screenshots and video.
 import Container from '@/components/ui/Container.astro';
 import Heading from '@/components/ui/Heading.astro';
 import Stack from '@/components/ui/Stack.astro';
@@ -40,7 +43,8 @@ import '@/styles/motion.css';
             WebGL context to check recovery: one restore is allowed, a second loss ends in "failed".
             The loop stops while the tab is hidden, while the canvas is hidden and while the context
             is lost. Without a forced tier, slow frames step the tier down (high, medium, low, then
-            static).
+            static). With <code>?scene=vortex</code> it runs the vortex simulation instead, at the
+            tier's particle count.
           </Text>
           <dl class="status" aria-live="polite">
             <dt>Status</dt>
@@ -63,6 +67,12 @@ import '@/styles/motion.css';
             <dd data-fx="paused-by">–</dd>
             <dt>Frames</dt>
             <dd data-fx="frames">0</dd>
+            <dt>Particles</dt>
+            <dd data-fx="particles">–</dd>
+            <dt>Sim steps</dt>
+            <dd data-fx="sim-steps">–</dd>
+            <dt>Sim build</dt>
+            <dd data-fx="sim-build">–</dd>
             <dt>GL error</dt>
             <dd data-fx="gl-error">–</dd>
           </dl>
@@ -90,13 +100,18 @@ import '@/styles/motion.css';
     Mesh,
     MeshBasicMaterial,
     OrthographicCamera,
+    PerspectiveCamera,
     Scene,
+    type Camera,
   } from 'three';
 
   import { parseFxOverride } from '@/fx/core/capabilities';
   import { initLoop, type RenderLoop } from '@/fx/core/loop';
   import { attachAdaptiveQuality, type QualityChange } from '@/fx/core/quality';
   import { initRenderer, type RenderQuality } from '@/fx/core/renderer';
+  import { createStateController } from '@/fx/core/state';
+  import { createVortexParticles, type VortexParticles } from '@/fx/vortex/particles';
+  import { createVortexSimulation, type VortexSimulation } from '@/fx/vortex/simulation';
 
   // One turn every ~5 s, independent of the frame rate (the loop's delta is in seconds).
   const ROTATION_PER_S = 1.2;
@@ -119,10 +134,16 @@ import '@/styles/motion.css';
   const MAX_WORK_MS = 50;
 
   const canvas = document.querySelector<HTMLCanvasElement>('#fx');
+  const params = new URLSearchParams(location.search);
+  const isVortex = params.get('scene') === 'vortex';
+  // Read in the browser: the page is prerendered, so the query string does not exist at build time.
+  if (params.get('panel') === 'off') document.body.dataset.panel = 'off';
   const forced = parseFxOverride(location.search).quality;
+  // On the site `static` (and `?fx=off`) never creates a renderer; the vortex scene does the same.
+  const vortexOff = isVortex && forced === 'static';
   const isForced = forced !== null && forced !== 'static';
   const quality: RenderQuality = isForced ? forced : 'high';
-  const workParam = Number(new URLSearchParams(location.search).get('work') ?? 0);
+  const workParam = Number(params.get('work') ?? 0);
   const workMs = Number.isFinite(workParam) ? Math.min(Math.max(workParam, 0), MAX_WORK_MS) : 0;
 
   const CALIBRATION_MS = 20;
@@ -147,7 +168,17 @@ import '@/styles/motion.css';
 
   const workIterations = workMs > 0 ? Math.round(calibrate() * workMs) : 0;
 
-  if (canvas) {
+  // Dev camera for the vortex: the disk is tilted and turned like the hero mockup C
+  // (docs/design/p1-ds-01: tilt 0.3, rotate −24°). The real placement is the scene owner's job.
+  const VORTEX_CAMERA_Z = 6.5;
+  const VORTEX_FOV = 40;
+  const VORTEX_TILT_X = 0.32;
+  const VORTEX_TURN_Z = -0.42;
+
+  if (canvas && vortexOff) {
+    show('status', 'static');
+    show('quality', 'static');
+  } else if (canvas) {
     try {
       const fx = initRenderer({ canvas, quality });
       const loop: RenderLoop = initLoop({ canvas });
@@ -156,24 +187,64 @@ import '@/styles/motion.css';
       const loseContext = gl.getExtension('WEBGL_lose_context');
 
       const scene = new Scene();
-      const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      const geometry = new BufferGeometry();
-      geometry.setAttribute('position', new BufferAttribute(TRIANGLE, 3));
-      // Dev-only page: the accent from tokens.css (#4D7CFF) as a hex literal for three.
-      const mesh = new Mesh(geometry, new MeshBasicMaterial({ color: 0x4d7cff }));
-      mesh.position.y = TRIANGLE_Y;
-      scene.add(mesh);
+      const ortho = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const perspective = new PerspectiveCamera(VORTEX_FOV, 1, 0.1, 50);
+      perspective.position.set(0, 0, VORTEX_CAMERA_Z);
+      const camera: Camera = isVortex ? perspective : ortho;
+
+      let mesh: Mesh | null = null;
+      let simulation: VortexSimulation | null = null;
+      let particles: VortexParticles | null = null;
+      const fxState = createStateController();
+
+      if (isVortex) {
+        const floatRenderTarget = gl.getExtension('EXT_color_buffer_float') ? 'float' : 'half';
+        const buildStart = performance.now();
+        simulation = createVortexSimulation({
+          renderer: fx,
+          loop,
+          quality,
+          floatRenderTarget,
+          state: fxState,
+        });
+        particles = createVortexParticles({ simulation, state: fxState });
+        particles.points.rotation.set(VORTEX_TILT_X, 0, VORTEX_TURN_Z);
+        scene.add(particles.points);
+        const sim = simulation;
+        sim.ready.then(
+          () =>
+            show(
+              'sim-build',
+              `${(performance.now() - buildStart).toFixed(0)} ms in tasks (${floatRenderTarget})`,
+            ),
+          (error: unknown) => {
+            show('sim-build', 'failed');
+            console.error(error);
+          },
+        );
+        // The owner advances the state tween before the simulation reads it.
+        loop.subscribe(({ delta }) => fxState.update(delta), { order: -200 });
+      } else {
+        const geometry = new BufferGeometry();
+        geometry.setAttribute('position', new BufferAttribute(TRIANGLE, 3));
+        // Dev-only page: the accent from tokens.css (#4D7CFF) as a hex literal for three.
+        mesh = new Mesh(geometry, new MeshBasicMaterial({ color: 0x4d7cff }));
+        mesh.position.y = TRIANGLE_Y;
+        scene.add(mesh);
+      }
 
       // Fits the shorter side to [-1, 1], so the triangle stays inside portrait screens too.
       const fitCamera = (): void => {
         const aspect = fx.size.width / Math.max(fx.size.height, 1);
+        perspective.aspect = aspect;
+        perspective.updateProjectionMatrix();
         const x = Math.max(aspect, 1);
         const y = Math.max(1 / aspect, 1);
-        camera.left = -x;
-        camera.right = x;
-        camera.top = y;
-        camera.bottom = -y;
-        camera.updateProjectionMatrix();
+        ortho.left = -x;
+        ortho.right = x;
+        ortho.top = y;
+        ortho.bottom = -y;
+        ortho.updateProjectionMatrix();
       };
 
       const changes: string[] = [];
@@ -184,6 +255,7 @@ import '@/styles/motion.css';
         show('quality', isStatic ? 'static' : fx.quality);
         show('size', `${fx.size.width}×${fx.size.height} @${fx.size.pixelRatio}`);
         show('restores', fx.restores);
+        if (simulation) show('particles', simulation.disposed ? 0 : simulation.count);
         // The last frame before a loss reads CONTEXT_LOST_WEBGL; that is expected, not a bug.
         if (fx.status !== 'ready') show('gl-error', '–');
       };
@@ -194,13 +266,15 @@ import '@/styles/motion.css';
         show('paused-by', [...loop.pauseReasons].sort().join(', ') || '–');
         const fps = adaptive.governor.fps;
         show('fps', fps === null ? '–' : fps.toFixed(1));
+        if (simulation) show('sim-steps', simulation.steps);
       };
       setInterval(showLoop, 100);
 
       let draws = 0;
       const stopDrawing = loop.subscribe(({ delta, frame }) => {
         if (workIterations > 0) spin(workIterations);
-        mesh.rotation.z += ROTATION_PER_S * delta;
+        if (mesh) mesh.rotation.z += ROTATION_PER_S * delta;
+        particles?.update(fx.size.pixelRatio);
         fx.three.render(scene, camera);
         draws += 1;
         show('frames', frame);
@@ -223,6 +297,10 @@ import '@/styles/motion.css';
           if (change.to === 'static') {
             isStatic = true;
             stopDrawing();
+            simulation?.dispose();
+            particles?.dispose();
+          } else {
+            simulation?.setQuality(change.to);
           }
           render();
         },
@@ -243,6 +321,8 @@ import '@/styles/motion.css';
       });
       fx.on('failed', () => {
         stopDrawing();
+        simulation?.dispose();
+        particles?.dispose();
         adaptive.dispose();
         render();
       });
@@ -285,6 +365,10 @@ import '@/styles/motion.css';
   .panel {
     position: relative;
     padding-block: var(--space-8);
+  }
+
+  :global([data-panel='off']) .panel {
+    display: none;
   }
 
   .status {
