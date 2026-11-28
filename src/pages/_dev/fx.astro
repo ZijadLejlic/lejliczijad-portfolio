@@ -9,7 +9,9 @@
 // 6× CPU throttle (tests/e2e/fx-quality.spec.ts).
 // `?scene=vortex` replaces the triangle with the vortex simulation (P1.FX.08) at the tier's particle
 // count; adaptive tier changes rebuild it, and `?fx=off|static` there starts nothing (as on the
-// site). `?panel=off` hides the status panel for screenshots and video.
+// site). `?panel=off` hides the status panel for screenshots and video. In the vortex scene a mouse
+// or pen pushes the particles away (P1.FX.10); the "Mouse" field shows the field's amount and where
+// it sits on the disk (tests/e2e/fx-mouse.spec.ts).
 import Container from '@/components/ui/Container.astro';
 import Heading from '@/components/ui/Heading.astro';
 import Stack from '@/components/ui/Stack.astro';
@@ -73,6 +75,8 @@ import '@/styles/motion.css';
             <dd data-fx="sim-steps">–</dd>
             <dt>Sim build</dt>
             <dd data-fx="sim-build">–</dd>
+            <dt>Mouse</dt>
+            <dd data-fx="mouse">–</dd>
             <dt>GL error</dt>
             <dd data-fx="gl-error">–</dd>
           </dl>
@@ -109,7 +113,9 @@ import '@/styles/motion.css';
   import { initLoop, type RenderLoop } from '@/fx/core/loop';
   import { attachAdaptiveQuality, type QualityChange } from '@/fx/core/quality';
   import { initRenderer, type RenderQuality } from '@/fx/core/renderer';
+  import { createPointerInput } from '@/fx/core/input';
   import { createStateController } from '@/fx/core/state';
+  import { attachMouseField, type MouseField } from '@/fx/vortex/mouse';
   import { createVortexParticles, type VortexParticles } from '@/fx/vortex/particles';
   import { createVortexSimulation, type VortexSimulation } from '@/fx/vortex/simulation';
 
@@ -195,6 +201,7 @@ import '@/styles/motion.css';
       let mesh: Mesh | null = null;
       let simulation: VortexSimulation | null = null;
       let particles: VortexParticles | null = null;
+      let mouseField: MouseField | null = null;
       const fxState = createStateController();
 
       if (isVortex) {
@@ -210,6 +217,15 @@ import '@/styles/motion.css';
         particles = createVortexParticles({ simulation, state: fxState });
         particles.points.rotation.set(VORTEX_TILT_X, 0, VORTEX_TURN_Z);
         scene.add(particles.points);
+        const pointer = createPointerInput();
+        mouseField = attachMouseField({
+          pointer,
+          loop,
+          camera: perspective,
+          object: particles.points,
+          inputs: simulation.inputs,
+          viewportHeight: () => fx.size.height,
+        });
         const sim = simulation;
         sim.ready.then(
           () =>
@@ -267,6 +283,15 @@ import '@/styles/motion.css';
         const fps = adaptive.governor.fps;
         show('fps', fps === null ? '–' : fps.toFixed(1));
         if (simulation) show('sim-steps', simulation.steps);
+        if (mouseField) {
+          const { amount, position } = mouseField.state;
+          show(
+            'mouse',
+            amount === 0
+              ? 'off'
+              : `${amount.toFixed(2)} at ${position.x.toFixed(2)}, ${position.z.toFixed(2)}`,
+          );
+        }
       };
       setInterval(showLoop, 100);
 
@@ -297,6 +322,7 @@ import '@/styles/motion.css';
           if (change.to === 'static') {
             isStatic = true;
             stopDrawing();
+            mouseField?.dispose();
             simulation?.dispose();
             particles?.dispose();
           } else {
@@ -321,6 +347,7 @@ import '@/styles/motion.css';
       });
       fx.on('failed', () => {
         stopDrawing();
+        mouseField?.dispose();
         simulation?.dispose();
         particles?.dispose();
         adaptive.dispose();
