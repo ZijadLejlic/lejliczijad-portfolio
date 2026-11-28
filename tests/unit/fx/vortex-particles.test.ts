@@ -1,7 +1,17 @@
-import { AdditiveBlending, type Texture } from 'three';
+import { readFileSync } from 'node:fs';
+
+import { AdditiveBlending, type Texture, type Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { createVortexParticles, particleReferences } from '@/fx/vortex/particles';
+import fragmentShader from '@/fx/shaders/vortex-points.frag.glsl?raw';
+import vertexShader from '@/fx/shaders/vortex-points.vert.glsl?raw';
+import {
+  PARTICLE_COLORS,
+  PARTICLE_LOOK,
+  createVortexParticles,
+  hexToRgb,
+  particleReferences,
+} from '@/fx/vortex/particles';
 import { SIMULATION_SIZE, type SimulationSize } from '@/fx/vortex/simulation';
 
 // The drawer needs no WebGL to build: geometry and material are plain three.js objects. Drawing
@@ -91,5 +101,40 @@ describe('createVortexParticles', () => {
     particles.points.material.addEventListener('dispose', () => (freed += 1));
     particles.dispose();
     expect(freed).toBe(2);
+  });
+});
+
+describe('particle look (P1.FX.09)', () => {
+  it('uses the colours from tokens.css', () => {
+    const css = readFileSync(new URL('../../../src/styles/tokens.css', import.meta.url), 'utf8');
+    const token = (name: string): string | undefined =>
+      new RegExp(`--${name}:\\s*(#[0-9a-f]{6})`, 'i').exec(css)?.[1]?.toLowerCase();
+    expect(PARTICLE_COLORS.white).toBe(token('color-text'));
+    expect(PARTICLE_COLORS.grey).toBe(token('color-text-muted'));
+    expect(PARTICLE_COLORS.accent).toBe(token('color-accent'));
+  });
+
+  it('keeps about 3 % accent particles', () => {
+    expect(PARTICLE_LOOK.ACCENT_RATIO).toBeGreaterThanOrEqual(0.02);
+    expect(PARTICLE_LOOK.ACCENT_RATIO).toBeLessThanOrEqual(0.04);
+  });
+
+  it('parses #rrggbb into sRGB components', () => {
+    expect(hexToRgb('#4d7cff')).toEqual([0x4d / 255, 0x7c / 255, 1]);
+    expect(() => hexToRgb('#4d7')).toThrow(/#rrggbb/);
+  });
+
+  it('writes the colours to the shader as sRGB, without linear conversion', () => {
+    const { points } = createVortexParticles({ simulation: fakeSimulation(SIMULATION_SIZE.low) });
+    const accent = points.material.uniforms.uColorAccent?.value as Vector3;
+    expect(accent.toArray()).toEqual(hexToRgb(PARTICLE_COLORS.accent));
+  });
+
+  it('declares every material uniform in a shader, and every shader uniform in the material', () => {
+    const { points } = createVortexParticles({ simulation: fakeSimulation(SIMULATION_SIZE.low) });
+    const declared = new Set(
+      [...`${vertexShader}\n${fragmentShader}`.matchAll(/^uniform \w+ (\w+);/gm)].map((m) => m[1]),
+    );
+    expect(new Set(Object.keys(points.material.uniforms))).toEqual(declared);
   });
 });
