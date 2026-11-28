@@ -2,11 +2,11 @@ import { expect, test } from '../fixtures/stable';
 
 // LiteYouTube (P1.DS.20) on the component gallery. YouTube is never contacted: the embed host is
 // stubbed, so the test only checks that the iframe is created on click, not what YouTube serves.
-const YOUTUBE_HOSTS = /youtube\.com|youtube-nocookie\.com|ytimg\.com|googlevideo\.com/;
+const YOUTUBE_HOSTS = /^(?:[\w-]+\.)*(?:youtube(?:-nocookie)?\.com|ytimg\.com|googlevideo\.com)$/;
 
 test.describe('LiteYouTube', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route(/youtube-nocookie\.com/, (route) =>
+    await page.route('https://www.youtube-nocookie.com/**', (route) =>
       route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>stub</title>' }),
     );
   });
