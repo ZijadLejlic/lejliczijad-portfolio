@@ -483,7 +483,7 @@ Svaka stranica usluge:
 - [ ] **P1.DS.16** `LogoMarquee` (CSS animacija, pauza na hover i fokus, statičan uz reduced motion, duplirani elementi `aria-hidden`) · Ko: A · Gotovo kad: nema skoka na kraju petlje.
 - [ ] **P1.DS.17** `StatCounter` (broji kad uđe u viewport, `aria-label` s konačnom vrijednošću) · Ko: A · Gotovo kad: screen reader čita konačnu brojku.
 - [ ] **P1.DS.18** `Accordion` (nativni `details`/`summary`, animirana visina) · Ko: A · Gotovo kad: radi bez JS-a.
-- [ ] **P1.DS.19** `Modal`/`Dialog` (nativni `<dialog>`, fokus trap, `Esc`, vraćanje fokusa, zaključan skrol) · Ko: A · Gotovo kad: E2E test za tastaturu prolazi.
+- [~] **P1.DS.19** `Modal`/`Dialog` (nativni `<dialog>`, fokus trap, `Esc`, vraćanje fokusa, zaključan skrol) · Ko: A · Gotovo kad: E2E test za tastaturu prolazi. · (agent: claude, 2026-11-28)
 - [ ] **P1.DS.20** `LiteYouTube` (youtube-nocookie, poster iz `i.ytimg.com` ili lokalni, iframe na klik, naslov za a11y) · Ko: A · Gotovo kad: 0 YouTube zahtjeva prije klika.
 - [ ] **P1.DS.21** Form komponente: `Input`, `Textarea` (brojač znakova), `Select`, `RadioCard`, `Checkbox`, `FieldError`, `FormStatus` · Ko: A · Gotovo kad: labele, `aria-describedby` i `aria-invalid` su ispravni.
 - [ ] **P1.DS.22** `Breadcrumbs` (+ JSON-LD BreadcrumbList) · Ko: A · Gotovo kad: validan u Rich Results Testu.
