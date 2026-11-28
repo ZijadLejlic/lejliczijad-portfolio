@@ -13,6 +13,8 @@ import Heading from '@/components/ui/Heading.astro';
 import Icon from '@/components/ui/Icon.astro';
 import { ICON_NAMES } from '@/components/ui/icons';
 import Link from '@/components/ui/Link.astro';
+import Modal from '@/components/ui/Modal.astro';
+import { MODAL_CLOSE_ATTR, modalTriggerAttributes } from '@/components/ui/modal';
 import Prose from '@/components/ui/Prose.astro';
 import Section from '@/components/ui/Section.astro';
 import Stack from '@/components/ui/Stack.astro';
@@ -224,6 +226,22 @@ const COMPONENTS: GalleryEntry[] = [
         fallback: 'inherit',
       },
       { name: 'label', values: 'text → role="img" + aria-label', fallback: 'none (aria-hidden)' },
+    ],
+  },
+  {
+    id: 'modal',
+    name: 'Modal',
+    purpose:
+      'Native <dialog> opened with showModal(). Named by its title. Tab stays inside, Esc closes, focus returns to the opener, page scroll is locked. Open it with modalTriggerAttributes(id) on a Button.',
+    props: [
+      { name: 'id', values: 'unique id; triggers point at it', fallback: 'required' },
+      { name: 'title', values: 'text (accessible name)', fallback: 'required' },
+      { name: 'description', values: 'text → aria-describedby', fallback: 'none' },
+      { name: 'titleLevel', values: '2, 3', fallback: '2' },
+      { name: 'size', values: 'sm (28rem), md (40rem), lg (60rem)', fallback: 'md' },
+      { name: 'closeOnBackdrop', values: 'true, false (forms)', fallback: 'true' },
+      { name: 'closeLabel', values: 'text', fallback: 'Close dialog' },
+      { name: 'slots', values: 'default (body), footer', fallback: '–' },
     ],
   },
 ];
@@ -621,6 +639,65 @@ const CHIPS = ['Astro', 'TypeScript', 'three.js', 'Cloudflare Workers', 'Svelte'
                       </span>
                     </Text>
                   </Stack>
+                </Stack>
+              )}
+
+              {primitive.id === 'modal' && (
+                <Stack gap={4}>
+                  <Cluster gap={3}>
+                    <Button {...modalTriggerAttributes('demo-modal')}>Open dialog</Button>
+                    <Button variant="secondary" {...modalTriggerAttributes('demo-modal-form')}>
+                      Open form dialog
+                    </Button>
+                  </Cluster>
+                  <Text size="small" tone="muted">
+                    The first closes on a backdrop click, the form dialog only with Esc or a button.
+                  </Text>
+                  <Modal
+                    id="demo-modal"
+                    title="Meet Zijad"
+                    description="A 60-second intro video will live here (P1.HOME.03)."
+                    size="lg"
+                  >
+                    <Stack gap={4}>
+                      <Text>
+                        Demo content. Tab moves between the controls below and wraps back to the
+                        close button; Shift+Tab goes the other way.
+                      </Text>
+                      <Text>
+                        <Link href="#modal">A link inside the dialog</Link>
+                      </Text>
+                    </Stack>
+                    <Cluster slot="footer" gap={3}>
+                      <Button variant="ghost" {...{ [MODAL_CLOSE_ATTR]: '' }}>
+                        Cancel
+                      </Button>
+                      <Button href="#modal">Book a call</Button>
+                    </Cluster>
+                  </Modal>
+                  <Modal
+                    id="demo-modal-form"
+                    title="Email me this estimate"
+                    size="sm"
+                    closeOnBackdrop={false}
+                  >
+                    <form method="dialog" id="demo-modal-form-fields">
+                      <Stack gap={3}>
+                        <label for="demo-modal-email">Email</label>
+                        <input
+                          id="demo-modal-email"
+                          name="email"
+                          type="email"
+                          autocomplete="email"
+                          class="demo-input"
+                          data-modal-autofocus
+                        />
+                        <div>
+                          <Button type="submit">Send</Button>
+                        </div>
+                      </Stack>
+                    </form>
+                  </Modal>
                 </Stack>
               )}
 
