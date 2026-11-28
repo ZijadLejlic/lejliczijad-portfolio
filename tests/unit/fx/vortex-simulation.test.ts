@@ -364,6 +364,9 @@ describe('createVortexSimulation', () => {
       expect(variable?.material.uniforms.uSwirl).toBe(velocity?.material.uniforms.uSwirl);
     }
     expect(velocity?.material.uniforms.uMouse).toBe(simulation.inputs.uMouse);
+    expect(velocity?.material.uniforms.uMouseAmount).toBe(simulation.inputs.uMouseAmount);
+    expect(simulation.inputs.uMouseAmount.value).toBe(0);
+    expect(velocityGlsl).toContain('MOUSE_PUSH * uMouseStrength * uMouseAmount');
     expect(position?.material.uniforms.uScrollVel).toBe(simulation.inputs.uScrollVel);
   });
 

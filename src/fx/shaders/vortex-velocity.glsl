@@ -7,12 +7,14 @@
 // pass). Forces, steered towards a desired drift (smooth, frame-rate independent):
 //   inflow to the axis  +  weak pull to the torus of radius RING_RADIUS (flat disk)
 //   +  curl noise  +  pull to the centre (uAttract, page transition)
-// and the mouse field (repel inside uMouseRadius) as an impulse on top.
+// and the mouse field (repel inside uMouseRadius, P1.FX.10) as an impulse on top. Particles then
+// steer back to the desired drift (RESPONSE), which gives the field its soft wake.
 //
 // Defines: RING_RADIUS, INFLOW, RING_PULL, HEIGHT_PULL, NOISE_SCALE, NOISE_DRIFT, NOISE_SPEED,
 //          ATTRACT_PULL, RESPONSE, MOUSE_PUSH (floats).
 // Uniforms: uSpeed (time scale), uNoiseAmp, uAttract, uMouseStrength (FX state),
-//           uMouse (world position), uMouseRadius (world units).
+//           uMouse (world position, particles' local space), uMouseRadius (world units),
+//           uMouseAmount (0 … 1, pointer presence × motion, src/fx/vortex/mouse.ts).
 
 uniform float uSpeed;
 uniform float uNoiseAmp;
@@ -20,6 +22,7 @@ uniform float uAttract;
 uniform float uMouseStrength;
 uniform vec3 uMouse;
 uniform float uMouseRadius;
+uniform float uMouseAmount;
 
 void main() {
   vec2 uv = gl_FragCoord.xy / resolution.xy;
@@ -50,7 +53,7 @@ void main() {
   float dist = length(away);
   if (dist < uMouseRadius && dist > 1e-4) {
     float falloff = 1.0 - dist / uMouseRadius;
-    v += away / dist * falloff * falloff * MOUSE_PUSH * uMouseStrength * dt;
+    v += away / dist * falloff * falloff * MOUSE_PUSH * uMouseStrength * uMouseAmount * dt;
   }
 
   gl_FragColor = vec4(v, velocity.w);

@@ -6,7 +6,8 @@
 // subscription that advances the simulation once per frame before anything draws. What it does
 // not own: drawing (particles.ts reads `positionTexture`), the scene and camera, the state tween
 // (the owner calls `state.update(delta)`; this module only copies `state.values` into uniforms) and
-// input (`inputs.uMouse` / `uScrollVel` are written by P1.FX.10 and P1.FX.11).
+// input (`inputs.uMouse` / `uMouseAmount` are written by the mouse field, vortex/mouse.ts, P1.FX.10;
+// `uScrollVel` by P1.FX.11).
 //
 // Lifecycle: building is asynchronous and split into short tasks (seed data in chunks, then shader
 // compilation), so no task blocks the main thread for long (AGENTS.md §6.4: never > 50 ms).
@@ -103,7 +104,7 @@ export const VORTEX = {
   /** How fast the drift velocity follows the desired drift (1/s); higher = stiffer. */
   RESPONSE: 2,
   /** Mouse impulse at the centre of its field (units/s²) at uMouseStrength = 1. */
-  MOUSE_PUSH: 6,
+  MOUSE_PUSH: 3.5,
   /** Lifespan range in seconds; each particle gets a fixed random value. */
   LIFESPAN_MIN: 6,
   LIFESPAN_MAX: 20,
@@ -112,7 +113,7 @@ export const VORTEX = {
 /** Octaves of curl noise (tech.md §7.3: 2–3); each costs three noise samples per particle. */
 export const CURL_OCTAVES = 2;
 
-/** Default mouse field radius (world units). P1.FX.10 tunes it. */
+/** Mouse field radius (world units, P1.FX.10): about a fifth of the disk's radius. */
 export const DEFAULT_MOUSE_RADIUS = 0.6;
 
 /** Where `uMouse` sits until input writes it: far outside the scene, so the field does nothing. */
@@ -244,6 +245,8 @@ export const browserSimulationDeps: SimulationDeps = {
 export interface VortexInputs {
   uMouse: IUniform<Vector3>;
   uMouseRadius: IUniform<number>;
+  /** 0 … 1: pointer presence × motion boost (vortex/mouse.ts). 0 = no field. */
+  uMouseAmount: IUniform<number>;
   uScrollVel: IUniform<number>;
 }
 
@@ -329,6 +332,7 @@ export function createVortexSimulation(options: VortexSimulationOptions): Vortex
   const inputs: VortexInputs = {
     uMouse: { value: new Vector3(MOUSE_PARKED, MOUSE_PARKED, MOUSE_PARKED) },
     uMouseRadius: { value: DEFAULT_MOUSE_RADIUS },
+    uMouseAmount: { value: 0 },
     uScrollVel: { value: 0 },
   };
 
