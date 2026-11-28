@@ -7,7 +7,12 @@
 // scene) restarts on the rim with full life. Life ages in real time (uDelta), not scaled time, so
 // a fast transition (uSpeed 3) does not burn through lifespans.
 //
-// Uniforms: uSpeed (time scale), uSwirl (FX state), uScrollVel (scroll → extra swirl);
+// Scroll (P1.FX.11): uScrollVel in [0, 1) speeds up both the time scale (drift and rotation) and
+// the swirl; at 1 the disk turns (1 + SCROLL_SPEED_BOOST) × (1 + SCROLL_SWIRL_BOOST) times as fast
+// (scrollRotationFactor() in scroll.ts). Only the rate changes, so the value may move quickly.
+//
+// Defines: SCROLL_SPEED_BOOST, SCROLL_SWIRL_BOOST (floats, from VORTEX in simulation.ts).
+// Uniforms: uSpeed (time scale), uSwirl (FX state), uScrollVel (scroll.ts);
 //           uDelta and uTime come from vortex-common.glsl.
 
 uniform float uSpeed;
@@ -24,9 +29,9 @@ void main() {
     return;
   }
 
-  float dt = uDelta * uSpeed;
+  float dt = uDelta * uSpeed * (1.0 + SCROLL_SPEED_BOOST * uScrollVel);
   vec3 p = position.xyz;
-  float angle = swirlAngularSpeed(p, uSwirl * (1.0 + uScrollVel)) * dt;
+  float angle = swirlAngularSpeed(p, uSwirl * (1.0 + SCROLL_SWIRL_BOOST * uScrollVel)) * dt;
   float c = cos(angle);
   float s = sin(angle);
   // Counter-clockwise seen from +Y.
