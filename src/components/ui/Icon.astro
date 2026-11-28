@@ -1,0 +1,68 @@
+---
+// Icon (P1.DS.13): an inline Lucide SVG from the set in icons.ts. Inline means no sprite file and
+// no network request. The shapes are typed data rendered as elements, so no set:html is needed.
+// Decorative (aria-hidden) by default; pass `label` when the icon is the only content that carries
+// meaning (an icon-only button still names the button itself, not the icon).
+import type { SvgComponent } from 'astro/types';
+
+import { iconA11y, iconNodes, type IconName, type IconSize } from './icons';
+
+type SvgAttributes = Parameters<SvgComponent>[0];
+
+interface Props extends Omit<SvgAttributes, 'viewBox' | 'role' | 'aria-label' | 'aria-hidden'> {
+  name: IconName;
+  /** `inherit` = 1em (follows the text, a container may size it); sm 16 · md 20 · lg 24 px. */
+  size?: IconSize;
+  /** Accessible name; turns the icon into role="img". Leave out for decorative icons. */
+  label?: string;
+}
+
+const { name, size = 'inherit', label, class: className, ...rest } = Astro.props;
+const nodes = iconNodes(name);
+---
+
+<svg
+  {...rest}
+  {...iconA11y(label)}
+  class:list={['icon', size !== 'inherit' && `icon--${size}`, className]}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  focusable="false"
+  data-icon={name}
+>
+  {nodes.map((node) => {
+    const Shape = node[0];
+    return <Shape {...node[1]} />;
+  })}
+</svg>
+
+<style>
+  /* Zero specificity, so Button, Link and other containers can size the icon with a single class.
+     :global because Astro adds its scope attribute outside :where, which would count as a class. */
+  :global(:where(.icon)) {
+    display: inline-block;
+    flex: none;
+    inline-size: 1em;
+    block-size: 1em;
+    vertical-align: -0.125em;
+  }
+
+  .icon--sm {
+    inline-size: var(--icon-size-sm);
+    block-size: var(--icon-size-sm);
+  }
+
+  .icon--md {
+    inline-size: var(--icon-size-md);
+    block-size: var(--icon-size-md);
+  }
+
+  .icon--lg {
+    inline-size: var(--icon-size-lg);
+    block-size: var(--icon-size-lg);
+  }
+</style>
