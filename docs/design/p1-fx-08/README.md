@@ -1,6 +1,6 @@
 # P1.FX.08: vortex simulacija (screenshotovi za pregled)
 
-> Status: **čeka Zijadovo odobrenje izgleda** ("vizuelno odgovara Dust Vortex referenci").
+> Status: **odobreno** (Zijad, 2026-11-28, zajedno s P1.FX.09).
 > Ovo je simulacija s **baznim** crtanjem tačaka. Konačan izgled čestica (veličina po dubini, ~3 % plavih, glow) je P1.FX.09, a mjesto i nagib diska na stranici određuju P1.FX.02 i hero (P1.FACE.10).
 
 Snimljeno na `/_dev/fx?scene=vortex&panel=off`, high tier (131.072 čestice), headed Chromium, Apple M4 (Metal), nakon ~10 s rada.
